@@ -321,14 +321,70 @@ The design system provides consistent text styles for all typography needs:
 </button>
 ```
 
+### Typography Components
+
+The design system provides pre-built typography components for consistent text rendering:
+
+```tsx
+import { H1, H2, H3, Text, Muted, Small, Lead } from "@/components/ui/typography";
+
+// Headings
+<H1>Main Page Heading</H1>
+<H2>Section Heading</H2>
+<H3>Subsection Heading</H3>
+
+// Text with variants
+<Text>Default body text (16px, 160%, regular)</Text>
+<Text variant="bold">Bold body text (16px, 160%, bold)</Text>
+<Text variant="small">Small text (14px, 140%, regular)</Text>
+<Text variant="small-bold">Small bold text (14px, 140%, bold)</Text>
+
+// Polymorphic rendering
+<Text as="span">Rendered as span</Text>
+<Text as="div">Rendered as div</Text>
+
+// Specialized variants
+<Muted>Secondary descriptive text (muted foreground)</Muted>
+<Small>Helper text or captions (small + muted)</Small>
+<Lead>Introductory paragraph (bold + muted)</Lead>
+
+// Override with className
+<H1 className="text-primary-900">Colored heading</H1>
+<Text className="text-center">Centered text</Text>
+```
+
+**Component Features:**
+- Automatic style application from design system
+- Support for `className` prop to override or extend styles
+- Polymorphic `as` prop for semantic HTML flexibility
+- Full TypeScript support with proper types
+- Consistent with light/dark mode color tokens
+
+**Additional Components:**
+```tsx
+import { InlineCode, Blockquote, List, OrderedList } from "@/components/ui/typography";
+
+<InlineCode>const code = "example";</InlineCode>
+<Blockquote>Inspirational quote about healthcare</Blockquote>
+<List>
+  <li>List item 1</li>
+  <li>List item 2</li>
+</List>
+<OrderedList>
+  <li>First step</li>
+  <li>Second step</li>
+</OrderedList>
+```
+
 ### Typography Best Practices
 
-1. **Use semantic HTML**: Prefer `<h1>`, `<h2>`, `<h3>` tags for headings to maintain proper document structure
-2. **Utility classes for flexibility**: Use utility classes (`.text-h1`, `.text-body`, etc.) when you need heading styles on non-heading elements
-3. **Maintain hierarchy**: Use heading levels in order (h1 → h2 → h3) for accessibility
-4. **Combine with color tokens**: Pair text styles with color tokens for consistent theming
-5. **Line height for readability**: Body text uses 160% line height for optimal readability
-6. **Use bold sparingly**: Reserve bold text for emphasis and important information
+1. **Use typography components**: Prefer `<H1>`, `<Text>`, etc. components over raw HTML for consistent styling
+2. **Use semantic HTML**: Components render semantic tags (h1, h2, h3, p) for accessibility
+3. **Maintain hierarchy**: Use heading levels in order (H1 → H2 → H3) for proper document structure
+4. **Polymorphic when needed**: Use `as` prop only when semantic HTML differs from visual styling
+5. **Combine with color tokens**: Components use design system colors, override with `className` when needed
+6. **Line height for readability**: Body text uses 160% line height for optimal readability
+7. **Use Muted and Small**: Leverage specialized components for secondary text instead of manual styling
 
 ## Dark Mode
 
