@@ -88,32 +88,36 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.14 0 0);
 
-  /* Primary: ABA Access Green #32C28A */
+  /* Primary: primary-900 #32C28A */
   --primary: oklch(0.717 0.136 166.5);
-  --primary-foreground: oklch(1 0 0);
+  --primary-foreground: oklch(1 0 0); /* white */
 
-  /* Secondary: Light backgrounds using neutral-200 */
-  --secondary: oklch(0.975 0.003 250); /* neutral-200: #F7F9FC */
-  --secondary-foreground: oklch(0.14 0 0);
+  /* Secondary: secondary-900 #3A8DFF */
+  --secondary: oklch(0.646 0.178 245); /* secondary-900 */
+  --secondary-foreground: oklch(1 0 0); /* white */
 
-  /* Muted: Using neutral palette */
-  --muted: oklch(0.975 0.003 250); /* neutral-200 */
-  --muted-foreground: oklch(0.632 0.012 230); /* neutral-600: #8F9AA1 */
+  /* Muted: neutral-400 */
+  --muted: oklch(0.91 0.005 250); /* neutral-400: #E5E8EC */
+  --muted-foreground: oklch(0.34 0.01 235); /* neutral-700: #4A4F55 */
 
-  /* Accent: Using secondary blue */
-  --accent: oklch(0.975 0.003 250);
-  --accent-foreground: oklch(0.14 0 0);
+  /* Accent: secondary-100 */
+  --accent: oklch(0.96 0.02 245); /* secondary-100: #E8F2FF */
+  --accent-foreground: oklch(0.646 0.178 245); /* secondary-900 */
 
-  /* Destructive: Using error-900 #E44F4F */
+  /* Destructive: error-900 #E44F4F */
   --destructive: oklch(0.63 0.19 25);
-  --destructive-foreground: oklch(1 0 0);
+  --destructive-foreground: oklch(1 0 0); /* white */
 
-  /* Borders & Inputs: Using neutral-400 */
+  /* Borders & Inputs: neutral-400 */
   --border: oklch(0.91 0.005 250); /* neutral-400: #E5E8EC */
   --input: oklch(0.91 0.005 250);
 
-  /* Focus Ring: Primary green */
+  /* Focus Ring: primary-900 */
   --ring: oklch(0.717 0.136 166.5);
+
+  /* Semantic Colors */
+  --success: oklch(0.71 0.14 145); /* success-900: #38C172 */
+  --warning: oklch(0.795 0.12 70); /* warning-900: #FFB649 */
 
   /* Charts: Using brand colors */
   --chart-1: oklch(0.717 0.136 166.5); /* primary green */
@@ -142,32 +146,36 @@
   --popover: oklch(0.22 0 0);
   --popover-foreground: oklch(1 0 0);
 
-  /* Primary: ABA Access Green (slightly lighter for dark mode) */
+  /* Primary: primary-900 (slightly lighter for dark mode) */
   --primary: oklch(0.75 0.15 166.5);
-  --primary-foreground: oklch(0.14 0 0);
+  --primary-foreground: oklch(1 0 0); /* white */
 
-  /* Secondary: Using neutral-800 for dark mode */
-  --secondary: oklch(0.22 0 0); /* neutral-800 */
-  --secondary-foreground: oklch(1 0 0);
+  /* Secondary: secondary-900 (slightly lighter for dark mode) */
+  --secondary: oklch(0.68 0.18 245); /* secondary-900 lighter */
+  --secondary-foreground: oklch(1 0 0); /* white */
 
-  /* Muted: Using neutral palette */
-  --muted: oklch(0.22 0 0); /* neutral-800 */
-  --muted-foreground: oklch(0.81 0.01 240); /* neutral-500: #C9D0DB */
+  /* Muted: neutral-400 (darker variant for dark mode) */
+  --muted: oklch(0.34 0.01 235); /* neutral-700 */
+  --muted-foreground: oklch(0.81 0.01 240); /* neutral-500 */
 
-  /* Accent: Using neutral-800 */
-  --accent: oklch(0.22 0 0);
-  --accent-foreground: oklch(1 0 0);
+  /* Accent: secondary-100 (darker variant for dark mode) */
+  --accent: oklch(0.22 0 0); /* neutral-800 */
+  --accent-foreground: oklch(0.68 0.18 245); /* secondary-900 */
 
-  /* Destructive: Using error color (slightly lighter for dark mode) */
+  /* Destructive: error-900 (slightly lighter for dark mode) */
   --destructive: oklch(0.67 0.20 25);
-  --destructive-foreground: oklch(1 0 0);
+  --destructive-foreground: oklch(1 0 0); /* white */
 
-  /* Borders & Inputs: Using neutral-700 */
-  --border: oklch(0.34 0.01 235); /* neutral-700: #4A4F55 */
+  /* Borders & Inputs: neutral-400 (darker variant for dark mode) */
+  --border: oklch(0.34 0.01 235); /* neutral-700 */
   --input: oklch(0.34 0.01 235);
 
-  /* Focus Ring: Primary green */
+  /* Focus Ring: primary-900 */
   --ring: oklch(0.75 0.15 166.5);
+
+  /* Semantic Colors */
+  --success: oklch(0.73 0.15 145); /* success-900 lighter */
+  --warning: oklch(0.82 0.13 70); /* warning-900 lighter */
 
   /* Charts: Using brand colors */
   --chart-1: oklch(0.75 0.15 166.5); /* primary green (lighter) */
