@@ -198,6 +198,138 @@ The design system uses shadcn/ui color tokens that adapt to light and dark modes
 </div>
 ```
 
+## Typography
+
+The design system uses **Geist** from Google Fonts as the primary typeface, providing a modern and professional look.
+
+### Font Family
+
+- **Font Sans**: Geist (default for all text)
+- **Font Mono**: Geist Mono (for code and monospace content)
+
+The fonts are loaded via `next/font/google` and applied globally through CSS variables:
+- `--font-geist-sans`
+- `--font-geist-mono`
+
+### Text Styles
+
+The design system provides consistent text styles for all typography needs:
+
+#### Headings
+
+**H1 - Main Heading**
+- Size: 48px
+- Line Height: Auto
+- Font Weight: 700 (Bold)
+
+```tsx
+<h1>Main Heading</h1>
+// or
+<p className="text-h1">Main Heading</p>
+```
+
+**H2 - Section Heading**
+- Size: 24px
+- Line Height: 160% (38.4px)
+- Font Weight: 700 (Bold)
+
+```tsx
+<h2>Section Heading</h2>
+// or
+<p className="text-h2">Section Heading</p>
+```
+
+**H3 - Subsection Heading**
+- Size: 20px
+- Line Height: Auto
+- Font Weight: 700 (Bold)
+
+```tsx
+<h3>Subsection Heading</h3>
+// or
+<p className="text-h3">Subsection Heading</p>
+```
+
+#### Body Text
+
+**Bold Text**
+- Size: 16px
+- Line Height: 160% (25.6px)
+- Font Weight: 700 (Bold)
+
+```tsx
+<p className="text-bold">Bold emphasis text</p>
+```
+
+**Body Text (Default)**
+- Size: 16px
+- Line Height: 160% (25.6px)
+- Font Weight: 400 (Regular)
+
+```tsx
+<p className="text-body">Regular body text</p>
+// or just
+<p>Regular body text</p>
+```
+
+#### Small Text
+
+**Small Bold**
+- Size: 14px
+- Line Height: 140% (19.6px)
+- Font Weight: 700 (Bold)
+
+```tsx
+<p className="text-sm-bold">Small bold text</p>
+```
+
+**Small Body**
+- Size: 14px
+- Line Height: 140% (19.6px)
+- Font Weight: 400 (Regular)
+
+```tsx
+<p className="text-sm-body">Small body text</p>
+```
+
+### Typography Usage Examples
+
+```tsx
+// Page header
+<div>
+  <h1>Welcome to ABA Access</h1>
+  <p className="text-body text-muted-foreground">
+    Manage your healthcare packages with ease
+  </p>
+</div>
+
+// Card with different text styles
+<div className="bg-card p-6 rounded-lg">
+  <h2>Your Packages</h2>
+  <p className="text-bold text-foreground">Premium Healthcare Plan</p>
+  <p className="text-body text-muted-foreground">
+    Access to over 100 healthcare facilities
+  </p>
+  <p className="text-sm-body text-neutral-600">
+    Valid until December 2025
+  </p>
+</div>
+
+// Button with text styles
+<button className="bg-primary text-primary-foreground">
+  <span className="text-bold">Get Started</span>
+</button>
+```
+
+### Typography Best Practices
+
+1. **Use semantic HTML**: Prefer `<h1>`, `<h2>`, `<h3>` tags for headings to maintain proper document structure
+2. **Utility classes for flexibility**: Use utility classes (`.text-h1`, `.text-body`, etc.) when you need heading styles on non-heading elements
+3. **Maintain hierarchy**: Use heading levels in order (h1 → h2 → h3) for accessibility
+4. **Combine with color tokens**: Pair text styles with color tokens for consistent theming
+5. **Line height for readability**: Body text uses 160% line height for optimal readability
+6. **Use bold sparingly**: Reserve bold text for emphasis and important information
+
 ## Dark Mode
 
 The color system automatically adapts to dark mode. All colors are defined for both light and dark themes in `app/globals.css`.

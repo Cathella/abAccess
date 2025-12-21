@@ -192,6 +192,64 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+
+  /* Typography Styles */
+  h1 {
+    @apply text-[48px] font-bold leading-none;
+  }
+
+  h2 {
+    @apply text-2xl font-bold leading-[160%];
+  }
+
+  h3 {
+    @apply text-xl font-bold leading-none;
+  }
+}
+
+@layer utilities {
+  /* Typography Utilities */
+  .text-h1 {
+    font-size: 48px;
+    line-height: auto;
+    font-weight: 700;
+  }
+
+  .text-h2 {
+    font-size: 24px;
+    line-height: 160%;
+    font-weight: 700;
+  }
+
+  .text-h3 {
+    font-size: 20px;
+    line-height: auto;
+    font-weight: 700;
+  }
+
+  .text-bold {
+    font-size: 16px;
+    line-height: 160%;
+    font-weight: 700;
+  }
+
+  .text-body {
+    font-size: 16px;
+    line-height: 160%;
+    font-weight: 400;
+  }
+
+  .text-sm-bold {
+    font-size: 14px;
+    line-height: 140%;
+    font-weight: 700;
+  }
+
+  .text-sm-body {
+    font-size: 14px;
+    line-height: 140%;
+    font-weight: 400;
   }
 }
