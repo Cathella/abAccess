@@ -7,11 +7,12 @@ const PUBLIC_ROUTES = [
   '/sign-in',
   '/verify-otp',
   '/create-pin',
+  '/enter-pin',
   '/onboarding',
 ]
 
 // Routes that should redirect to welcome if already authenticated
-const AUTH_ROUTES = ['/sign-in', '/verify-otp', '/create-pin']
+const AUTH_ROUTES = ['/sign-in', '/verify-otp', '/create-pin', '/enter-pin']
 
 /**
  * Check if the given path matches any of the public routes

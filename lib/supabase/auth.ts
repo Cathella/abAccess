@@ -1,5 +1,11 @@
 import { createClient } from "./client";
 import type { Session } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
+import * as bcrypt from "bcryptjs";
+
+const SALT_ROUNDS = 10;
+
+type UserRow = Database["public"]["Tables"]["users"]["Row"];
 
 /**
  * Format a Ugandan phone number to international format
@@ -46,9 +52,72 @@ export function formatUgandanPhone(phone: string): string {
 }
 
 /**
- * Verify phone number and PIN combination
+ * Validate if phone number is a valid Ugandan phone number
+ * Returns true if valid, false otherwise (doesn't throw)
  */
-export async function verifyPhoneAndPin(
+export function isValidUgandanPhone(phone: string): boolean {
+  try {
+    formatUgandanPhone(phone);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Hash a PIN for secure storage
+ * Uses bcrypt with 10 salt rounds
+ */
+export async function hashPin(pin: string): Promise<string> {
+  return bcrypt.hash(pin, SALT_ROUNDS);
+}
+
+/**
+ * Verify a PIN against its hash
+ * Returns true if PIN matches, false otherwise
+ */
+export async function verifyPin(inputPin: string, storedHash: string): Promise<boolean> {
+  return bcrypt.compare(inputPin, storedHash);
+}
+
+/**
+ * Check if a user with this phone number exists
+ */
+export async function checkUserExists(
+  phoneNumber: string
+): Promise<{ exists: boolean; error?: string }> {
+  try {
+    const formattedPhone = formatUgandanPhone(phoneNumber);
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("users")
+      .select("id")
+      .eq("phone", formattedPhone)
+      .single();
+
+    if (error) {
+      // If error is "no rows", user doesn't exist
+      if (error.code === "PGRST116") {
+        return { exists: false };
+      }
+      return { exists: false, error: error.message };
+    }
+
+    return { exists: !!data };
+  } catch (error) {
+    if (error instanceof Error) {
+      return { exists: false, error: error.message };
+    }
+    return { exists: false, error: "Failed to check user" };
+  }
+}
+
+/**
+ * Login with phone number and PIN
+ * This is the main authentication function for the app
+ */
+export async function login(
   phoneNumber: string,
   pin: string
 ): Promise<{ success: boolean; session?: Session; user?: any; error?: string }> {
@@ -56,18 +125,41 @@ export async function verifyPhoneAndPin(
     const formattedPhone = formatUgandanPhone(phoneNumber);
     const supabase = createClient();
 
-    // Query the users table to find a user with this phone and PIN
+    // Query the users table to find a user with this phone
     const { data: userData, error: queryError } = await supabase
       .from("users")
       .select("*")
-      .eq("phone_number", formattedPhone)
-      .eq("pin", pin)
-      .single();
+      .eq("phone", formattedPhone)
+      .single<UserRow>();
 
-    if (queryError || !userData) {
+    if (queryError) {
+      // User not found
+      if (queryError.code === "PGRST116") {
+        return {
+          success: false,
+          error: "Account not found"
+        };
+      }
       return {
         success: false,
-        error: "Invalid phone number or PIN"
+        error: queryError.message
+      };
+    }
+
+    if (!userData) {
+      return {
+        success: false,
+        error: "Account not found"
+      };
+    }
+
+    // Verify PIN against stored hash
+    const isPinValid = await verifyPin(pin, userData.pin);
+
+    if (!isPinValid) {
+      return {
+        success: false,
+        error: "Wrong PIN"
       };
     }
 
@@ -100,6 +192,17 @@ export async function verifyPhoneAndPin(
     }
     return { success: false, error: "Failed to verify credentials" };
   }
+}
+
+/**
+ * Verify phone number and PIN combination
+ * Alias for login() for backward compatibility
+ */
+export async function verifyPhoneAndPin(
+  phoneNumber: string,
+  pin: string
+): Promise<{ success: boolean; session?: Session; user?: any; error?: string }> {
+  return login(phoneNumber, pin);
 }
 
 /**

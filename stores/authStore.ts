@@ -10,42 +10,55 @@ interface Session {
 }
 
 interface AuthState {
-  // State
+  // User
   user: User | null
-  session: Session | null
+
+  // Login flow
+  phoneNumber: string
+  isPhoneValid: boolean
+
+  // PIN attempts tracking
+  pinAttempts: number
+  isPinLocked: boolean
+  maxAttempts: number
+
+  // Loading
   isLoading: boolean
+
+  // Session
+  session: Session | null
   isAuthenticated: boolean
-  pin: string | null // For current session only, not persisted
-  phoneNumber: string | null // For OTP flow
-  isOtpSent: boolean
-  isVerifying: boolean
 
   // Actions
   setUser: (user: User | null) => void
   setSession: (session: Session | null) => void
   setLoading: (isLoading: boolean) => void
+  setAuthenticated: (auth: boolean) => void
+  setPhoneNumber: (phone: string) => void
+  setPhoneValid: (valid: boolean) => void
+  incrementPinAttempts: () => void
+  resetPinAttempts: () => void
+  lockPin: () => void
   signIn: (user: User, session: Session) => void
   signOut: () => void
-  verifyPin: (inputPin: string) => boolean
-  setPin: (pin: string) => void
   clearAuth: () => void
-  setPhoneNumber: (phoneNumber: string | null) => void
-  setOtpSent: (isOtpSent: boolean) => void
-  setVerifying: (isVerifying: boolean) => void
 }
+
+const MAX_PIN_ATTEMPTS = 3
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       // Initial state
       user: null,
-      session: null,
+      phoneNumber: '',
+      isPhoneValid: false,
+      pinAttempts: 0,
+      isPinLocked: false,
+      maxAttempts: MAX_PIN_ATTEMPTS,
       isLoading: false,
+      session: null,
       isAuthenticated: false,
-      pin: null,
-      phoneNumber: null,
-      isOtpSent: false,
-      isVerifying: false,
 
       // Actions
       setUser: (user) =>
@@ -60,12 +73,51 @@ export const useAuthStore = create<AuthState>()(
       setLoading: (isLoading) =>
         set({ isLoading }),
 
+      setAuthenticated: (auth) =>
+        set({ isAuthenticated: auth }),
+
+      setPhoneNumber: (phone) =>
+        set({
+          phoneNumber: phone,
+          // Reset PIN attempts when phone changes
+          pinAttempts: 0,
+          isPinLocked: false
+        }),
+
+      setPhoneValid: (valid) =>
+        set({ isPhoneValid: valid }),
+
+      incrementPinAttempts: () => {
+        const { pinAttempts, maxAttempts } = get()
+        const newAttempts = pinAttempts + 1
+
+        set({
+          pinAttempts: newAttempts,
+          isPinLocked: newAttempts >= maxAttempts
+        })
+      },
+
+      resetPinAttempts: () =>
+        set({
+          pinAttempts: 0,
+          isPinLocked: false
+        }),
+
+      lockPin: () =>
+        set({
+          isPinLocked: true,
+          pinAttempts: MAX_PIN_ATTEMPTS
+        }),
+
       signIn: (user, session) =>
         set({
           user,
           session,
           isAuthenticated: true,
-          isLoading: false
+          isLoading: false,
+          // Reset PIN attempts on successful login
+          pinAttempts: 0,
+          isPinLocked: false
         }),
 
       signOut: () =>
@@ -73,51 +125,39 @@ export const useAuthStore = create<AuthState>()(
           user: null,
           session: null,
           isAuthenticated: false,
-          pin: null,
           isLoading: false,
-          phoneNumber: null,
-          isOtpSent: false,
-          isVerifying: false
+          // Keep phoneNumber for "Welcome back" experience
+          // Reset PIN attempts
+          pinAttempts: 0,
+          isPinLocked: false,
+          isPhoneValid: false
         }),
-
-      verifyPin: (inputPin) => {
-        const state = get()
-        if (!state.user?.pin) return false
-        return state.user.pin === inputPin
-      },
-
-      setPin: (pin) =>
-        set({ pin }),
 
       clearAuth: () =>
         set({
           user: null,
           session: null,
           isAuthenticated: false,
-          pin: null,
           isLoading: false,
-          phoneNumber: null,
-          isOtpSent: false,
-          isVerifying: false
+          phoneNumber: '',
+          isPhoneValid: false,
+          pinAttempts: 0,
+          isPinLocked: false
         }),
-
-      setPhoneNumber: (phoneNumber) =>
-        set({ phoneNumber }),
-
-      setOtpSent: (isOtpSent) =>
-        set({ isOtpSent }),
-
-      setVerifying: (isVerifying) =>
-        set({ isVerifying }),
     }),
     {
       name: 'auth-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        // Only persist user and session, not pin or loading states
+        // Persist user for "Welcome back" display
         user: state.user,
-        session: state.session,
-        isAuthenticated: state.isAuthenticated,
+        // Persist phoneNumber to remember last login
+        phoneNumber: state.phoneNumber,
+        // Do NOT persist:
+        // - pinAttempts (reset on app restart for security)
+        // - isAuthenticated (check fresh each time)
+        // - session (checked fresh via Supabase)
+        // - isPinLocked (reset on app restart)
       }),
     }
   )
