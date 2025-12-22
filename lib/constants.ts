@@ -16,6 +16,11 @@ export const colors = {
     900: "#3A8DFF",
     100: "#E8F2FF",
   },
+  brandRose: {
+    900: "#F23D7A",
+    700: "#FF7AA8",
+    100: "#FFE6EF",
+  },
   neutral: {
     900: "#1A1A1A",
     800: "#2E2E2E",

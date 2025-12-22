@@ -37,6 +37,19 @@ The secondary blue color represents trust, reliability, and professionalism.
 <div className="bg-secondary-100 text-secondary-900">Info card</div>
 ```
 
+#### Brand Accent (Rose)
+Used for the brand heart mark and warm accents.
+
+- **brand-rose-900**: `#F23D7A` - Main accent
+- **brand-rose-700**: `#FF7AA8` - Highlight
+- **brand-rose-100**: `#FFE6EF` - Light background
+
+**Usage:**
+```tsx
+<div className="text-brand-rose-900">Accent text</div>
+<div className="bg-brand-rose-100 text-brand-rose-900">Accent surface</div>
+```
+
 ### Neutral (Grays)
 The neutral color palette provides a full range of grays for text, backgrounds, and UI elements.
 

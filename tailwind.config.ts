@@ -27,6 +27,13 @@ const config: Config = {
           100: "#E8F2FF",
           DEFAULT: "#3A8DFF",
         },
+        // Brand Accent (Rose)
+        "brand-rose": {
+          900: "#F23D7A",
+          700: "#FF7AA8",
+          100: "#FFE6EF",
+          DEFAULT: "#F23D7A",
+        },
         // Neutral (Grays)
         neutral: {
           900: "#1A1A1A",
