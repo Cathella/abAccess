@@ -16,6 +16,9 @@ interface AuthState {
   isLoading: boolean
   isAuthenticated: boolean
   pin: string | null // For current session only, not persisted
+  phoneNumber: string | null // For OTP flow
+  isOtpSent: boolean
+  isVerifying: boolean
 
   // Actions
   setUser: (user: User | null) => void
@@ -26,6 +29,9 @@ interface AuthState {
   verifyPin: (inputPin: string) => boolean
   setPin: (pin: string) => void
   clearAuth: () => void
+  setPhoneNumber: (phoneNumber: string | null) => void
+  setOtpSent: (isOtpSent: boolean) => void
+  setVerifying: (isVerifying: boolean) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -37,6 +43,9 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       isAuthenticated: false,
       pin: null,
+      phoneNumber: null,
+      isOtpSent: false,
+      isVerifying: false,
 
       // Actions
       setUser: (user) =>
@@ -65,7 +74,10 @@ export const useAuthStore = create<AuthState>()(
           session: null,
           isAuthenticated: false,
           pin: null,
-          isLoading: false
+          isLoading: false,
+          phoneNumber: null,
+          isOtpSent: false,
+          isVerifying: false
         }),
 
       verifyPin: (inputPin) => {
@@ -83,8 +95,20 @@ export const useAuthStore = create<AuthState>()(
           session: null,
           isAuthenticated: false,
           pin: null,
-          isLoading: false
+          isLoading: false,
+          phoneNumber: null,
+          isOtpSent: false,
+          isVerifying: false
         }),
+
+      setPhoneNumber: (phoneNumber) =>
+        set({ phoneNumber }),
+
+      setOtpSent: (isOtpSent) =>
+        set({ isOtpSent }),
+
+      setVerifying: (isVerifying) =>
+        set({ isVerifying }),
     }),
     {
       name: 'auth-storage',

@@ -26,24 +26,24 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       // Remove country code if present
       let phoneDigits = digits;
       if (digits.startsWith("256")) {
-        phoneDigits = digits.substring(3);
+        phoneDigits = "0" + digits.substring(3);
       }
 
-      // Limit to 9 digits (Uganda mobile numbers are 9 digits after country code)
-      phoneDigits = phoneDigits.substring(0, 9);
+      // Limit to 10 digits (0 + 9 digits)
+      phoneDigits = phoneDigits.substring(0, 10);
 
-      // Format as: 0XX XXX XXX
+      // Format as: 07XX XXX XXX
       if (phoneDigits.length === 0) return "";
 
-      let formatted = "0";
+      let formatted = "";
       if (phoneDigits.length > 0) {
-        formatted += phoneDigits.substring(0, 2);
+        formatted += phoneDigits.substring(0, 4);
       }
-      if (phoneDigits.length > 2) {
-        formatted += " " + phoneDigits.substring(2, 5);
+      if (phoneDigits.length > 4) {
+        formatted += " " + phoneDigits.substring(4, 7);
       }
-      if (phoneDigits.length > 5) {
-        formatted += " " + phoneDigits.substring(5, 9);
+      if (phoneDigits.length > 7) {
+        formatted += " " + phoneDigits.substring(7, 10);
       }
 
       return formatted;
@@ -54,17 +54,18 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       const digits = value.replace(/\D/g, "");
       if (digits.length === 0) return "";
 
-      // If it starts with 0, replace with 256
-      if (digits.startsWith("0")) {
-        return "+256" + digits.substring(1);
-      }
-
       // If it already has country code
       if (digits.startsWith("256")) {
         return "+" + digits;
       }
 
-      return "+256" + digits;
+      // Remove leading 0 if present
+      let phoneDigits = digits;
+      if (phoneDigits.startsWith("0")) {
+        phoneDigits = phoneDigits.substring(1);
+      }
+
+      return "+256" + phoneDigits;
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +85,10 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       if (!displayValue) return true; // Empty is valid (let required handle it)
       const digits = displayValue.replace(/\D/g, "");
 
-      if (digits.length !== 9) return false;
+      if (digits.length !== 10) return false;
+
+      // Validate it starts with 0 and has valid prefix
+      if (!digits.startsWith("0")) return false;
 
       const prefix = digits.substring(0, 3);
       return VALID_PREFIXES.includes(prefix);
@@ -100,26 +104,21 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
             {label}
           </Label>
         )}
-        <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-neutral-600 pointer-events-none">
-            +256
-          </div>
-          <Input
-            ref={ref}
-            type="tel"
-            inputMode="numeric"
-            placeholder="0XX XXX XXX"
-            value={displayValue}
-            onChange={handleChange}
-            className={cn(
-              "pl-16 min-h-[44px] text-base",
-              error && "border-destructive focus-visible:ring-destructive",
-              !isValid && displayValue && "border-warning-900",
-              className
-            )}
-            {...props}
-          />
-        </div>
+        <Input
+          ref={ref}
+          type="tel"
+          inputMode="numeric"
+          placeholder="07XX XXX XXX"
+          value={displayValue}
+          onChange={handleChange}
+          className={cn(
+            "h-12 rounded-lg border-[1.5px] border-neutral-300 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0",
+            error && "border-destructive focus-visible:border-destructive",
+            !isValid && displayValue && "border-warning-900",
+            className
+          )}
+          {...props}
+        />
         {error && (
           <p className="text-sm text-destructive">{error}</p>
         )}

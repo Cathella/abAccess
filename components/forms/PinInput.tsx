@@ -2,39 +2,40 @@
 
 import * as React from "react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PinInputProps {
-  label?: string;
   error?: string;
   value?: string;
   onChange?: (value: string) => void;
   onComplete?: (pin: string) => void;
   length?: number;
+  showPin?: boolean;
   className?: string;
 }
 
 export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
   (
     {
-      label = "Enter PIN",
       error,
       value = "",
       onChange,
       onComplete,
       length = 4,
+      showPin = false,
       className,
     },
     ref
   ) => {
-    const [showPin, setShowPin] = React.useState(false);
     const [pins, setPins] = React.useState<string[]>(
       Array(length).fill("")
     );
     const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
+
+    // Auto-focus first input on mount
+    React.useEffect(() => {
+      inputRefs.current[0]?.focus();
+    }, []);
 
     // Sync external value with internal state
     React.useEffect(() => {
@@ -125,35 +126,9 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
     };
 
     return (
-      <div className={cn("space-y-3", className)}>
-        {/* Label and Toggle */}
-        <div className="flex items-center justify-between">
-          {label && (
-            <Label className={cn(error && "text-destructive")}>{label}</Label>
-          )}
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowPin(!showPin)}
-            className="h-8 px-2 text-xs"
-          >
-            {showPin ? (
-              <>
-                <EyeOff className="h-4 w-4 mr-1" />
-                Hide
-              </>
-            ) : (
-              <>
-                <Eye className="h-4 w-4 mr-1" />
-                Show
-              </>
-            )}
-          </Button>
-        </div>
-
+      <div className={cn(className)}>
         {/* PIN Inputs */}
-        <div className="flex gap-3 justify-center">
+        <div className="flex gap-1">
           {pins.map((pin, index) => (
             <Input
               key={index}
@@ -168,7 +143,7 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
                   }
                 }
               }}
-              type={showPin ? "text" : "password"}
+              type={showPin ? "tel" : "password"}
               inputMode="numeric"
               maxLength={1}
               value={pin}
@@ -176,9 +151,9 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
               onKeyDown={(e) => handleKeyDown(index, e)}
               onFocus={handleFocus}
               className={cn(
-                "h-14 w-14 text-center text-2xl font-semibold tabular-nums",
-                "min-h-[44px] min-w-[44px]", // Mobile touch target
-                error && "border-destructive focus-visible:ring-destructive"
+                "h-16 flex-1 rounded-lg border-[1.5px] border-neutral-400 text-center text-2xl font-bold tabular-nums",
+                "focus-visible:border-2 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0",
+                error && "border-destructive focus-visible:border-destructive"
               )}
               aria-label={`PIN digit ${index + 1}`}
             />
@@ -187,7 +162,7 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
 
         {/* Error Message */}
         {error && (
-          <p className="text-sm text-destructive text-center">{error}</p>
+          <p className="mt-4 text-sm text-destructive text-center">{error}</p>
         )}
       </div>
     );

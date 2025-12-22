@@ -28,6 +28,7 @@ export const colors = {
     600: "#8F9AA1",
     500: "#C9D0DB",
     400: "#E5E8EC",
+    300: "#EEF0F3",
     200: "#F7F9FC",
     100: "#FFFFFF",
   },
@@ -89,7 +90,7 @@ export const typography = {
 export const API_TIMEOUT = 30000; // 30 seconds
 
 // Authentication
-export const PIN_LENGTH = 6;
+export const PIN_LENGTH = 4;
 export const OTP_LENGTH = 6;
 export const OTP_EXPIRY_MINUTES = 10;
 
@@ -108,6 +109,7 @@ export const STORAGE_KEYS = {
 export const ROUTES = {
   WELCOME: "/welcome",
   SIGN_IN: "/sign-in",
+  ENTER_PIN: "/enter-pin",
   VERIFY_OTP: "/verify-otp",
   CREATE_PIN: "/create-pin",
   ONBOARDING: "/onboarding",
