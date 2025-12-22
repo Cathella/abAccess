@@ -1,7 +1,13 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Logo } from "@/components/common/Logo";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
+
+export const metadata: Metadata = {
+  title: "Welcome - ABA Access",
+  description: "Affordable healthcare for your family",
+};
 
 export default function WelcomePage() {
   return (
@@ -30,7 +36,7 @@ export default function WelcomePage() {
         <Button
           asChild
           size="lg"
-          className="w-full min-h-[48px] text-base font-semibold"
+          className="w-full min-h-12 text-base font-semibold"
         >
           <Link href={ROUTES.SIGN_IN}>Sign In</Link>
         </Button>
@@ -40,7 +46,7 @@ export default function WelcomePage() {
           asChild
           variant="outline"
           size="lg"
-          className="w-full min-h-[48px] text-base font-semibold border-2"
+          className="w-full min-h-12 text-base font-semibold border-2"
         >
           <Link href={ROUTES.ONBOARDING}>Create Account</Link>
         </Button>

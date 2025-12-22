@@ -1,10 +1,3 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Sign In - ABA Access",
-  description: "Sign in to access your healthcare packages",
-};
-
 export default function AuthLayout({
   children,
 }: Readonly<{
