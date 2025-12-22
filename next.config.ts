@@ -3,6 +3,9 @@ import withPWA from "next-pwa";
 
 const nextConfig: NextConfig = {
   /* config options here */
+
+  // Note: Using webpack (not Turbopack) because next-pwa requires webpack.
+  // The --webpack flag is set in package.json scripts.
 };
 
 // Configure PWA
@@ -10,6 +13,8 @@ const pwaConfig = withPWA({
   dest: "public",
   register: true,
   skipWaiting: true,
+  // Disable PWA in development to avoid service worker caching issues
+  // and prevent multiple service worker generation warnings
   disable: process.env.NODE_ENV === "development",
   runtimeCaching: [
     {
