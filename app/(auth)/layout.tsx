@@ -1,3 +1,5 @@
+import { SafeArea } from "@/components/common/SafeArea";
+
 export default function AuthLayout({
   children,
 }: Readonly<{
@@ -8,10 +10,10 @@ export default function AuthLayout({
       {/* Safe area container for mobile devices */}
       <div className="flex min-h-screen flex-col">
         {/* Main content - centered vertically and horizontally */}
-        <main className="flex flex-1 items-center justify-center px-4 py-8 safe-area-inset">
-          <div className="w-full max-w-md">
+        <main className="flex flex-1 items-center justify-center px-4 py-8">
+          <SafeArea className="w-full max-w-md">
             {children}
-          </div>
+          </SafeArea>
         </main>
       </div>
     </div>

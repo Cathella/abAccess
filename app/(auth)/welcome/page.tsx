@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Logo } from "@/components/common/Logo";
+import { SafeArea } from "@/components/common/SafeArea";
 import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
 
@@ -31,7 +32,7 @@ export default function WelcomePage() {
       </div>
 
       {/* Action buttons - fixed at bottom */}
-      <div className="space-y-3 px-6 pb-8 pt-4 safe-area-inset-bottom">
+      <SafeArea inset="bottom" className="space-y-3 px-6 pb-8 pt-4">
         {/* Sign In Button */}
         <Button
           asChild
@@ -50,7 +51,7 @@ export default function WelcomePage() {
         >
           <Link href={ROUTES.ONBOARDING}>Create Account</Link>
         </Button>
-      </div>
+      </SafeArea>
     </div>
   );
 }

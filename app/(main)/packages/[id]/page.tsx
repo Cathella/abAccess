@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Package Details - ABA Access",
+  description: "Package details and coverage",
+};
+
 export default function PackageDetailPage({ params }: { params: { id: string } }) {
   return (
     <div className="flex min-h-screen items-center justify-center">

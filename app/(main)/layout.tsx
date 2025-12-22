@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Header } from "@/components/common/Header";
 import { BottomNav } from "@/components/common/BottomNav";
+import { SafeArea } from "@/components/common/SafeArea";
 import { useAuthStore } from "@/stores";
 import { ROUTES } from "@/lib/constants";
 
@@ -90,9 +91,11 @@ export default function MainLayout({
 
       {/* Main content area */}
       {/* pb-20 accounts for bottom nav height (~80px) */}
-      {/* safe-area-inset-top for notched phones */}
-      <main className="flex-1 overflow-y-auto pb-20 safe-area-inset-x">
-        {children}
+      {/* safe-area-inset-x for notched phones */}
+      <main className="flex-1 overflow-y-auto pb-20">
+        <SafeArea inset="x">
+          {children}
+        </SafeArea>
       </main>
 
       {/* Bottom Navigation */}
