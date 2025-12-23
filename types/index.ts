@@ -81,11 +81,19 @@ export enum ApprovalStatus {
 export interface User {
   id: string;
   phone: string;
-  name: string;
-  pin: string;
+  firstName: string;
+  lastName: string;
+  pinHash: string; // Hashed PIN, never plain
   avatar?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+// Auth Result Types
+export interface LoginResult {
+  success: boolean;
+  user?: User;
+  error?: string;
 }
 
 export interface Dependent {

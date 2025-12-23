@@ -1,6 +1,8 @@
 import { createClient } from "./client";
 import type { Session } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
+import type { User, LoginResult } from "@/types";
+import { mapDatabaseUserToUser } from "@/lib/mappers/userMapper";
 import * as bcrypt from "bcryptjs";
 
 const SALT_ROUNDS = 10;
@@ -120,7 +122,7 @@ export async function checkUserExists(
 export async function login(
   phoneNumber: string,
   pin: string
-): Promise<{ success: boolean; session?: Session; user?: any; error?: string }> {
+): Promise<LoginResult & { session?: Session }> {
   try {
     const formattedPhone = formatUgandanPhone(phoneNumber);
     const supabase = createClient();
@@ -163,6 +165,9 @@ export async function login(
       };
     }
 
+    // Map database user to application User type
+    const user = mapDatabaseUserToUser(userData);
+
     // Create a session for this user
     // Note: This is a simplified approach. In production, you'd want to
     // use proper Supabase auth methods or JWT tokens
@@ -184,7 +189,7 @@ export async function login(
     return {
       success: true,
       session,
-      user: userData
+      user
     };
   } catch (error) {
     if (error instanceof Error) {
@@ -201,7 +206,7 @@ export async function login(
 export async function verifyPhoneAndPin(
   phoneNumber: string,
   pin: string
-): Promise<{ success: boolean; session?: Session; user?: any; error?: string }> {
+): Promise<LoginResult & { session?: Session }> {
   return login(phoneNumber, pin);
 }
 
