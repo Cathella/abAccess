@@ -89,7 +89,15 @@ export async function checkUserExists(
   phoneNumber: string
 ): Promise<{ exists: boolean; error?: string }> {
   try {
-    const formattedPhone = formatUgandanPhone(phoneNumber);
+    // Format phone - this can throw if invalid
+    let formattedPhone: string;
+    try {
+      formattedPhone = formatUgandanPhone(phoneNumber);
+    } catch (formatError) {
+      // Invalid phone format - user doesn't exist
+      return { exists: false };
+    }
+
     const supabase = createClient();
 
     const { data, error } = await supabase

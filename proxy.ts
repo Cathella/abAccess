@@ -8,6 +8,7 @@ const PUBLIC_ROUTES = [
   '/verify-otp',
   '/create-pin',
   '/enter-pin',
+  '/forgot-pin',
   '/onboarding',
 ]
 

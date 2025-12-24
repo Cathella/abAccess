@@ -112,6 +112,7 @@ export const ROUTES = {
   ENTER_PIN: "/enter-pin",
   VERIFY_OTP: "/verify-otp",
   CREATE_PIN: "/create-pin",
+  FORGOT_PIN: "/forgot-pin",
   ONBOARDING: "/onboarding",
   DASHBOARD: "/dashboard",
   PACKAGES: "/packages",

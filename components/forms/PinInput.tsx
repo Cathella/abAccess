@@ -11,6 +11,7 @@ interface PinInputProps {
   onComplete?: (pin: string) => void;
   length?: number;
   showPin?: boolean;
+  disabled?: boolean;
   className?: string;
 }
 
@@ -23,6 +24,7 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
       onComplete,
       length = 4,
       showPin = false,
+      disabled = false,
       className,
     },
     ref
@@ -150,10 +152,12 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
               onFocus={handleFocus}
+              disabled={disabled}
               className={cn(
                 "h-16 flex-1 rounded-lg border-[1.5px] border-neutral-400 text-center text-2xl font-bold tabular-nums",
                 "focus-visible:border-2 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0",
-                error && "border-destructive focus-visible:border-destructive"
+                error && "border-destructive focus-visible:border-destructive",
+                disabled && "cursor-not-allowed opacity-50"
               )}
               aria-label={`PIN digit ${index + 1}`}
             />

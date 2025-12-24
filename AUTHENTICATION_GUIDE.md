@@ -81,6 +81,174 @@ ABA Access uses a simplified phone + PIN authentication system for MVP. The syst
 
 ---
 
+## Complete Login Flow
+
+### Flow Overview
+
+```
+/welcome
+  └── "Login" button → /sign-in
+
+/sign-in
+  └── Enter phone → "Continue"
+      ├── User exists → /enter-pin
+      │   └── LoadingOverlay: "Checking account..."
+      └── User not found → Show error, stay on page
+  └── "Create one" → /onboarding
+
+/enter-pin
+  └── Enter PIN (auto-submit on 4 digits)
+      ├── PIN correct → LoadingOverlay: "Signing in..." → /dashboard
+      └── PIN wrong → Clear, show error, track attempts
+          ├── Attempt 1 → Show "2 attempts remaining"
+          ├── Attempt 2 → Show "1 attempt remaining"
+          └── Attempt 3 → Lock, show "Forgot PIN?" only
+  └── "Forgot PIN?" → /forgot-pin (only shown when locked)
+
+/dashboard
+  └── Protected route (requires isAuthenticated)
+  └── Shows: "Welcome, [firstName]!"
+  └── User info: full name, phone
+  └── Logout button
+```
+
+### User Experience Scenarios
+
+#### Scenario 1: Successful Login
+
+1. User opens `/welcome`
+2. Clicks "Login" → navigates to `/sign-in`
+3. Enters phone number (e.g., +256781234567)
+4. Clicks "Continue"
+5. **LoadingOverlay appears**: "Checking account..."
+6. User exists → navigates to `/enter-pin`
+7. Enters 4-digit PIN
+8. **LoadingOverlay appears**: "Signing in..."
+9. PIN correct → navigates to `/dashboard` after 500ms
+10. Dashboard shows: "Welcome, John!" with user info
+
+#### Scenario 2: Failed Login (Wrong PIN)
+
+1. User at `/enter-pin`
+2. Enters wrong PIN (attempt 1)
+3. Error displayed: "Wrong PIN. 2 attempts remaining."
+4. Warning banner shows: "2 attempts remaining"
+5. PIN input clears, user can retry
+6. Enters wrong PIN (attempt 2)
+7. Error displayed: "Wrong PIN. 1 attempt remaining."
+8. Warning banner shows: "1 attempt remaining"
+9. PIN input clears, user can retry
+10. Enters wrong PIN (attempt 3)
+11. **Account locked!**
+12. Lock banner appears: "Account locked after 3 failed attempts"
+13. PIN input becomes disabled (grayed out)
+14. "Forgot PIN?" link appears at bottom
+
+#### Scenario 3: Account Not Found
+
+1. User at `/sign-in`
+2. Enters unregistered phone number
+3. Clicks "Continue"
+4. **LoadingOverlay appears**: "Checking account..."
+5. User not found → stays on `/sign-in`
+6. Error displayed: "We couldn't find an account with this phone number. Please check the number or create a new account."
+7. User can:
+   - Try different phone number
+   - Click "Create one" → navigates to `/onboarding`
+
+### Implementation Details
+
+#### Sign-in Page Logic
+
+```typescript
+const handleContinue = async () => {
+  // 1. Validate phone format
+  if (!isValidPhone(phoneNumber)) {
+    setError("Please enter a valid Ugandan phone number");
+    return;
+  }
+
+  setIsChecking(true);
+
+  // 2. Check if user exists
+  const result = await checkUserExists(phoneNumber);
+
+  if (result.exists) {
+    // User found - save phone and navigate to PIN entry
+    setStorePhoneNumber(phoneNumber);
+    router.push(ROUTES.ENTER_PIN);
+  } else {
+    // User not found - show friendly error
+    setError("We couldn't find an account with this phone number. Please check the number or create a new account.");
+    setIsChecking(false);
+  }
+}
+```
+
+#### Enter PIN Page Logic
+
+```typescript
+const handlePinComplete = async (completedPin: string) => {
+  // 1. Check if account is locked
+  if (isPinLocked) {
+    setError("Account locked. Please use Forgot PIN.");
+    return;
+  }
+
+  // 2. Attempt login with useAuth hook
+  const result = await login(phoneNumber, completedPin);
+
+  if (result.success) {
+    // Success - useAuth already updated store
+    // Show loading briefly before redirect
+    setTimeout(() => router.push(ROUTES.DASHBOARD), 500);
+  } else {
+    // Failed - useAuth already incremented attempts
+    setError(result.error || "Invalid PIN");
+    setPin(""); // Clear input
+
+    // Calculate and show remaining attempts
+    if (!isPinLocked && pinAttempts + 1 < maxAttempts) {
+      const remaining = maxAttempts - (pinAttempts + 1);
+      setError(`${result.error}. ${remaining} attempts remaining.`);
+    }
+  }
+}
+```
+
+### Security Features in Flow
+
+| Feature | Implementation | Location |
+|---------|---------------|----------|
+| User existence check | Prevents PIN entry for non-existent users | sign-in/page.tsx:48 |
+| Attempt limiting | Max 3 attempts per session | enter-pin/page.tsx via useAuth |
+| Auto-locking | Account locks after 3rd failure | useAuth hook + authStore |
+| Disabled input | Cannot enter PIN when locked | enter-pin/page.tsx:123 |
+| Conditional "Forgot PIN?" | Only shown when locked | enter-pin/page.tsx:147 |
+| Protected routes | Dashboard requires auth | (main)/layout.tsx:65 |
+| Loading states | Visual feedback during async ops | LoadingOverlay component |
+| Session management | Handled by useAuth + authStore | hooks/useAuth.ts |
+
+### Middleware Protection
+
+**Public Routes** (no auth required):
+- `/welcome`
+- `/sign-in`
+- `/verify-otp`
+- `/create-pin`
+- `/enter-pin`
+- `/forgot-pin`
+- `/onboarding`
+
+**Protected Routes** (auth required):
+- `/dashboard` and all other `(main)` routes
+- Unauthenticated users redirected to `/welcome`
+
+**Auth Route Behavior**:
+- Authenticated users trying to access `/sign-in` or `/enter-pin` are redirected to `/dashboard`
+
+---
+
 ## Implementation Status
 
 ### ✅ Completed Components
