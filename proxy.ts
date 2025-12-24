@@ -53,15 +53,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // If user is not authenticated and trying to access protected routes, redirect to welcome
-  if (!user && !isPublicRoute(pathname)) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/welcome'
-    // Preserve the original destination for post-login redirect
-    url.searchParams.set('redirectTo', pathname)
-    return NextResponse.redirect(url)
-  }
-
+  // Allow request to continue; client-side auth guard handles redirects
   return response
 }
 

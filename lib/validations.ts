@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PIN_LENGTH } from "./constants";
 
 // Authentication Schemas
 export const phoneSchema = z.object({
@@ -10,7 +11,7 @@ export const otpSchema = z.object({
 });
 
 export const pinSchema = z.object({
-  pin: z.string().length(6, "PIN must be 6 digits"),
+  pin: z.string().length(PIN_LENGTH, `PIN must be ${PIN_LENGTH} digits`),
 });
 
 // User Profile Schemas

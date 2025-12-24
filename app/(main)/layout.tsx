@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Header } from "@/components/common/Header";
 import { BottomNav } from "@/components/common/BottomNav";
@@ -59,14 +59,30 @@ export default function MainLayout({
 }>) {
   const router = useRouter();
   const pathname = usePathname();
+  const [hasHydrated, setHasHydrated] = useState(
+    useAuthStore.persist?.hasHydrated?.() ?? false
+  );
   const { user } = useAuthStore();
+
+  // Wait for persisted auth store to hydrate before enforcing redirects
+  useEffect(() => {
+    if (useAuthStore.persist?.hasHydrated?.()) {
+      setHasHydrated(true);
+      return;
+    }
+
+    const unsubscribe = useAuthStore.persist?.onFinish?.(() => setHasHydrated(true));
+    return () => {
+      unsubscribe?.();
+    };
+  }, []);
 
   // Check authentication
   useEffect(() => {
-    if (!user) {
+    if (hasHydrated && !user) {
       router.push(ROUTES.WELCOME);
     }
-  }, [user, router]);
+  }, [user, router, hasHydrated]);
 
   // Get current route config
   const currentConfig = routeConfig[pathname || ROUTES.DASHBOARD] || {
@@ -76,6 +92,10 @@ export default function MainLayout({
   };
 
   // Don't render if not authenticated
+  if (!hasHydrated) {
+    return null;
+  }
+
   if (!user) {
     return null;
   }
