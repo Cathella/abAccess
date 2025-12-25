@@ -1,10 +1,11 @@
 "use client";
 
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useUIStore } from "@/stores";
+import { useUIStore, useAuthStore } from "@/stores";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
@@ -22,6 +23,15 @@ export function Header({
 }: HeaderProps) {
   const router = useRouter();
   const unreadCount = useUIStore((state) => state.unreadCount);
+  const user = useAuthStore((state) => state.user);
+
+  const initials = useMemo(() => {
+    if (!user) return null;
+    const parts = `${user.firstName} ${user.lastName}`.trim().split(/\s+/);
+    const first = parts[0]?.[0] ?? "";
+    const second = parts[1]?.[0] ?? "";
+    return `${first}${second}`.toUpperCase();
+  }, [user]);
 
   return (
     <header
@@ -50,27 +60,35 @@ export function Header({
         </div>
 
         {/* Right section */}
-        {showNotifications && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/notifications")}
-            className="relative h-9 w-9"
-          >
-            <Bell className="h-5 w-5" />
-            {unreadCount > 0 && (
-              <Badge
-                variant="destructive"
-                className="absolute -right-1 -top-1 h-5 min-w-5 px-1 text-xs"
-              >
-                {unreadCount > 99 ? "99+" : unreadCount}
-              </Badge>
-            )}
-            <span className="sr-only">
-              Notifications {unreadCount > 0 && `(${unreadCount} unread)`}
-            </span>
-          </Button>
-        )}
+        <div className="flex items-center gap-3">
+          {showNotifications && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => router.push("/notifications")}
+              className="relative h-10 w-10 rounded-full bg-secondary-100"
+            >
+              <Bell className="h-5 w-5 text-secondary-900" />
+              {unreadCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -right-1 -top-1 h-5 min-w-5 px-1 text-xs"
+                >
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </Badge>
+              )}
+              <span className="sr-only">
+                Notifications {unreadCount > 0 && `(${unreadCount} unread)`}
+              </span>
+            </Button>
+          )}
+
+          {initials && (
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-100 text-sm font-semibold text-neutral-900">
+              {initials}
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

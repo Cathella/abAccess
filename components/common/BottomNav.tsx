@@ -1,8 +1,9 @@
 "use client";
 
+import { useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Home, Package, CalendarCheck, Wallet, User } from "lucide-react";
-import { useUIStore } from "@/stores";
+import { CalendarCheck, Home, Package, Users } from "lucide-react";
+import { useAuthStore, useUIStore } from "@/stores";
 import { cn } from "@/lib/utils";
 
 interface NavTab {
@@ -13,91 +14,68 @@ interface NavTab {
 }
 
 const tabs: NavTab[] = [
-  {
-    id: "home",
-    label: "Home",
-    icon: Home,
-    path: "/dashboard",
-  },
-  {
-    id: "packages",
-    label: "Packages",
-    icon: Package,
-    path: "/packages",
-  },
-  {
-    id: "visits",
-    label: "Visits",
-    icon: CalendarCheck,
-    path: "/visits",
-  },
-  {
-    id: "wallet",
-    label: "Wallet",
-    icon: Wallet,
-    path: "/wallet",
-  },
-  {
-    id: "profile",
-    label: "Profile",
-    icon: User,
-    path: "/profile",
-  },
+  { id: "home", label: "Home", icon: Home, path: "/dashboard" },
+  { id: "family", label: "Family", icon: Users, path: "/family" },
+  { id: "packages", label: "Packages", icon: Package, path: "/packages" },
+  { id: "visits", label: "Visits", icon: CalendarCheck, path: "/visits" },
 ];
 
 export function BottomNav() {
   const router = useRouter();
   const pathname = usePathname();
   const { isBottomNavVisible, setActiveTab } = useUIStore();
+  const user = useAuthStore((state) => state.user);
 
-  const handleTabClick = (tab: NavTab) => {
-    setActiveTab(tab.id);
-    router.push(tab.path);
-  };
+  const initials = useMemo(() => {
+    if (!user) return "NC";
+    const parts = `${user.firstName} ${user.lastName}`.trim().split(/\s+/);
+    const first = parts[0]?.[0] ?? "";
+    const second = parts[1]?.[0] ?? "";
+    return `${first}${second || ""}`.toUpperCase() || "NC";
+  }, [user]);
 
-  // Determine active tab based on current pathname
   const activeTabId =
     tabs.find((tab) => pathname?.startsWith(tab.path))?.id || "home";
 
-  if (!isBottomNavVisible) {
-    return null;
-  }
+  if (!isBottomNavVisible) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background safe-area-inset-bottom">
-      <div className="flex items-center justify-around px-2 pb-safe">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTabId === tab.id;
-
-          return (
-            <button
-              key={tab.id}
-              onClick={() => handleTabClick(tab)}
-              className={cn(
-                "flex flex-1 flex-col items-center justify-center gap-1 py-2 px-1 transition-colors",
-                "hover:bg-accent hover:text-accent-foreground",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                "rounded-md"
-              )}
-            >
-              <Icon
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-transparent pb-safe">
+      <div className="mx-auto max-w-xl px-3">
+        <div className="flex items-center justify-between rounded-[32px] border-2 border-neutral-900 bg-white px-4 py-3 shadow-[0_6px_0_#000]">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTabId === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  router.push(tab.path);
+                }}
                 className={cn(
-                  "h-5 w-5 transition-colors",
-                  isActive ? "text-primary-900" : "text-neutral-600"
-                )}
-              />
-              <span
-                className={cn(
-                  "text-xs font-medium transition-colors",
-                  isActive ? "text-primary-900" : "text-neutral-600"
+                  "flex flex-1 items-center justify-center gap-2 rounded-2xl px-3 py-3 text-sm font-semibold transition-all",
+                  isActive
+                    ? "bg-primary-100 text-neutral-900"
+                    : "text-neutral-900"
                 )}
               >
-                {tab.label}
-              </span>
-            </button>
-          );
-        })}
+                <Icon
+                  className={cn(
+                    "h-6 w-6",
+                    isActive ? "text-neutral-900" : "text-neutral-900"
+                  )}
+                  strokeWidth={2.25}
+                />
+                {isActive && <span className="text-base font-semibold">{tab.label}</span>}
+              </button>
+            );
+          })}
+
+          <div className="ml-2 flex h-12 w-12 items-center justify-center rounded-full bg-[#e8f1ff] text-base font-semibold text-neutral-900">
+            {initials}
+          </div>
+        </div>
       </div>
     </nav>
   );

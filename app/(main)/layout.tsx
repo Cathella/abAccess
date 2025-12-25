@@ -9,11 +9,12 @@ import { useAuthStore } from "@/stores";
 import { ROUTES } from "@/lib/constants";
 
 // Route configurations for Header
-const routeConfig: Record<string, { title?: string; showBack?: boolean; showNotifications?: boolean }> = {
+const routeConfig: Record<string, { title?: string; showBack?: boolean; showNotifications?: boolean; hideHeader?: boolean }> = {
   [ROUTES.DASHBOARD]: {
     title: "Dashboard",
     showBack: false,
-    showNotifications: true,
+    showNotifications: false,
+    hideHeader: true,
   },
   [ROUTES.PACKAGES]: {
     title: "Packages",
@@ -102,12 +103,14 @@ export default function MainLayout({
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      {/* Header */}
-      <Header
-        title={currentConfig.title}
-        showBack={currentConfig.showBack}
-        showNotifications={currentConfig.showNotifications}
-      />
+      {/* Header (hidden on dashboard to match design) */}
+      {!currentConfig.hideHeader && (
+        <Header
+          title={currentConfig.title}
+          showBack={currentConfig.showBack}
+          showNotifications={currentConfig.showNotifications}
+        />
+      )}
 
       {/* Main content area */}
       {/* pb-20 accounts for bottom nav height (~80px) */}
