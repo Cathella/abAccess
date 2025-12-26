@@ -42,7 +42,7 @@ export function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-transparent pb-safe">
       <div className="mx-auto max-w-xl px-3">
-        <div className="flex items-center justify-between rounded-[32px] border-2 border-neutral-900 bg-white px-4 py-3 shadow-[0_6px_0_#000]">
+        <div className="flex items-center justify-between rounded-t-[32px] rounded-b-none border-2 border-neutral-900 bg-white px-4 py-3">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTabId === tab.id;
