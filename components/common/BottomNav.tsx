@@ -40,8 +40,8 @@ export function BottomNav() {
   if (!isBottomNavVisible) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-transparent pb-safe">
-      <div className="mx-auto max-w-xl px-3">
+    <nav className="fixed inset-x-0 bottom-0 z-50 w-screen bg-transparent">
+      <div className="w-screen px-0">
         <div className="flex items-center justify-between rounded-t-[32px] rounded-b-none border-2 border-neutral-900 bg-white px-4 py-3">
           {tabs.map((tab) => {
             const Icon = tab.icon;

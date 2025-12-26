@@ -23,7 +23,7 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex min-h-[400px] flex-col items-center justify-center px-4 py-12 text-center",
+        "flex min-h-100 flex-col items-center justify-center px-4 py-12 text-center",
         className
       )}
     >
@@ -47,7 +47,7 @@ export function EmptyState({
         {action && (
           <Button
             onClick={action.onClick}
-            className="mt-2 min-h-[44px] px-6"
+            className="mt-2 min-h-11 px-6"
             size="lg"
           >
             {action.label}
