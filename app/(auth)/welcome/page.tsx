@@ -49,7 +49,7 @@ export default function WelcomePage() {
       {/* Action buttons - fixed at bottom */}
       <SafeArea inset="bottom" className="space-y-2 px-6 pb-8">
         {/* Create Account Button */}
-        <SecondaryButton href={ROUTES.ONBOARDING}>
+        <SecondaryButton href={ROUTES.REGISTER}>
           Create Account
         </SecondaryButton>
 

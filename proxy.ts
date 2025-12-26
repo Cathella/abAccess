@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
 
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
@@ -10,6 +9,19 @@ const PUBLIC_ROUTES = [
   '/enter-pin',
   '/forgot-pin',
   '/onboarding',
+  '/register',
+]
+
+// Protected routes that require authentication
+const PROTECTED_ROUTES = [
+  '/dashboard',
+  '/packages',
+  '/my-packages',
+  '/visits',
+  '/wallet',
+  '/profile',
+  '/family',
+  '/notifications',
 ]
 
 // Routes that should redirect to welcome if already authenticated
@@ -23,38 +35,72 @@ function isPublicRoute(pathname: string): boolean {
 }
 
 /**
+ * Check if the given path is a protected route
+ */
+function isProtectedRoute(pathname: string): boolean {
+  return PROTECTED_ROUTES.some(route => pathname === route || pathname.startsWith(`${route}/`))
+}
+
+/**
  * Check if the given path is an auth route (sign in flow)
  */
 function isAuthRoute(pathname: string): boolean {
   return AUTH_ROUTES.some(route => pathname === route || pathname.startsWith(`${route}/`))
 }
 
+/**
+ * Proxy function to protect routes and handle authentication
+ * Runs on the server before any page is rendered
+ */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Check if Supabase is configured
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // Get auth session from cookies
+  const authCookie = request.cookies.get('auth-session')
+  const isAuthenticated = !!authCookie?.value
 
-  // If Supabase is not configured, allow all access (development safety)
-  if (!supabaseUrl || !supabaseAnonKey ||
-      supabaseUrl.includes('your_supabase_url_here') ||
-      supabaseAnonKey.includes('your_supabase_anon_key_here')) {
+  // Root path redirects to welcome (handled by app/page.tsx), allow it through
+  if (pathname === '/') {
     return NextResponse.next()
   }
 
-  // Update session and get user
-  const { user, response } = await updateSession(request)
-
-  // If user is authenticated and trying to access auth routes, redirect to dashboard
-  if (user && isAuthRoute(pathname)) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
+  // Protect authenticated routes
+  if (isProtectedRoute(pathname) && !isAuthenticated) {
+    // User trying to access protected route without auth
+    const url = new URL('/welcome', request.url)
     return NextResponse.redirect(url)
   }
 
-  // Allow request to continue; client-side auth guard handles redirects
-  return response
+  // Redirect authenticated users away from auth pages
+  if (isPublicRoute(pathname) && isAuthenticated && pathname !== '/welcome') {
+    // Already logged in, redirect to dashboard
+    const url = new URL('/dashboard', request.url)
+    return NextResponse.redirect(url)
+  }
+
+  // Validate session data if authenticated
+  if (isAuthenticated && authCookie?.value) {
+    try {
+      const sessionData = JSON.parse(authCookie.value)
+
+      // Check if session has expired
+      if (sessionData.expires_at && sessionData.expires_at < Date.now()) {
+        // Session expired, clear cookie and redirect
+        const response = NextResponse.redirect(new URL('/welcome', request.url))
+        response.cookies.delete('auth-session')
+        return response
+      }
+    } catch (error) {
+      // Invalid session cookie, clear it
+      const response = isProtectedRoute(pathname)
+        ? NextResponse.redirect(new URL('/welcome', request.url))
+        : NextResponse.next()
+      response.cookies.delete('auth-session')
+      return response
+    }
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserHeader } from "@/components/common/UserHeader";
 import Link from "next/link";
@@ -88,7 +88,7 @@ const mockVisitData: Record<string, { label: string; value: number }[]> = {
 };
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [selectedDependent, setSelectedDependent] = useState<string>("Catherine");
   const [timeframe, setTimeframe] = useState<"This week" | "This month" | "Last 3 months">("This week");
 
@@ -133,7 +133,7 @@ export default function DashboardPage() {
               <p className="text-[40px] font-semibold text-neutral-900 tracking-tight leading-none">55,600</p>
               <p className="text-sm font-normal text-neutral-700 leading-none">UGX</p>
             </div>
-            <button className="h-10 rounded-3xl border-2 border-neutral-900 bg-[#37c189] px-5 text-base font-semibold text-neutral-900 hover:bg-[#2fa678]">
+            <button className="h-10 rounded-[14px] border-2 border-neutral-900 bg-[#37c189] px-5 text-base font-semibold text-neutral-900 hover:bg-[#2fa678]">
               Top up
             </button>
           </div>
@@ -281,11 +281,22 @@ export default function DashboardPage() {
               <p className="text-sm text-neutral-900">
                 {selectedDependent}: 7 visits {timeframe.toLowerCase()}
               </p>
-              <Link href="#" className="text-sm font-semibold text-secondary-900 underline">
+              <Link href="#" className="text-base font-semibold text-secondary-900 underline">
                 View all
               </Link>
             </div>
           </div>
+        </section>
+
+        {/* Sign Out Button */}
+        <section className="pb-4">
+          <button
+            onClick={logout}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border-[1.5px] border-neutral-300 bg-white px-6 py-3 text-base font-semibold text-neutral-900 transition-colors hover:bg-neutral-100"
+          >
+            <LogOut className="h-5 w-5" />
+            Sign Out
+          </button>
         </section>
       </div>
     </>

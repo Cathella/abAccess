@@ -112,7 +112,7 @@ export const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
           value={displayValue}
           onChange={handleChange}
           className={cn(
-            "h-12 rounded-lg border-[1.5px] border-neutral-300 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0",
+            "h-12 rounded-xl border-[1.5px] border-neutral-300 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0",
             error && "border-destructive focus-visible:border-destructive",
             !isValid && displayValue && "border-warning-900",
             className

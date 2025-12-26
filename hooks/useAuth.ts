@@ -50,6 +50,22 @@ export function useAuth() {
       if (result.success && result.user && result.session) {
         // Update store on success (this also resets PIN attempts)
         signInStore(result.user, result.session);
+
+        // Set session cookie via API route for server-side middleware
+        try {
+          await fetch('/api/auth/session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              session: result.session,
+              user: result.user,
+            }),
+          });
+        } catch (cookieError) {
+          console.error('Failed to set session cookie:', cookieError);
+          // Continue anyway - client-side auth still works
+        }
+
         setLoading(false);
         return {
           success: true,
@@ -80,6 +96,16 @@ export function useAuth() {
   const logout = async () => {
     try {
       setLoading(true);
+
+      // Clear session cookie via API route
+      try {
+        await fetch('/api/auth/session', {
+          method: 'DELETE',
+        });
+      } catch (cookieError) {
+        console.error('Failed to clear session cookie:', cookieError);
+        // Continue anyway
+      }
 
       // Call Supabase signOut
       await signOutAuth();
