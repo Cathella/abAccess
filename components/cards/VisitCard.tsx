@@ -18,7 +18,7 @@ export function VisitCard({
     <Card>
       <CardHeader>
         <div className="flex items-start justify-between">
-          <CardTitle className="text-lg">{facility}</CardTitle>
+          <CardTitle className="text-base">{facility}</CardTitle>
           <Badge variant={status === "completed" ? "default" : "secondary"}>
             {status}
           </Badge>

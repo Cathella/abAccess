@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SafeArea } from "@/components/common/SafeArea";
 import { useAuthStore } from "@/stores/authStore";

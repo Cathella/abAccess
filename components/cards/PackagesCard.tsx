@@ -25,7 +25,7 @@ export function PackagesCard({ onBrowsePackages, className }: PackagesCardProps)
     >
       {/* Icon Circle */}
       <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-        <Package className="h-8 w-8 fill-[#DEB586] text-[#976857]" />
+        <Package className="h-6 w-6 fill-[#DEB586] text-[#976857]" />
       </div>
 
       {/* Action Row */}

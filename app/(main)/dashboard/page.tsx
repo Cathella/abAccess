@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
-import { ChevronDown, LogOut } from "lucide-react";
+import { ChevronDown, Hospital, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { transformVisitDataToWeeklyChart } from "@/lib/utils/visitChartData";
 import { UserHeader } from "@/components/common/UserHeader";
@@ -163,31 +163,31 @@ export default function DashboardPage() {
             </Link>
           </div>
 
-          <div className="rounded-[26px] border-[1.5px] border-neutral-300 p-4">
-            <div className="flex gap-4 overflow-x-auto pb-0">
+          <div className="">
+            <div className="flex gap-6 overflow-x-auto pt-4">
               {dashboardData.nearbyFacilities.length > 0 ? (
                 dashboardData.nearbyFacilities.map((facility, idx) => (
                   <div
                     key={`${facility.id}-${idx}`}
                     className={cn(
                       cards.panel,
-                      "min-w-[92%] max-w-[92%] space-y-4 rounded-[26px] border-none p-0"
+                      "min-w-[92%] max-w-[95%] space-y-4 rounded-[26px] border-none p-0"
                     )}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-100 text-2xl">
-                        <span role="img" aria-label="facility" className="text-2xl">🏥</span>
+                        <span role="img" aria-label="facility" className="text-2xl">
+                          <Hospital className="h-6 w-6 text-[#3A8DFF]" />
+                        </span>
                       </div>
                       <div className="flex-1">
-                        <p className="text-base font-bold text-neutral-900">{facility.name}</p>
-                        <div className="mt-1 flex items-center gap-2">
-                          <p className="text-sm font-normal text-neutral-600">{facility.address}</p>
-                          {facility.accepts_booking && (
-                            <span className="rounded-full px-3 py-1 text-sm font-semibold bg-[#d8f1dd] text-neutral-900">
+                        <p className="text-base text-neutral-900">{facility.name}</p>
+                        <p className="mb-2 text-sm text-neutral-600">{facility.address}</p>
+                        {facility.accepts_booking && (
+                            <span className="rounded-full px-3 py-1 text-sm bg-[#d8f1dd] text-neutral-900">
                               Bookings available
                             </span>
-                          )}
-                        </div>
+                        )}
                       </div>
                     </div>
 
@@ -215,7 +215,7 @@ export default function DashboardPage() {
               <select
                 value={timeframe}
                 onChange={(e) => setTimeframe(e.target.value as typeof timeframe)}
-                className="appearance-none rounded-xl border-[1.5px] border-neutral-300 bg-white px-3 pr-8 py-2 text-sm font-normal text-neutral-900 focus:outline-none"
+                className="appearance-none rounded-xl border-[1.5px] border-neutral-300 bg-white px-3 pr-8 py-2 text-sm text-neutral-900 focus:outline-none"
               >
                 <option>This week</option>
                 <option>This month</option>

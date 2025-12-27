@@ -25,7 +25,7 @@ export function DependentsCard({ onAddDependent, className }: DependentsCardProp
     >
       {/* Icon Circle */}
       <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-        <Heart className="h-8 w-8 fill-[#FF5E74] text-[#DC4349]" />
+        <Heart className="h-6 w-6 fill-[#FF5E74] text-[#DC4349]" />
       </div>
 
       {/* Action Row */}

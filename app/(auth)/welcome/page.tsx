@@ -36,7 +36,7 @@ export default function WelcomePage() {
         </div>
 
         {/* Tagline */}
-        <h1 className="mb-3 text-h2 font-semibold text-neutral-900">
+        <h1 className="mb-3 text-base font-semibold text-neutral-900">
           Affordable healthcare for your family
         </h1>
 
