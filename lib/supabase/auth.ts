@@ -3,6 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
 import type { User, LoginResult } from "@/types";
 import { mapDatabaseUserToUser } from "@/lib/mappers/userMapper";
+import { generateMemberId } from "@/lib/memberIdGenerator";
 import * as bcrypt from "bcryptjs";
 
 const SALT_ROUNDS = 10;
@@ -276,6 +277,126 @@ export async function verifyOTP(
       return { success: false, error: error.message };
     }
     return { success: false, error: "Failed to verify OTP" };
+  }
+}
+
+/**
+ * Register a new user account
+ * Creates a user in the database with hashed PIN
+ */
+export async function register(data: {
+  phone: string;
+  firstName: string;
+  lastName: string;
+  nin: string;
+  pin: string;
+}): Promise<LoginResult & { session?: Session }> {
+  try {
+    const { phone, firstName, lastName, nin, pin } = data;
+
+    // Validate inputs
+    if (!phone || !firstName || !lastName || !nin || !pin) {
+      return {
+        success: false,
+        error: "All fields are required"
+      };
+    }
+
+    // Format phone number
+    let formattedPhone: string;
+    try {
+      formattedPhone = formatUgandanPhone(phone);
+    } catch (err) {
+      return {
+        success: false,
+        error: err instanceof Error ? err.message : "Invalid phone number"
+      };
+    }
+
+    // Validate PIN format
+    if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+      return {
+        success: false,
+        error: "PIN must be exactly 4 digits"
+      };
+    }
+
+    const supabase = createClient();
+
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from("users")
+      .select("id")
+      .eq("phone", formattedPhone)
+      .single();
+
+    if (existingUser) {
+      return {
+        success: false,
+        error: "An account with this phone number already exists"
+      };
+    }
+
+    // Hash the PIN
+    const hashedPin = await hashPin(pin);
+
+    // Combine firstName and lastName into full name for database
+    const fullName = `${firstName} ${lastName}`.trim();
+
+    // Generate unique Member ID
+    const memberId = generateMemberId();
+
+    // Create user in database
+    const { data: newUser, error: insertError } = await supabase
+      .from("users")
+      .insert({
+        phone: formattedPhone,
+        name: fullName,
+        pin: hashedPin,
+        member_id: memberId,
+        nin: nin,
+      })
+      .select()
+      .single<UserRow>();
+
+    if (insertError || !newUser) {
+      console.error("Registration error:", insertError);
+      return {
+        success: false,
+        error: insertError?.message || "Failed to create account"
+      };
+    }
+
+    // Map database user to application User type
+    const user = mapDatabaseUserToUser(newUser);
+
+    // Create a session for the new user
+    const session: Session = {
+      access_token: newUser.id,
+      refresh_token: "",
+      expires_in: 3600,
+      expires_at: Date.now() + 3600000,
+      token_type: "bearer",
+      user: {
+        id: newUser.id,
+        app_metadata: {},
+        user_metadata: {},
+        aud: "authenticated",
+        created_at: newUser.created_at,
+      },
+    };
+
+    return {
+      success: true,
+      session,
+      user
+    };
+  } catch (error) {
+    console.error("Registration error:", error);
+    if (error instanceof Error) {
+      return { success: false, error: error.message };
+    }
+    return { success: false, error: "Failed to create account" };
   }
 }
 

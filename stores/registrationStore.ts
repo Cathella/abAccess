@@ -1,5 +1,8 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { register } from '@/lib/supabase/auth'
+import type { User } from '@/types'
+import type { Session } from '@supabase/supabase-js'
 
 interface RegistrationState {
   // Registration data
@@ -18,6 +21,7 @@ interface RegistrationState {
   setNin: (nin: string) => void
   setPin: (pin: string) => void
   setCurrentStep: (step: number) => void
+  createAccount: () => Promise<{ success: boolean; user?: User; session?: Session; error?: string }>
   clearRegistration: () => void
 }
 
@@ -43,6 +47,38 @@ export const useRegistrationStore = create<RegistrationState>()(
       setPin: (pin) => set({ pin }),
 
       setCurrentStep: (step) => set({ currentStep: step }),
+
+      createAccount: async () => {
+        const state = useRegistrationStore.getState()
+        const { phone, firstName, lastName, nin, pin } = state
+
+        // Validate all required fields
+        if (!phone || !firstName || !lastName || !nin || !pin) {
+          return {
+            success: false,
+            error: 'All registration fields are required'
+          }
+        }
+
+        try {
+          // Call registration API
+          const result = await register({
+            phone,
+            firstName,
+            lastName,
+            nin,
+            pin,
+          })
+
+          return result
+        } catch (error) {
+          console.error('Registration error:', error)
+          return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Failed to create account'
+          }
+        }
+      },
 
       clearRegistration: () =>
         set({

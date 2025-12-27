@@ -20,6 +20,8 @@ export function mapDatabaseUserToUser(dbUser: DatabaseUser): User {
     firstName,
     lastName,
     pinHash: dbUser.pin, // Database "pin" is actually hashed
+    memberId: dbUser.member_id || undefined,
+    nin: dbUser.nin || undefined,
     avatar: dbUser.avatar || undefined,
     createdAt: dbUser.created_at,
     updatedAt: dbUser.updated_at,
@@ -34,6 +36,8 @@ export function mapUserToDatabase(user: {
   firstName: string;
   lastName: string;
   pinHash: string;
+  memberId?: string;
+  nin?: string;
   avatar?: string;
 }): Database["public"]["Tables"]["users"]["Insert"] {
   // Combine firstName and lastName into single name field
@@ -43,6 +47,8 @@ export function mapUserToDatabase(user: {
     phone: user.phone,
     name,
     pin: user.pinHash, // Store as "pin" in database (already hashed)
+    member_id: user.memberId || null,
+    nin: user.nin || null,
     avatar: user.avatar || null,
   };
 }

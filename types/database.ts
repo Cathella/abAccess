@@ -18,6 +18,8 @@ export interface Database {
           phone: string;
           name: string;
           pin: string;
+          member_id: string | null;
+          nin: string | null;
           avatar: string | null;
           created_at: string;
           updated_at: string;
@@ -27,6 +29,8 @@ export interface Database {
           phone: string;
           name: string;
           pin: string;
+          member_id?: string | null;
+          nin?: string | null;
           avatar?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -36,6 +40,8 @@ export interface Database {
           phone?: string;
           name?: string;
           pin?: string;
+          member_id?: string | null;
+          nin?: string | null;
           avatar?: string | null;
           created_at?: string;
           updated_at?: string;

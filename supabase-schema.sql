@@ -23,6 +23,8 @@ CREATE TABLE users (
     phone TEXT UNIQUE NOT NULL,
     name TEXT NOT NULL,
     pin TEXT NOT NULL,  -- Bcrypt hashed PIN (not plain text)
+    member_id VARCHAR(8) UNIQUE,  -- Unique member identifier (A-XXXXXX)
+    nin VARCHAR(14),  -- National ID Number (14 alphanumeric characters)
     avatar TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -179,6 +181,8 @@ CREATE TABLE approval_requests (
 
 -- Create indexes for better performance
 CREATE INDEX idx_users_phone ON users(phone);
+CREATE INDEX idx_users_member_id ON users(member_id);
+CREATE INDEX idx_users_nin ON users(nin);
 CREATE INDEX idx_dependents_user_id ON dependents(user_id);
 CREATE INDEX idx_family_members_user_id ON family_members(user_id);
 CREATE INDEX idx_user_packages_user_id ON user_packages(user_id);

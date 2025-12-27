@@ -154,7 +154,7 @@ export const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
               onFocus={handleFocus}
               disabled={disabled}
               className={cn(
-                "h-16 flex-1 rounded-lg border-[1.5px] border-neutral-400 text-center text-2xl font-bold tabular-nums",
+                "h-16 flex-1 rounded-xl border-[1.5px] border-neutral-400 text-center text-2xl font-bold tabular-nums",
                 "focus-visible:border-2 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0",
                 error && "border-destructive focus-visible:border-destructive",
                 disabled && "cursor-not-allowed opacity-50"

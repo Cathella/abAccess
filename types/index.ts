@@ -84,6 +84,8 @@ export interface User {
   firstName: string;
   lastName: string;
   pinHash: string; // Hashed PIN, never plain
+  memberId?: string; // Unique member identifier (A-XXXXXX)
+  nin?: string; // National ID Number
   avatar?: string;
   createdAt: string;
   updatedAt: string;

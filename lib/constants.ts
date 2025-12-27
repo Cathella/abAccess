@@ -118,6 +118,7 @@ export const ROUTES = {
   REGISTER_INFO: "/register/info",
   REGISTER_NIN: "/register/nin",
   REGISTER_PIN: "/register/pin",
+  REGISTER_SUCCESS: "/register/success",
   DASHBOARD: "/dashboard",
   PACKAGES: "/packages",
   MY_PACKAGES: "/my-packages",

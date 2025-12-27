@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 interface ProvidersProps {
   children: React.ReactNode;
 }
@@ -14,19 +12,10 @@ interface ProvidersProps {
  * - Future provider integrations (react-query, etc.)
  */
 export function Providers({ children }: ProvidersProps) {
-  const [isHydrated, setIsHydrated] = useState(false);
-
-  useEffect(() => {
-    // Wait for Zustand stores to hydrate from localStorage
-    // This prevents hydration mismatches between server and client
-    setIsHydrated(true);
-  }, []);
-
-  // Show nothing during hydration to prevent flash of incorrect content
-  // The root layout will show a loading state if needed
-  if (!isHydrated) {
-    return null;
-  }
+  // Note: We used to block rendering during hydration, but this caused issues
+  // with navigation. Zustand handles hydration internally, so we can just
+  // render children immediately. Individual components can handle their own
+  // hydration states if needed.
 
   return (
     <>

@@ -27,6 +27,9 @@ const PROTECTED_ROUTES = [
 // Routes that should redirect to welcome if already authenticated
 const AUTH_ROUTES = ['/sign-in', '/verify-otp', '/create-pin', '/enter-pin']
 
+// Routes that authenticated users can access (success page)
+const AUTH_SUCCESS_ROUTES = ['/register/success']
+
 /**
  * Check if the given path matches any of the public routes
  */
@@ -71,8 +74,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Redirect authenticated users away from auth pages
-  if (isPublicRoute(pathname) && isAuthenticated && pathname !== '/welcome') {
+  // Allow authenticated users to access success page (must check BEFORE public route redirect)
+  if (AUTH_SUCCESS_ROUTES.some(route => pathname.startsWith(route))) {
+    return NextResponse.next()
+  }
+
+  // Redirect authenticated users away from auth pages (except welcome and success pages)
+  if (isPublicRoute(pathname) && isAuthenticated && pathname !== '/welcome' && !AUTH_SUCCESS_ROUTES.some(route => pathname.startsWith(route))) {
     // Already logged in, redirect to dashboard
     const url = new URL('/dashboard', request.url)
     return NextResponse.redirect(url)
