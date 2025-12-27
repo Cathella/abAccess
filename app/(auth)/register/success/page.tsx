@@ -39,22 +39,6 @@ export default function RegisterSuccessPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      {/* Header with Logo */}
-      <div className="px-6">
-        <div className="flex items-center justify-center pt-4">
-          <Image
-            src="/logos/logo-text.svg"
-            alt="abAccess"
-            width={140}
-            height={40}
-            className="h-10 w-auto"
-            priority
-          />
-        </div>
-        {/* Divider */}
-        <div className="mt-4 h-px w-full bg-neutral-400" />
-      </div>
-
       {/* Main content - centered */}
       <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
         {/* Celebration Icon */}
@@ -87,7 +71,7 @@ export default function RegisterSuccessPage() {
       <SafeArea inset="bottom" className="px-6 pb-6">
         <PrimaryButton
           onClick={handleContinue}
-          className="h-14 rounded-2xl bg-primary-900 hover:bg-primary-800"
+          className="rounded-xl bg-primary-900 hover:bg-primary-800"
         >
           Go to dashboard
         </PrimaryButton>
