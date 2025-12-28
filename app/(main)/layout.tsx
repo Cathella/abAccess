@@ -6,6 +6,8 @@ import { Header } from "@/components/common/Header";
 import { BottomNav } from "@/components/common/BottomNav";
 import { SafeArea } from "@/components/common/SafeArea";
 import { useAuthStore } from "@/stores";
+import { useFamilyStore } from "@/stores/familyStore";
+import { getDependents } from "@/lib/services/dependentService";
 import { ROUTES } from "@/lib/constants";
 
 // Route configurations for Header
@@ -45,6 +47,18 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
     title: "Family Members",
     showBack: true,
     showNotifications: true,
+    hideHeader: true,
+  },
+  [ROUTES.FAMILY_ADD]: {
+    title: "Add dependent",
+    showBack: true,
+    showNotifications: false,
+  },
+  [ROUTES.FAMILY_ADD_SUCCESS]: {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
   },
   [ROUTES.NOTIFICATIONS]: {
     title: "Notifications",
@@ -64,6 +78,7 @@ export default function MainLayout({
     useAuthStore.persist?.hasHydrated?.() ?? false
   );
   const { user } = useAuthStore();
+  const setDependents = useFamilyStore((state) => state.setDependents);
 
   // Wait for persisted auth store to hydrate before enforcing redirects
   useEffect(() => {
@@ -84,6 +99,20 @@ export default function MainLayout({
       router.push(ROUTES.WELCOME);
     }
   }, [user, router, hasHydrated]);
+
+  // Fetch and sync dependents when user is authenticated
+  useEffect(() => {
+    if (hasHydrated && user?.id) {
+      const fetchDependents = async () => {
+        const result = await getDependents(user.id);
+        if (result.success && result.dependents) {
+          setDependents(result.dependents);
+        }
+      };
+
+      fetchDependents();
+    }
+  }, [hasHydrated, user?.id, setDependents]);
 
   // Get current route config
   const currentConfig = routeConfig[pathname || ROUTES.DASHBOARD] || {

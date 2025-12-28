@@ -31,9 +31,9 @@ export function AuthHeader({ backTo, onBack }: AuthHeaderProps) {
             variant="ghost"
             size="icon"
             onClick={handleBack}
-            className="h-6 w-6 p-0 hover:bg-transparent"
+            className="h-8 w-8 p-0 hover:bg-transparent"
           >
-            <ArrowLeft className="h-6 w-6 text-neutral-900" strokeWidth={2} />
+            <ArrowLeft className="h-8 w-8 text-neutral-900" strokeWidth={2} />
             <span className="sr-only">Go back</span>
           </Button>
         </div>

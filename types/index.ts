@@ -103,11 +103,20 @@ export interface Dependent {
   userId: string;
   name: string;
   relationship: Relationship;
-  dateOfBirth: string;
-  gender: Gender;
+  dateOfBirth: string; // ISO date string
+  gender: 'male' | 'female';
   photo?: string;
   birthCertificateNumber?: string;
   createdAt: string;
+}
+
+export interface DependentVisit {
+  id: string;
+  dependentId: string;
+  facilityName: string;
+  facilityIcon?: string;
+  date: string;
+  packageName: string;
 }
 
 // Package Types

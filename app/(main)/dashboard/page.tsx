@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
-import { ChevronDown, Hospital, LogOut } from "lucide-react";
+import { useFamilyStore } from "@/stores/familyStore";
+import { ChevronDown, Heart, Hospital, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { transformVisitDataToWeeklyChart } from "@/lib/utils/visitChartData";
 import { UserHeader } from "@/components/common/UserHeader";
@@ -11,6 +12,7 @@ import { WalletCard } from "@/components/cards/WalletCard";
 import { DependentsCard } from "@/components/cards/DependentsCard";
 import { PackagesCard } from "@/components/cards/PackagesCard";
 import Link from "next/link";
+import { ROUTES } from "@/lib/constants";
 
 const cards = {
   action: "border-[1.5px] border-neutral-300 rounded-[26px] bg-white",
@@ -23,7 +25,8 @@ const cards = {
 
 export default function DashboardPage() {
   const { user, logout } = useAuth();
-  const { data: dashboardData, loading: dashboardLoading, error: dashboardError } = useDashboard(user?.id);
+  const { data: dashboardData, loading: dashboardLoading, error: dashboardError, refetch } = useDashboard(user?.id);
+  const dependents = useFamilyStore((state) => state.dependents);
   const [selectedDependent, setSelectedDependent] = useState<string>("All");
   const [timeframe, setTimeframe] = useState<"This week" | "This month" | "Last 3 months">("This week");
 
@@ -31,6 +34,24 @@ export default function DashboardPage() {
     if (!user) return "Good morning";
     return `Good morning, ${user.firstName}`;
   }, [user]);
+
+  // Refetch dashboard data when page becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        refetch();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [refetch]);
+
+  // Use familyStore data for dependents count
+  const familyMembersCount = dependents.length;
 
   // Transform visit data into weekly chart format
   const weeklyChartData = useMemo(() => {
@@ -106,22 +127,21 @@ export default function DashboardPage() {
         {/* Quick actions */}
         <div className="grid grid-cols-2 gap-4">
           {/* Dependents Card */}
-          {dashboardData.familyMembersCount === 0 ? (
+          {familyMembersCount === 0 ? (
             <DependentsCard
               onAddDependent={() => {
-                // TODO: Navigate to add dependent page
-                console.log("Add dependent clicked");
+                window.location.href = ROUTES.FAMILY_ADD;
               }}
             />
           ) : (
-            <Link href="#" className={cn(cards.action, "p-4 relative overflow-hidden")}>
+            <Link href={ROUTES.FAMILY} className={cn(cards.action, "p-4 relative overflow-hidden")}>
               <div className="flex flex-col items-center gap-3">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-                  <span role="img" aria-label="dependents" className="text-3xl">❤️</span>
+                <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
+                  <Heart className="h-6 w-6 text-secondary-900" />
                 </div>
                 <div className="flex w-full items-center justify-between">
                   <p className="text-xl font-semibold text-neutral-900">
-                    <span className="text-[20px] font-semibold">{dashboardData.familyMembersCount}</span> <span className="text-base font-normal">Dependents</span>
+                    <span className="text-[20px] font-semibold">{familyMembersCount}</span> <span className="text-base font-normal">Dependents</span>
                   </p>
                   <span className="text-2xl text-neutral-900">›</span>
                 </div>
@@ -177,7 +197,7 @@ export default function DashboardPage() {
                     <div className="flex items-start gap-3">
                       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-100 text-2xl">
                         <span role="img" aria-label="facility" className="text-2xl">
-                          <Hospital className="h-6 w-6 text-[#3A8DFF]" />
+                          <Hospital className="h-6 w-6 text-secondary-900" />
                         </span>
                       </div>
                       <div className="flex-1">
@@ -238,12 +258,12 @@ export default function DashboardPage() {
               >
                 All
               </button>
-              {dashboardData.familyMembers.map((member) => {
-                const isActive = selectedDependent === member.id;
+              {dependents.map((dependent) => {
+                const isActive = selectedDependent === dependent.id;
                 return (
                   <button
-                    key={member.id}
-                    onClick={() => setSelectedDependent(member.id)}
+                    key={dependent.id}
+                    onClick={() => setSelectedDependent(dependent.id)}
                     className={cn(
                       "rounded-full px-2 text-sm h-6 flex items-center justify-center",
                       isActive
@@ -251,7 +271,7 @@ export default function DashboardPage() {
                         : "bg-neutral-200 text-neutral-700 font-normal border-0"
                     )}
                   >
-                    {member.name}
+                    {dependent.name}
                   </button>
                 );
               })}

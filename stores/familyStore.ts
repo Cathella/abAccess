@@ -1,104 +1,122 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import type { Dependent } from '@/types'
+
+const MAX_DEPENDENTS = 3
 
 interface FamilyState {
   // State
   dependents: Dependent[]
   selectedDependent: Dependent | null
   isLoading: boolean
+  error: string | null
 
   // Actions
   setDependents: (dependents: Dependent[]) => void
   addDependent: (dependent: Dependent) => void
-  updateDependent: (dependentId: string, updates: Partial<Dependent>) => void
-  removeDependent: (dependentId: string) => void
-  selectDependent: (dependentId: string | null) => void
-  setLoading: (isLoading: boolean) => void
+  updateDependent: (id: string, data: Partial<Dependent>) => void
+  removeDependent: (id: string) => void
+  selectDependent: (dependent: Dependent | null) => void
+  setLoading: (loading: boolean) => void
+  setError: (error: string | null) => void
   clearSelection: () => void
 
-  // Computed getters
+  // Getters
   getDependentById: (id: string) => Dependent | undefined
-  getDependentsByRelationship: (relationship: string) => Dependent[]
-  getChildrenCount: () => number
 }
 
+// Selectors for computed values
+export const selectMaxDependents = () => MAX_DEPENDENTS
+export const selectDependentCount = (state: FamilyState) => state.dependents.length
+export const selectCanAddMore = (state: FamilyState) => state.dependents.length < MAX_DEPENDENTS
+
 export const useFamilyStore = create<FamilyState>()(
-  immer((set, get) => ({
-    // Initial state
-    dependents: [],
-    selectedDependent: null,
-    isLoading: false,
+  persist(
+    immer((set, get) => ({
+      // Initial state
+      dependents: [],
+      selectedDependent: null,
+      isLoading: false,
+      error: null,
 
-    // Actions
-    setDependents: (dependents) =>
-      set((state) => {
-        state.dependents = dependents
-      }),
+      // Actions
+      setDependents: (dependents) =>
+        set((state) => {
+          state.dependents = dependents
+        }),
 
-    addDependent: (dependent) =>
-      set((state) => {
-        state.dependents.push(dependent)
-      }),
-
-    updateDependent: (dependentId, updates) =>
-      set((state) => {
-        const index = state.dependents.findIndex(d => d.id === dependentId)
-        if (index !== -1) {
-          state.dependents[index] = {
-            ...state.dependents[index],
-            ...updates
+      addDependent: (dependent) =>
+        set((state) => {
+          if (state.dependents.length < MAX_DEPENDENTS) {
+            state.dependents.push(dependent)
+            state.error = null
+          } else {
+            state.error = `Maximum of ${MAX_DEPENDENTS} dependents allowed`
           }
-          // Update selected dependent if it's the one being updated
-          if (state.selectedDependent?.id === dependentId) {
-            state.selectedDependent = state.dependents[index]
+        }),
+
+      updateDependent: (id, data) =>
+        set((state) => {
+          const index = state.dependents.findIndex(d => d.id === id)
+          if (index !== -1) {
+            state.dependents[index] = {
+              ...state.dependents[index],
+              ...data,
+            }
+            // Update selected dependent if it's the one being updated
+            if (state.selectedDependent?.id === id) {
+              state.selectedDependent = state.dependents[index]
+            }
+            state.error = null
+          } else {
+            state.error = 'Dependent not found'
           }
-        }
-      }),
+        }),
 
-    removeDependent: (dependentId) =>
-      set((state) => {
-        state.dependents = state.dependents.filter(d => d.id !== dependentId)
-        // Clear selection if removed dependent was selected
-        if (state.selectedDependent?.id === dependentId) {
+      removeDependent: (id) =>
+        set((state) => {
+          state.dependents = state.dependents.filter(d => d.id !== id)
+          // Clear selection if removed dependent was selected
+          if (state.selectedDependent?.id === id) {
+            state.selectedDependent = null
+          }
+          state.error = null
+        }),
+
+      selectDependent: (dependent) =>
+        set((state) => {
+          state.selectedDependent = dependent
+        }),
+
+      setLoading: (loading) =>
+        set((state) => {
+          state.isLoading = loading
+        }),
+
+      setError: (error) =>
+        set((state) => {
+          state.error = error
+        }),
+
+      clearSelection: () =>
+        set((state) => {
           state.selectedDependent = null
-        }
+        }),
+
+      // Computed getters
+      getDependentById: (id) => {
+        const { dependents } = get()
+        return dependents.find(d => d.id === id)
+      },
+    })),
+    {
+      name: 'family-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        dependents: state.dependents,
+        // Don't persist selectedDependent, isLoading, or error
       }),
-
-    selectDependent: (dependentId) =>
-      set((state) => {
-        if (dependentId === null) {
-          state.selectedDependent = null
-        } else {
-          const dependent = state.dependents.find(d => d.id === dependentId)
-          state.selectedDependent = dependent || null
-        }
-      }),
-
-    setLoading: (isLoading) =>
-      set((state) => {
-        state.isLoading = isLoading
-      }),
-
-    clearSelection: () =>
-      set((state) => {
-        state.selectedDependent = null
-      }),
-
-    // Computed getters
-    getDependentById: (id) => {
-      const { dependents } = get()
-      return dependents.find(d => d.id === id)
-    },
-
-    getDependentsByRelationship: (relationship) => {
-      const { dependents } = get()
-      return dependents.filter(d => d.relationship === relationship)
-    },
-
-    getChildrenCount: () => {
-      const { dependents } = get()
-      return dependents.filter(d => d.relationship === 'child').length
-    },
-  }))
+    }
+  )
 )

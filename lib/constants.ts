@@ -126,5 +126,8 @@ export const ROUTES = {
   WALLET: "/wallet",
   PROFILE: "/profile",
   FAMILY: "/family",
+  FAMILY_ADD: "/family/add",
+  FAMILY_ADD_SUCCESS: "/family/add/success",
+  FAMILY_DETAIL: (id: string) => `/family/${id}`,
   NOTIFICATIONS: "/notifications",
 } as const;

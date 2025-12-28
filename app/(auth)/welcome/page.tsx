@@ -18,14 +18,6 @@ export default function WelcomePage() {
         {/* Logo */}
         <div className="mb-6 flex flex-col items-center">
           <Image
-            src="/icons/heart-icon.svg"
-            alt=""
-            width={64}
-            height={64}
-            className="mb-4 h-16 w-16"
-            aria-hidden="true"
-          />
-          <Image
             src="/logos/logo-text.svg"
             alt="abAccess"
             width={200}
@@ -36,7 +28,7 @@ export default function WelcomePage() {
         </div>
 
         {/* Tagline */}
-        <h1 className="mb-3 text-base font-semibold text-neutral-900">
+        <h1 className="mb-3 text-lg font-semibold text-neutral-900">
           Affordable healthcare for your family
         </h1>
 

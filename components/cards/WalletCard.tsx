@@ -31,7 +31,7 @@ export function WalletCard({ balance, onTopUp, className }: WalletCardProps) {
       <div className="flex items-center gap-3">
         {/* Icon container */}
         <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
-          <Wallet className="h-6 w-6 text-[#3A8DFF]" />
+          <Wallet className="h-6 w-6 text-secondary-900" />
         </div>
 
         {/* Text container */}

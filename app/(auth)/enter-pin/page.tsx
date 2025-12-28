@@ -105,15 +105,6 @@ export default function EnterPinPage() {
             </div>
           )}
 
-          {/* Attempts Warning */}
-          {!isPinLocked && pinAttempts > 0 && (
-            <div className="mb-4 rounded-lg bg-warning-100 border border-warning-900 p-4">
-              <p className="text-sm font-semibold text-warning-900">
-                {attemptsLeft} {attemptsLeft === 1 ? 'attempt' : 'attempts'} remaining
-              </p>
-            </div>
-          )}
-
           {/* PIN Input */}
           <PinInput
             value={pin}
