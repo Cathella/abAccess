@@ -138,6 +138,22 @@ export default function MainLayout({
         hideHeader: true,
         hideBottomNav: true,
       };
+    } else if (pathname?.startsWith('/wallet/history/') && pathname?.match(/^\/wallet\/history\/[^/]+$/)) {
+      currentConfig = {
+        title: "Transaction Details",
+        showBack: true,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else if (pathname === '/wallet/history') {
+      currentConfig = {
+        title: "Transaction History",
+        showBack: true,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
     } else {
       currentConfig = {
         title: "ABA Access",

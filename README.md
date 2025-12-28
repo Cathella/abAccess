@@ -1,36 +1,156 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ABA Access
+
+ABA Access is a mobile-first healthcare access platform that makes quality healthcare affordable and accessible. The platform enables users to purchase healthcare bundles, manage their family members, book visits at partner facilities, and track their healthcare journey.
+
+## About AbAccess
+
+AbAccess is revolutionizing healthcare access by providing bundled healthcare packages that users can purchase and share with their family members. Our platform connects users with a network of partner healthcare facilities, making it easy to book appointments, track visits, and manage healthcare expenses.
+
+## Key Features
+
+### 🏥 Healthcare Bundles & Packages
+- Browse and purchase healthcare packages tailored to different needs
+- Track active packages, visits remaining, and expiry dates
+- Share bundles with family members
+
+### 👨‍👩‍👧‍👦 Family Management
+- Add up to 3 dependents to your account
+- Manage family member profiles (name, date of birth, gender)
+- Share healthcare bundles with dependents
+- Track visits for each family member
+- Edit or remove dependents as needed
+
+### 🏢 Partner Facilities
+- Discover nearby partner healthcare facilities
+- View facility details, services, and availability
+- Book visits at partner locations
+
+### 📅 Visit Management
+- Book appointments at partner facilities
+- Track visit history for yourself and dependents
+- View upcoming and completed visits
+- Access visit details and package usage
+
+### 💰 Wallet System
+- Top up your wallet balance
+- Track transaction history
+- View spending and package purchases
+
+### 📊 Dashboard & Analytics
+- View your healthcare journey at a glance
+- Track visit trends over time
+- Monitor bundle usage and expiry
+- Quick access to key features
+
+## Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI
+- **State Management**: Zustand
+- **Database**: Supabase
+- **Authentication**: Supabase Auth
+- **Icons**: Lucide React
+
+## Project Structure
+
+```
+abaccess/
+├── app/                    # Next.js app directory
+│   ├── (auth)/            # Authentication pages
+│   └── (main)/            # Main application pages
+│       ├── dashboard/     # Dashboard & overview
+│       ├── family/        # Family management
+│       ├── packages/      # Healthcare packages
+│       ├── visits/        # Visit booking & history
+│       ├── wallet/        # Wallet & transactions
+│       └── profile/       # User profile
+├── components/            # React components
+│   ├── cards/            # Card components
+│   ├── common/           # Shared components
+│   ├── forms/            # Form components
+│   ├── modals/           # Modal dialogs
+│   └── ui/               # UI primitives
+├── lib/                  # Utilities & services
+│   ├── services/         # API services
+│   ├── supabase/         # Supabase client & queries
+│   └── utils/            # Helper functions
+├── stores/               # Zustand state stores
+└── types/                # TypeScript type definitions
+```
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- npm/yarn/pnpm/bun
+- Supabase account
 
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-org/abaccess.git
+cd abaccess
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Add your Supabase credentials:
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
 
-## Learn More
+4. Run the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+5. Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Code Style
+- TypeScript for type safety
+- Component-first architecture
+- Mobile-first responsive design
+- Accessibility-first approach
 
-## Deploy on Vercel
+### State Management
+- Zustand for global state
+- Local state with React hooks
+- Persistent storage with localStorage
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Design System
+- Geist font family
+- Tailwind CSS utility classes
+- Custom color palette (primary, secondary, neutral, error)
+- Consistent spacing and typography scale
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contributing
+
+We welcome contributions! Please follow these guidelines:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is proprietary and confidential.
+
+## Contact
+
+For questions or support, please contact the AbAccess team.

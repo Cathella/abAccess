@@ -1,116 +1,171 @@
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
-import type { Wallet, Transaction, TransactionType } from '@/types'
+import type { WalletTransaction, SavedPaymentMethod, TopUpData } from '@/types'
 
 interface WalletState {
-  // State
-  wallet: Wallet | null
-  transactions: Transaction[]
+  // Balance
+  balance: number
+
+  // Transactions
+  transactions: WalletTransaction[]
+
+  // Saved payment methods
+  savedPaymentMethods: SavedPaymentMethod[]
+
+  // Top up flow state
+  topUpData: Partial<TopUpData>
+
+  // Loading states
   isLoading: boolean
-  topUpAmount: number
+  isProcessing: boolean
+
+  // Filter
+  transactionFilter: 'all' | 'top_up' | 'purchase'
 
   // Actions
-  setWallet: (wallet: Wallet | null) => void
-  setTransactions: (transactions: Transaction[]) => void
-  setTopUpAmount: (amount: number) => void
-  setLoading: (isLoading: boolean) => void
-  addTransaction: (transaction: Transaction) => void
-  updateBalance: (newBalance: number) => void
-  updateTransaction: (transactionId: string, updates: Partial<Transaction>) => void
+  setBalance: (balance: number) => void
+  addBalance: (amount: number) => void
+  deductBalance: (amount: number) => void
+  setTransactions: (transactions: WalletTransaction[]) => void
+  addTransaction: (transaction: WalletTransaction) => void
+  setSavedPaymentMethods: (methods: SavedPaymentMethod[]) => void
+  addSavedPaymentMethod: (method: SavedPaymentMethod) => void
+  removeSavedPaymentMethod: (id: string) => void
+  setDefaultPaymentMethod: (id: string) => void
+  setTopUpData: (data: Partial<TopUpData>) => void
+  clearTopUpData: () => void
+  setLoading: (loading: boolean) => void
+  setProcessing: (processing: boolean) => void
+  setTransactionFilter: (filter: 'all' | 'top_up' | 'purchase') => void
 
-  // Computed getters
-  getTransactionsByType: (type: TransactionType) => Transaction[]
-  getRecentTransactions: (limit?: number) => Transaction[]
-  getPendingTransactions: () => Transaction[]
-  getTotalTopUps: () => number
-  getTotalPurchases: () => number
+  // Getters
+  getFilteredTransactions: () => WalletTransaction[]
+  getDefaultPaymentMethod: () => SavedPaymentMethod | undefined
 }
 
 export const useWalletStore = create<WalletState>()(
-  immer((set, get) => ({
-    // Initial state
-    wallet: null,
-    transactions: [],
-    isLoading: false,
-    topUpAmount: 0,
+  persist(
+    immer((set, get) => ({
+      // Initial state
+      balance: 0,
+      transactions: [],
+      savedPaymentMethods: [],
+      topUpData: {},
+      isLoading: false,
+      isProcessing: false,
+      transactionFilter: 'all',
 
-    // Actions
-    setWallet: (wallet) =>
-      set((state) => {
-        state.wallet = wallet
-      }),
+      // Balance actions
+      setBalance: (balance) =>
+        set((state) => {
+          state.balance = balance
+        }),
 
-    setTransactions: (transactions) =>
-      set((state) => {
-        state.transactions = transactions
-      }),
+      addBalance: (amount) =>
+        set((state) => {
+          state.balance += amount
+        }),
 
-    setTopUpAmount: (amount) =>
-      set((state) => {
-        state.topUpAmount = amount
-      }),
+      deductBalance: (amount) =>
+        set((state) => {
+          state.balance = Math.max(0, state.balance - amount)
+        }),
 
-    setLoading: (isLoading) =>
-      set((state) => {
-        state.isLoading = isLoading
-      }),
+      // Transaction actions
+      setTransactions: (transactions) =>
+        set((state) => {
+          state.transactions = transactions
+        }),
 
-    addTransaction: (transaction) =>
-      set((state) => {
-        state.transactions.unshift(transaction)
-      }),
+      addTransaction: (transaction) =>
+        set((state) => {
+          // Add to beginning of array (most recent first)
+          state.transactions.unshift(transaction)
+        }),
 
-    updateBalance: (newBalance) =>
-      set((state) => {
-        if (state.wallet) {
-          state.wallet.balance = newBalance
-          state.wallet.updatedAt = new Date().toISOString()
-        }
-      }),
+      // Payment method actions
+      setSavedPaymentMethods: (methods) =>
+        set((state) => {
+          state.savedPaymentMethods = methods
+        }),
 
-    updateTransaction: (transactionId, updates) =>
-      set((state) => {
-        const index = state.transactions.findIndex(txn => txn.id === transactionId)
-        if (index !== -1) {
-          state.transactions[index] = {
-            ...state.transactions[index],
-            ...updates
+      addSavedPaymentMethod: (method) =>
+        set((state) => {
+          // If this is set as default, unset all others
+          if (method.isDefault) {
+            state.savedPaymentMethods.forEach((m) => {
+              m.isDefault = false
+            })
           }
+          state.savedPaymentMethods.push(method)
+        }),
+
+      removeSavedPaymentMethod: (id) =>
+        set((state) => {
+          state.savedPaymentMethods = state.savedPaymentMethods.filter(
+            (m) => m.id !== id
+          )
+        }),
+
+      setDefaultPaymentMethod: (id) =>
+        set((state) => {
+          state.savedPaymentMethods.forEach((method) => {
+            method.isDefault = method.id === id
+          })
+        }),
+
+      // Top up flow actions
+      setTopUpData: (data) =>
+        set((state) => {
+          state.topUpData = { ...state.topUpData, ...data }
+        }),
+
+      clearTopUpData: () =>
+        set((state) => {
+          state.topUpData = {}
+        }),
+
+      // Loading state actions
+      setLoading: (loading) =>
+        set((state) => {
+          state.isLoading = loading
+        }),
+
+      setProcessing: (processing) =>
+        set((state) => {
+          state.isProcessing = processing
+        }),
+
+      // Filter actions
+      setTransactionFilter: (filter) =>
+        set((state) => {
+          state.transactionFilter = filter
+        }),
+
+      // Getters
+      getFilteredTransactions: () => {
+        const { transactions, transactionFilter } = get()
+        if (transactionFilter === 'all') {
+          return transactions
         }
+        return transactions.filter((t) => t.type === transactionFilter)
+      },
+
+      getDefaultPaymentMethod: () => {
+        const { savedPaymentMethods } = get()
+        return savedPaymentMethods.find((m) => m.isDefault)
+      },
+    })),
+    {
+      name: 'wallet-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        balance: state.balance,
+        transactions: state.transactions,
+        savedPaymentMethods: state.savedPaymentMethods,
+        // Don't persist: topUpData, isLoading, isProcessing, transactionFilter
       }),
-
-  // Computed getters
-  getTransactionsByType: (type) => {
-    const { transactions } = get()
-    return transactions.filter((txn) => txn.type === type)
-  },
-
-  getRecentTransactions: (limit = 10) => {
-    const { transactions } = get()
-    return transactions
-      .sort((a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )
-      .slice(0, limit)
-  },
-
-  getPendingTransactions: () => {
-    const { transactions } = get()
-    return transactions.filter((txn) => txn.status === 'pending')
-  },
-
-  getTotalTopUps: () => {
-    const { transactions } = get()
-    return transactions
-      .filter((txn) => txn.type === 'topUp' && txn.status === 'completed')
-      .reduce((total, txn) => total + txn.amount, 0)
-  },
-
-  getTotalPurchases: () => {
-    const { transactions } = get()
-    return transactions
-      .filter((txn) => txn.type === 'purchase' && txn.status === 'completed')
-      .reduce((total, txn) => total + txn.amount, 0)
-  },
-  }))
+    }
+  )
 )

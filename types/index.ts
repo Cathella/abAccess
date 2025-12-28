@@ -258,3 +258,47 @@ export interface ApprovalRequest {
   respondedAt?: string;
   expiresAt: string;
 }
+
+// Wallet Feature Types
+export type PaymentMethodType = 'mtn_momo' | 'airtel_money' | 'card';
+
+export type WalletTransactionType = 'top_up' | 'purchase';
+
+export type WalletTransactionStatus = 'pending' | 'completed' | 'failed';
+
+export interface WalletTransaction {
+  id: string;
+  type: WalletTransactionType;
+  amount: number;
+  fee: number;
+  status: WalletTransactionStatus;
+  paymentMethod: PaymentMethodType;
+  phoneNumber?: string; // For mobile money
+  cardLast4?: string; // For card payments
+  packageName?: string; // For purchases
+  packageVisits?: number; // For purchases
+  transactionId: string; // e.g., TXN-2025-00891
+  createdAt: string;
+}
+
+export interface SavedPaymentMethod {
+  id: string;
+  type: PaymentMethodType;
+  phoneNumber?: string; // For mobile money
+  cardLast4?: string; // For card
+  cardBrand?: string; // Visa, Mastercard
+  isDefault: boolean;
+}
+
+export interface TopUpData {
+  amount: number;
+  paymentMethod: PaymentMethodType;
+  phoneNumber?: string;
+  cardDetails?: {
+    number: string;
+    expiry: string;
+    cvv: string;
+    name: string;
+  };
+  saveForFuture: boolean;
+}
