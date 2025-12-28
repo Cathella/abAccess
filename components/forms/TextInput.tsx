@@ -37,7 +37,7 @@ export const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
           ref={ref}
           onChange={handleChange}
           className={cn(
-            "h-12 rounded-xl border-[1.5px] border-neutral-300 px-4 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0",
+            "h-12 rounded-xl border-[1.5px] border-neutral-400 px-4 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0",
             error && "border-destructive focus-visible:border-destructive",
             className
           )}

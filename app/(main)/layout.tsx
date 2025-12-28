@@ -11,7 +11,7 @@ import { getDependents } from "@/lib/services/dependentService";
 import { ROUTES } from "@/lib/constants";
 
 // Route configurations for Header
-const routeConfig: Record<string, { title?: string; showBack?: boolean; showNotifications?: boolean; hideHeader?: boolean }> = {
+const routeConfig: Record<string, { title?: string; showBack?: boolean; showNotifications?: boolean; hideHeader?: boolean; hideBottomNav?: boolean }> = {
   [ROUTES.DASHBOARD]: {
     title: "Dashboard",
     showBack: false,
@@ -53,12 +53,14 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
     title: "Add dependent",
     showBack: true,
     showNotifications: false,
+    hideBottomNav: true,
   },
   [ROUTES.FAMILY_ADD_SUCCESS]: {
     title: "",
     showBack: false,
     showNotifications: false,
     hideHeader: true,
+    hideBottomNav: true,
   },
   [ROUTES.NOTIFICATIONS]: {
     title: "Notifications",
@@ -115,11 +117,35 @@ export default function MainLayout({
   }, [hasHydrated, user?.id, setDependents]);
 
   // Get current route config
-  const currentConfig = routeConfig[pathname || ROUTES.DASHBOARD] || {
-    title: "ABA Access",
-    showBack: true,
-    showNotifications: true,
-  };
+  // Check for dynamic routes (e.g., /family/[id]/edit)
+  let currentConfig = routeConfig[pathname || ROUTES.DASHBOARD];
+
+  if (!currentConfig) {
+    // Handle dynamic routes
+    if (pathname?.includes('/family/') && pathname?.includes('/edit')) {
+      currentConfig = {
+        title: "Edit Details",
+        showBack: true,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/family/') && pathname?.match(/^\/family\/[^/]+$/)) {
+      currentConfig = {
+        title: "",
+        showBack: true,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else {
+      currentConfig = {
+        title: "ABA Access",
+        showBack: true,
+        showNotifications: true,
+      };
+    }
+  }
 
   // Don't render if not authenticated
   if (!hasHydrated) {
@@ -144,14 +170,14 @@ export default function MainLayout({
       {/* Main content area */}
       {/* pb-20 accounts for bottom nav height (~80px) */}
       {/* safe-area-inset-x for notched phones */}
-      <main className="flex-1 overflow-y-auto pb-20">
+      <main className={`flex-1 overflow-y-auto ${currentConfig.hideBottomNav ? '' : 'pb-20'}`}>
         <SafeArea inset="x">
           {children}
         </SafeArea>
       </main>
 
       {/* Bottom Navigation */}
-      <BottomNav />
+      {!currentConfig.hideBottomNav && <BottomNav />}
     </div>
   );
 }

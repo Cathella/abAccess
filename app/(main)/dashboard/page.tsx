@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useFamilyStore } from "@/stores/familyStore";
-import { ChevronDown, Heart, Hospital, LogOut } from "lucide-react";
+import { ChevronDown, ChevronRight, Heart, Hospital, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { transformVisitDataToWeeklyChart } from "@/lib/utils/visitChartData";
 import { UserHeader } from "@/components/common/UserHeader";
@@ -140,10 +140,11 @@ export default function DashboardPage() {
                   <Heart className="h-6 w-6 text-secondary-900" />
                 </div>
                 <div className="flex w-full items-center justify-between">
-                  <p className="text-xl font-semibold text-neutral-900">
-                    <span className="text-[20px] font-semibold">{familyMembersCount}</span> <span className="text-base font-normal">Dependents</span>
+                  <p className="flex items-center gap-1 text-neutral-900">
+                    <span className="text-[20px] font-semibold">{familyMembersCount}</span> 
+                    <span className="text-sm font-normal">Dependents</span>
                   </p>
-                  <span className="text-2xl text-neutral-900">›</span>
+                  <ChevronRight className="h-5 w-5 text-neutral-900" />
                 </div>
               </div>
             </Link>

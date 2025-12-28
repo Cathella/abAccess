@@ -170,7 +170,7 @@ export default function EditDependentPage() {
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-1 flex-col px-6">
         {/* Title */}
-        <h1 className="mb-8 mt-6 text-2xl font-bold text-neutral-900">
+        <h1 className="mb-8 mt-6 text-xl font-bold text-neutral-900">
           Update your child&apos;s information
         </h1>
 
@@ -190,7 +190,7 @@ export default function EditDependentPage() {
                 }
               }}
               error={errors.name}
-              className="h-14"
+              className="h-12"
             />
           </div>
 
@@ -212,17 +212,17 @@ export default function EditDependentPage() {
                 }}
                 max={getMaxDateForChild()}
                 min={getMinDateForChild()}
-                className={`h-14 w-full rounded-xl border-[1.5px] ${
+                className={`h-12 w-full rounded-xl border-neutral-400 border-[1.5px] ${
                   errors.dateOfBirth
                     ? "border-error-900 focus-visible:border-error-900"
                     : "border-neutral-300 focus-visible:border-primary-900"
                 } px-4 text-base placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-0`}
                 placeholder="Select date"
               />
-              <Calendar className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-600" />
+              {/* <Calendar className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-600" /> */}
             </div>
             {!errors.dateOfBirth && (
-              <p className="mt-2 text-xs text-neutral-600">Child must be under 18 years old</p>
+              <p className="mt-2 text-sm text-neutral-700">Child must be under 18 years old</p>
             )}
             {errors.dateOfBirth && (
               <p className="mt-2 text-sm text-error-900">{errors.dateOfBirth}</p>
@@ -241,10 +241,10 @@ export default function EditDependentPage() {
                     setErrors({ ...errors, gender: undefined });
                   }
                 }}
-                className={`flex h-[52px] flex-1 items-center justify-center rounded-xl border transition-colors ${
+                className={`flex h-12 flex-1 items-center justify-center rounded-xl border transition-colors ${
                   formData.gender === "male"
-                    ? "border-primary-900 bg-primary-100 text-neutral-900"
-                    : "border-neutral-400 bg-white text-neutral-900"
+                    ? "border-primary-900 border-[1.5px] bg-primary-100 text-neutral-900"
+                    : "border-neutral-400 border-[1.5px] bg-white text-neutral-900"
                 }`}
               >
                 Male
@@ -257,10 +257,10 @@ export default function EditDependentPage() {
                     setErrors({ ...errors, gender: undefined });
                   }
                 }}
-                className={`flex h-[52px] flex-1 items-center justify-center rounded-xl border transition-colors ${
+                className={`flex h-12 flex-1 items-center justify-center rounded-xl border transition-colors ${
                   formData.gender === "female"
-                    ? "border-primary-900 bg-primary-100 text-neutral-900"
-                    : "border-neutral-400 bg-white text-neutral-900"
+                    ? "border-primary-900 border-[1.5px] bg-primary-100 text-neutral-900"
+                    : "border-neutral-400 border-[1.5px] bg-white text-neutral-900"
                 }`}
               >
                 Female
@@ -277,7 +277,7 @@ export default function EditDependentPage() {
           <button
             type="submit"
             disabled={!isFormValid() || !hasChanges || isSubmitting}
-            className="h-14 w-full rounded-2xl bg-primary-900 text-base font-semibold text-white transition-colors hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-12 w-full rounded-xl bg-primary-900 text-base font-bold text-neutral-900 border-2 border-neutral-900 transition-colors hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? "Saving..." : "Save Changes"}
           </button>
@@ -287,7 +287,7 @@ export default function EditDependentPage() {
       {/* Success Toast */}
       {showSuccessToast && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <div className="rounded-xl bg-success-900 px-6 py-3 text-white shadow-lg">
+          <div className="rounded-xl bg-success-900 px-6 py-3 text-neutral-900 shadow-lg">
             <p className="text-sm font-medium">Changes saved</p>
           </div>
         </div>

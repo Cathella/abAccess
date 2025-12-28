@@ -44,7 +44,7 @@ export default function AddDependentSuccessPage() {
       <SafeArea inset="bottom" className="px-6 pb-6">
         <PrimaryButton
           onClick={handleContinue}
-          className="h-14 rounded-2xl bg-primary-900 hover:bg-primary-800"
+          className="h-12 rounded-xl bg-primary-900 hover:bg-primary-800"
         >
           Done
         </PrimaryButton>

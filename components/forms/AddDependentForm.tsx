@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar } from "lucide-react";
 import { TextInput } from "@/components/forms/TextInput";
 import {
   useFamilyStore,
-  selectCanAddMore,
-  selectMaxDependents
+  selectCanAddMore
 } from "@/stores/familyStore";
 import { useAuth } from "@/hooks/useAuth";
 import { addDependent } from "@/lib/services/dependentService";
@@ -32,7 +30,6 @@ export function AddDependentForm() {
   const { user } = useAuth();
   const addToStore = useFamilyStore((state) => state.addDependent);
   const canAddMore = useFamilyStore(selectCanAddMore);
-  const maxDependents = selectMaxDependents();
 
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -127,7 +124,7 @@ export function AddDependentForm() {
     <form onSubmit={handleSubmit} className="flex min-h-screen flex-col bg-white px-6">
       {/* Description */}
       <p className="mt-6 text-base leading-[160%] text-neutral-700">
-        Enter your child's details. They'll share your bundles and appear in your visit history.
+        Enter your child&apos;s details. They&apos;ll share your bundles and appear in your visit history.
       </p>
 
       {/* Form Fields */}
@@ -171,11 +168,11 @@ export function AddDependentForm() {
               className={`h-12 w-full rounded-xl border-[1.5px] ${
                 errors.dateOfBirth
                   ? "border-error-900 focus-visible:border-error-900"
-                  : "border-neutral-300 focus-visible:border-primary-900"
+                  : "border-neutral-400 focus-visible:border-primary-900"
               } px-4 text-base placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-0`}
               placeholder="Select date"
             />
-            <Calendar className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-600" />
+            {/* <Calendar className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-600" /> */}
           </div>
           {!errors.dateOfBirth && (
             <p className="mt-2 text-sm text-neutral-600">Child must be under 18 years old</p>
@@ -233,7 +230,7 @@ export function AddDependentForm() {
         <button
           type="submit"
           disabled={!isFormValid() || isSubmitting}
-          className="h-14 w-full rounded-2xl bg-primary-900 text-base font-semibold text-white transition-colors hover:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-12 w-full rounded-xl bg-primary-900 text-base font-bold border-2 border-neutral-900 text-neutral-900 transition-colors hover:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? "Adding child..." : "Add child"}
         </button>

@@ -98,7 +98,7 @@ export default function DependentProfilePage() {
       <Header title={dependent.name} showBack />
 
       {/* Divider */}
-      <div className="h-px bg-neutral-400" />
+      {/* <div className="h-px bg-neutral-400" /> */}
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto pb-32">
@@ -107,30 +107,30 @@ export default function DependentProfilePage() {
           <div className="rounded-2xl border border-neutral-400 bg-white p-6">
             {/* Avatar */}
             <div className="mb-4 flex justify-center">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-secondary-100">
-                <span className="text-2xl font-bold text-secondary-900">
+              <div className="flex h-18 w-18 items-center justify-center rounded-full bg-secondary-100">
+                <span className="text-lg font-bold text-secondary-900">
                   {initials}
                 </span>
               </div>
             </div>
 
             {/* Name */}
-            <h2 className="mb-1 text-center text-lg font-bold text-neutral-900">
+            <h2 className="mb-1 text-center text-base font-bold text-neutral-900">
               {dependent.name}
             </h2>
 
             {/* Age */}
-            <p className="mb-4 text-center text-sm text-neutral-600">
+            <p className="mb-4 text-center text-sm text-neutral-700">
               {age} {age === 1 ? "year" : "years"} old
             </p>
 
             {/* Divider */}
-            <div className="mb-3 h-px bg-neutral-200" />
+            {/* <div className="mb-3 h-px bg-neutral-300" /> */}
 
             {/* Info Rows */}
-            <div className="space-y-3">
+            <div className="space-y-3 bg-neutral-200 border-t border-neutral-300 p-4">
               {/* Gender */}
-              <div className="flex items-center justify-between py-3">
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-neutral-600">Gender</span>
                 <span className="text-sm text-neutral-900">
                   {dependent.gender === "female" ? "Female" : "Male"}
@@ -138,7 +138,7 @@ export default function DependentProfilePage() {
               </div>
 
               {/* Date of Birth */}
-              <div className="flex items-center justify-between py-3">
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-neutral-600">Date of birth</span>
                 <span className="text-sm text-neutral-900">
                   {formatDate(dependent.dateOfBirth)}
@@ -146,7 +146,7 @@ export default function DependentProfilePage() {
               </div>
 
               {/* Added */}
-              <div className="flex items-center justify-between py-3">
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-neutral-600">Added</span>
                 <span className="text-sm text-neutral-900">
                   {formatRelativeTime(dependent.createdAt)}
@@ -187,7 +187,7 @@ export default function DependentProfilePage() {
                   }`}
                 >
                   {/* Icon Circle */}
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary-100">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary-100">
                     <Building2 className="h-6 w-6 text-primary-900" />
                   </div>
 
@@ -205,7 +205,7 @@ export default function DependentProfilePage() {
             </div>
           ) : (
             /* Empty State */
-            <div className="rounded-2xl border border-dashed border-neutral-400 bg-white p-8">
+            <div className="rounded-2xl border-2 border-dashed border-neutral-400 bg-white p-8">
               <div className="flex flex-col items-center text-center">
                 {/* Calendar Icon */}
                 <div className="mb-4 text-5xl" role="img" aria-label="calendar">
@@ -218,7 +218,7 @@ export default function DependentProfilePage() {
                 </h4>
 
                 {/* Description */}
-                <p className="mb-4 text-sm text-neutral-600">
+                <p className="mb-4 text-base text-neutral-700">
                   Book {dependent.name.split(" ")[0]}&apos;s first appointment
                 </p>
 
@@ -227,7 +227,7 @@ export default function DependentProfilePage() {
                   onClick={() =>
                     router.push(`/visits/book?dependentId=${dependent.id}`)
                   }
-                  className="rounded-xl border border-neutral-900 bg-transparent px-5 py-3 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-100"
+                  className="rounded-xl h-10 border-2 border-neutral-900 bg-primary-100 px-5 text-base font-medium text-neutral-900 transition-colors hover:bg-neutral-100"
                 >
                   Book a Visit
                 </button>
@@ -243,7 +243,7 @@ export default function DependentProfilePage() {
         <div className="mb-3 text-center">
           <button
             onClick={() => setShowRemoveModal(true)}
-            className="text-sm font-medium text-error-900 hover:underline"
+            className="text-base font-bold text-error-900 hover:underline"
           >
             Remove from family
           </button>
@@ -252,7 +252,7 @@ export default function DependentProfilePage() {
         {/* Edit details button */}
         <button
           onClick={() => router.push(`${ROUTES.FAMILY}/${id}/edit`)}
-          className="h-14 w-full rounded-2xl border border-neutral-900 bg-secondary-100 text-base font-semibold text-neutral-900 transition-colors hover:bg-secondary-100/80"
+          className="mb-6 h-12 w-full rounded-xl border-2 border-neutral-900 bg-secondary-100 text-base font-semibold text-neutral-900 transition-colors hover:bg-secondary-100/80"
         >
           Edit details
         </button>

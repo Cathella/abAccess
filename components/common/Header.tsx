@@ -1,11 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Bell } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useUIStore, useAuthStore } from "@/stores";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
@@ -18,25 +15,14 @@ interface HeaderProps {
 export function Header({
   title,
   showBack = false,
-  showNotifications = false,
   className,
 }: HeaderProps) {
   const router = useRouter();
-  const unreadCount = useUIStore((state) => state.unreadCount);
-  const user = useAuthStore((state) => state.user);
-
-  const initials = useMemo(() => {
-    if (!user) return null;
-    const parts = `${user.firstName} ${user.lastName}`.trim().split(/\s+/);
-    const first = parts[0]?.[0] ?? "";
-    const second = parts[1]?.[0] ?? "";
-    return `${first}${second}`.toUpperCase();
-  }, [user]);
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60",
+        "sticky top-0 z-50 w-full border-b border-neutral-900 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60",
         className
       )}
     >

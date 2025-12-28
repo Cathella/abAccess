@@ -94,7 +94,7 @@ export default function FamilyPage() {
           {canAddMore && (
             <button
               onClick={handleAddDependent}
-              className="rounded-xl border-2 border-neutral-900 h-[40px] bg-primary-900 px-4 text-base font-bold text-neutral-900 transition-colors hover:bg-primary-800"
+              className="rounded-xl border-2 border-neutral-900 h-10 bg-primary-900 px-4 text-base font-bold text-neutral-900 transition-colors hover:bg-primary-800"
             >
               Add dependent
             </button>
@@ -102,7 +102,7 @@ export default function FamilyPage() {
         </div>
 
         {/* Dependents List Card */}
-        <div className="mt-4 rounded-2xl border-2 border-neutral-400 bg-white p-4">
+        <div className="mt-4 rounded-2xl border-[1.5px] border-neutral-400 bg-white p-4">
           {dependents.map((dependent, index) => (
             <button
               key={dependent.id}
@@ -112,7 +112,7 @@ export default function FamilyPage() {
               }`}
             >
               {/* Avatar Circle */}
-              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-secondary-100">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-secondary-100">
                 <span className="text-base font-semibold text-neutral-900">
                   {getInitials(dependent.name)}
                 </span>
