@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useFamilyStore } from "@/stores/familyStore";
@@ -24,6 +25,7 @@ const cards = {
 
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { user, logout } = useAuth();
   const { data: dashboardData, loading: dashboardLoading, error: dashboardError, refetch } = useDashboard(user?.id);
   const dependents = useFamilyStore((state) => state.dependents);
@@ -86,8 +88,7 @@ export default function DashboardPage() {
           <WalletCard
             balance={dashboardData.walletBalance}
             onTopUp={() => {
-              // TODO: Implement top up functionality
-              console.log("Top up clicked");
+              router.push("/wallet/top-up");
             }}
             className="mb-4"
           />
@@ -104,7 +105,7 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="flex items-center">
-                <Link href="#" className="text-base font-semibold text-secondary-900 underline">
+                <Link href="/wallet/history" className="text-base font-semibold text-secondary-900 underline">
                   Transaction History
                 </Link>
               </div>
@@ -117,7 +118,10 @@ export default function DashboardPage() {
                 </p>
                 <p className="text-sm font-normal text-neutral-700 leading-none">UGX</p>
               </div>
-              <button className="h-10 rounded-[14px] border-2 border-neutral-900 bg-[#37c189] px-5 text-base font-semibold text-neutral-900 hover:bg-[#2fa678]">
+              <button
+                onClick={() => router.push("/wallet/top-up")}
+                className="h-10 rounded-[14px] border-2 border-neutral-900 bg-[#37c189] px-5 text-base font-semibold text-neutral-900 hover:bg-[#2fa678]"
+              >
                 Top up
               </button>
             </div>
