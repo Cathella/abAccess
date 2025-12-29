@@ -20,7 +20,7 @@ export async function getWalletBalance(
       .from("wallets")
       .select("balance, id")
       .eq("user_id", userId)
-      .single<WalletRow>();
+      .single();
 
     if (error) {
       // If wallet doesn't exist, create one with 0 balance
@@ -29,7 +29,7 @@ export async function getWalletBalance(
           .from("wallets")
           .insert({ user_id: userId, balance: 0 })
           .select("balance, id")
-          .single<WalletRow>();
+          .single();
 
         if (createError) {
           return { balance: 0, transactionCount: 0, error: createError.message };
@@ -221,7 +221,7 @@ export async function getVisitStatistics(
       return { visits: [] };
     }
 
-    const packageIds = userPackages.map((pkg) => pkg.id);
+    const packageIds = userPackages.map((pkg: any) => pkg.id);
 
     // Get visits for these packages within the timeframe
     const { data: visits, error: visitsError } = await supabase
@@ -241,7 +241,7 @@ export async function getVisitStatistics(
     }
 
     // Group visits by date
-    const visitsByDate = (visits || []).reduce((acc, visit) => {
+    const visitsByDate = (visits || []).reduce((acc: Record<string, number>, visit: any) => {
       const date = new Date(visit.visit_date).toISOString().split("T")[0];
       if (!acc[date]) {
         acc[date] = 0;
@@ -250,9 +250,9 @@ export async function getVisitStatistics(
       return acc;
     }, {} as Record<string, number>);
 
-    const visitsArray = Object.entries(visitsByDate).map(([date, count]) => ({
+    const visitsArray = Object.entries(visitsByDate).map(([date, count]): { date: string; count: number } => ({
       date,
-      count,
+      count: count as number,
     }));
 
     return { visits: visitsArray };

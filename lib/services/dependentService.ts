@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 import type { Dependent } from '@/types'
+import type { Database } from '@/types/database'
 import { calculateAge } from '@/lib/utils/dateUtils'
 
 /**

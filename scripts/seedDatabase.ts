@@ -32,7 +32,7 @@ if (!supabaseUrl || !supabaseKey) {
   process.exit(1);
 }
 
-const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+const supabase = createClient<Database>(supabaseUrl, supabaseKey) as any;
 
 /**
  * Format a Ugandan phone number to international format
@@ -74,8 +74,8 @@ async function seedDatabase(phoneNumber: string) {
     let userId: string;
 
     if (existingUser) {
-      console.log(`✅ User found: ${existingUser.name} (ID: ${existingUser.id})`);
-      userId = existingUser.id;
+      console.log(`✅ User found: ${(existingUser as any).name} (ID: ${(existingUser as any).id})`);
+      userId = (existingUser as any).id;
     } else {
       console.log('📝 Creating new user...');
 

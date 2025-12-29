@@ -141,7 +141,7 @@ export async function login(
       .from("users")
       .select("*")
       .eq("phone", formattedPhone)
-      .single<UserRow>();
+      .single();
 
     if (queryError) {
       // User not found
@@ -357,7 +357,7 @@ export async function register(data: {
         nin: nin,
       })
       .select()
-      .single<UserRow>();
+      .single();
 
     if (insertError || !newUser) {
       console.error("Registration error:", insertError);
@@ -434,7 +434,7 @@ export function onAuthStateChange(
 
   const {
     data: { subscription },
-  } = supabase.auth.onAuthStateChange((_event, session) => {
+  } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
     callback(session);
   });
 
