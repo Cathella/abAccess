@@ -89,7 +89,7 @@ export default function MainLayout({
       return;
     }
 
-    const unsubscribe = useAuthStore.persist?.onFinish?.(() => setHasHydrated(true));
+    const unsubscribe = useAuthStore.persist?.onFinishHydration?.(() => setHasHydrated(true));
     return () => {
       unsubscribe?.();
     };
