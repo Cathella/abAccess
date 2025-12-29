@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AuthHeader } from "@/components/common/AuthHeader";
+import { Header } from "@/components/common/Header";
 import { PhoneInput } from "@/components/forms/PhoneInput";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
@@ -89,10 +89,10 @@ export default function RegisterPage() {
     <>
       <div className="flex min-h-screen flex-col bg-white">
         {/* Header */}
-        <AuthHeader backTo={ROUTES.WELCOME} />
+        <Header showBack />
 
         {/* Main content */}
-        <div className="flex-1">
+        <div className="flex-1 px-6">
           {/* Title */}
           <h1 className="mb-2 mt-8 text-2xl font-bold text-neutral-900">
             Create an account

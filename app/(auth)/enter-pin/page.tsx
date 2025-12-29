@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AuthHeader } from "@/components/common/AuthHeader";
+import { Header } from "@/components/common/Header";
 import { SafeArea } from "@/components/common/SafeArea";
 import { PinInput } from "@/components/forms/PinInput";
 import { LoadingOverlay } from "@/components/common/LoadingOverlay";
@@ -79,10 +79,10 @@ export default function EnterPinPage() {
     <>
       <div className="flex min-h-screen flex-col bg-white">
         {/* Header */}
-        <AuthHeader backTo={ROUTES.SIGN_IN} />
+        <Header showBack />
 
         {/* Main content */}
-        <div className="flex-1">
+        <div className="flex-1 px-6">
           {/* Title */}
           <h1 className="mb-2 mt-8 text-2xl font-bold text-neutral-900">
             Enter your PIN

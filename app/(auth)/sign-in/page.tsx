@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AuthHeader } from "@/components/common/AuthHeader";
+import { Header } from "@/components/common/Header";
 import { SafeArea } from "@/components/common/SafeArea";
 import { PhoneInput } from "@/components/forms/PhoneInput";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
@@ -76,12 +76,12 @@ export default function SignInPage() {
     <>
       <div className="flex min-h-screen flex-col bg-white">
         {/* Header */}
-        <AuthHeader backTo={ROUTES.WELCOME} />
+        <Header title="Sign in" showBack />
 
         {/* Main content */}
-        <div className="flex-1">
+        <div className="flex-1 px-6">
           {/* Title */}
-          <h1 className="mb-2 mt-8 text-2xl font-bold text-neutral-900">
+          <h1 className="mb-2 mt-8 text-xl font-bold text-neutral-900">
             Welcome back!
           </h1>
 
@@ -112,12 +112,12 @@ export default function SignInPage() {
         <SafeArea inset="bottom" className="space-y-4 pb-6">
           {/* Create account link */}
           <div className="text-center">
-            <span className="text-sm text-neutral-600">
+            <span className="text-base text-neutral-600">
               Don&apos;t have an account?{" "}
             </span>
             <Link
               href={ROUTES.REGISTER}
-              className="text-sm text-secondary-900 underline"
+              className="text-base text-secondary-900 font-bold underline"
             >
               Create one
             </Link>
