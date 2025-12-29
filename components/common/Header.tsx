@@ -26,7 +26,7 @@ export function Header({
         className
       )}
     >
-      <div className="flex h-16 items-center justify-between px-4">
+      <div className="flex h-16 items-center justify-between">
         {/* Left section */}
         <div className="flex items-center gap-3">
           {showBack && (
@@ -36,12 +36,12 @@ export function Header({
               onClick={() => router.back()}
               className="h-9 w-9"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-12 w-12" />
               <span className="sr-only">Go back</span>
             </Button>
           )}
           {title && (
-            <h1 className="text-lg font-semibold text-neutral-900">{title}</h1>
+            <h1 className="text-base font-semibold text-neutral-900">{title}</h1>
           )}
         </div>
       </div>

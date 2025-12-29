@@ -89,17 +89,17 @@ export default function RegisterPage() {
     <>
       <div className="flex min-h-screen flex-col bg-white">
         {/* Header */}
-        <Header showBack />
+        <Header title="Register" showBack />
 
         {/* Main content */}
-        <div className="flex-1 px-6">
+        <div className="flex-1">
           {/* Title */}
-          <h1 className="mb-2 mt-8 text-2xl font-bold text-neutral-900">
+          <h1 className="mb-2 mt-8 text-xl font-bold text-neutral-900">
             Create an account
           </h1>
 
           {/* Subtitle */}
-          <p className="mb-8 text-base text-neutral-600 leading-[160%]">
+          <p className="mb-8 text-base text-neutral-700 leading-[160%]">
             Enter your mobile number to get started. We&apos;ll send you a verification code.
           </p>
 
@@ -126,7 +126,7 @@ export default function RegisterPage() {
               id="terms"
               checked={termsAccepted}
               onCheckedChange={(checked) => setTermsAccepted(checked === true)}
-              className="mt-0.5 h-5 w-5 rounded border-neutral-400 data-[state=checked]:border-primary-900 data-[state=checked]:bg-primary-900"
+              className="mt-0.5 h-5 w-5 rounded border-2 border-neutral-400 data-[state=checked]:border-primary-900 data-[state=checked]:bg-primary-900"
             />
             <label
               htmlFor="terms"
@@ -161,7 +161,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Bottom section - fixed */}
-        <SafeArea inset="bottom" className="space-y-4 pb-6">
+        <SafeArea inset="bottom" className="space-y-4 mb-6">
           {/* Step Indicator */}
           <StepIndicator totalSteps={4} currentStep={1} />
 
@@ -171,7 +171,7 @@ export default function RegisterPage() {
             disabled={isButtonDisabled}
             className={
               isButtonDisabled
-                ? "rounded-xl bg-neutral-400 hover:bg-neutral-400"
+                ? "rounded-xl bg-primary-900 hover:bg-primary-800 opacity-50"
                 : "rounded-xl bg-primary-900 hover:bg-primary-800"
             }
           >

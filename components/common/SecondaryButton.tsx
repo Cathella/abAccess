@@ -20,7 +20,7 @@ export function SecondaryButton({
   type = "button",
 }: SecondaryButtonProps) {
   const buttonClasses = cn(
-    "h-12 w-full rounded-xl border-2 border-neutral-900 bg-primary-100 text-base font-semibold text-neutral-900 hover:bg-primary-100/80",
+    "h-12 w-full rounded-xl border-[1.5px] border-neutral-900 bg-primary-100 text-base font-bold text-neutral-900 hover:bg-primary-100/80",
     className
   );
 

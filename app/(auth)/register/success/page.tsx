@@ -51,7 +51,7 @@ export default function RegisterSuccessPage() {
         </h1>
 
         {/* Description */}
-        <p className="mb-8 max-w-[320px] text-base text-neutral-600 leading-[160%]">
+        <p className="mb-8 max-w-[320px] text-base text-neutral-700 leading-[160%]">
           Welcome to abAccess. Your Member ID is below - you can also find it anytime in your profile
         </p>
 
@@ -67,7 +67,7 @@ export default function RegisterSuccessPage() {
       </div>
 
       {/* Bottom section - fixed */}
-      <SafeArea inset="bottom" className="px-6 pb-6">
+      <SafeArea inset="bottom" className="mb-6">
         <PrimaryButton
           onClick={handleContinue}
           className="rounded-xl bg-primary-900 hover:bg-primary-800"

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { AuthHeader } from "@/components/common/AuthHeader";
+import { Header } from "@/components/common/Header";
 import { PinInput } from "@/components/forms/PinInput";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
@@ -128,17 +128,17 @@ export default function RegisterPinPage() {
     <>
       <div className="flex min-h-screen flex-col bg-white">
         {/* Header */}
-        <AuthHeader backTo={ROUTES.REGISTER_INFO} />
+        <Header title="Register" showBack />
 
         {/* Main content */}
-        <div className="flex-1 px-6">
+        <div className="flex-1">
           {/* Title */}
-          <h1 className="mb-2 mt-8 text-2xl font-bold text-neutral-900">
+          <h1 className="mb-2 mt-8 text-xl font-bold text-neutral-900">
             Create your PIN
           </h1>
 
           {/* Subtitle */}
-          <p className="mb-8 text-base text-neutral-600 leading-[160%]">
+          <p className="mb-8 text-base text-neutral-700 leading-[160%]">
             Choose a 4-digit PIN to secure your wallet and health data. You&apos;ll use this to approve transactions.
           </p>
 
@@ -163,7 +163,7 @@ export default function RegisterPinPage() {
             />
             <label
               htmlFor="show-pin"
-              className={`text-sm cursor-pointer select-none ${isCreating ? 'text-neutral-400' : 'text-neutral-600'}`}
+              className={`text-base cursor-pointer select-none ${isCreating ? 'text-neutral-400' : 'text-neutral-600'}`}
             >
               Show PIN
             </label>
@@ -171,7 +171,7 @@ export default function RegisterPinPage() {
         </div>
 
         {/* Bottom section - fixed */}
-        <SafeArea inset="bottom" className="space-y-4 px-6 pb-6">
+        <SafeArea inset="bottom" className="space-y-4 mb-6">
           {/* Step Indicator */}
           <StepIndicator totalSteps={4} currentStep={4} />
 
@@ -180,7 +180,7 @@ export default function RegisterPinPage() {
             <button
               onClick={handleGoBack}
               disabled={isCreating}
-              className="text-sm font-semibold text-neutral-900 hover:underline disabled:opacity-50"
+              className="text-base font-semibold text-neutral-900 hover:underline disabled:opacity-50"
             >
               Go Back
             </button>
@@ -192,7 +192,7 @@ export default function RegisterPinPage() {
             disabled={!isPinComplete || isCreating}
             className={
               !isPinComplete || isCreating
-                ? "rounded-xl bg-neutral-400 hover:bg-neutral-400"
+                ? "rounded-xl bg-primary-900 hover:bg-primary-800 opacity-50"
                 : "rounded-xl bg-primary-900 hover:bg-primary-800"
             }
           >

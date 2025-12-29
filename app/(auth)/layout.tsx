@@ -6,11 +6,11 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="h-screen bg-white">
       {/* Safe area container for mobile devices */}
-      <div className="flex min-h-screen flex-col">
+      <div className="flex flex-col">
         {/* Main content - centered vertically and horizontally */}
-        <main className="flex flex-1 items-center justify-center px-4 py-8">
+        <main className="flex flex-1 items-center justify-center px-4">
           <SafeArea className="w-full max-w-md">
             {children}
           </SafeArea>
