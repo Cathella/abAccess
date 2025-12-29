@@ -79,17 +79,17 @@ export default function EnterPinPage() {
     <>
       <div className="flex min-h-screen flex-col bg-white">
         {/* Header */}
-        <Header showBack />
+        <Header title="Sign in" showBack />
 
         {/* Main content */}
-        <div className="flex-1 px-6">
+        <div className="flex-1">
           {/* Title */}
-          <h1 className="mb-2 mt-8 text-2xl font-bold text-neutral-900">
+          <h1 className="mb-2 mt-8 text-xl font-bold text-neutral-900">
             Enter your PIN
           </h1>
 
           {/* Subtitle */}
-          <p className="mb-8 text-base text-neutral-600">
+          <p className="mb-8 text-base text-neutral-700">
             Enter your {PIN_LENGTH}-digit PIN to access your account.
           </p>
 
@@ -133,7 +133,7 @@ export default function EnterPinPage() {
             />
             <label
               htmlFor="show-pin"
-              className={`text-sm cursor-pointer select-none ${isPinLocked ? 'text-neutral-400' : 'text-neutral-600'}`}
+              className={`text-base cursor-pointer select-none ${isPinLocked ? 'text-neutral-400' : 'text-neutral-600'}`}
             >
               Show PIN
             </label>

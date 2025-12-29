@@ -20,7 +20,7 @@ export function PrimaryButton({
   type = "button",
 }: PrimaryButtonProps) {
   const buttonClasses = cn(
-    "h-12 w-full rounded-xl border-2 border-neutral-900 bg-primary-800 text-base font-semibold text-neutral-900 hover:bg-primary-700",
+    "h-12 w-full rounded-xl border-[1.5px] border-neutral-900 bg-primary-800 text-base font-bold text-neutral-900 hover:bg-primary-800",
     className
   );
 

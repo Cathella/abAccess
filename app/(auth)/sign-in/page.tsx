@@ -79,7 +79,7 @@ export default function SignInPage() {
         <Header title="Sign in" showBack />
 
         {/* Main content */}
-        <div className="flex-1 px-6">
+        <div className="flex-1">
           {/* Title */}
           <h1 className="mb-2 mt-8 text-xl font-bold text-neutral-900">
             Welcome back!
@@ -109,10 +109,10 @@ export default function SignInPage() {
         </div>
 
         {/* Bottom section - fixed */}
-        <SafeArea inset="bottom" className="space-y-4 pb-6">
+        <SafeArea inset="bottom" className="space-y-4 mb-6">
           {/* Create account link */}
           <div className="text-center">
-            <span className="text-base text-neutral-600">
+            <span className="text-base text-neutral-700">
               Don&apos;t have an account?{" "}
             </span>
             <Link
@@ -129,7 +129,7 @@ export default function SignInPage() {
             disabled={isButtonDisabled}
             className={
               isButtonDisabled
-                ? "rounded-xl bg-neutral-400 hover:bg-neutral-400"
+                ? "rounded-xl bg-primary-900 hover:bg-primary-800 opacity-50"
                 : "rounded-xl bg-primary-900 hover:bg-primary-800"
             }
           >
