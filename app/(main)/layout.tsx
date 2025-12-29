@@ -25,8 +25,9 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
   },
   [ROUTES.MY_PACKAGES]: {
     title: "My Packages",
-    showBack: true,
-    showNotifications: true,
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
   },
   [ROUTES.VISITS]: {
     title: "Visits",
@@ -134,6 +135,15 @@ export default function MainLayout({
       currentConfig = {
         title: "",
         showBack: true,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/my-packages/') && pathname?.match(/^\/my-packages\/[^/]+$/)) {
+      // Package detail page with custom header
+      currentConfig = {
+        title: "",
+        showBack: false,
         showNotifications: false,
         hideHeader: true,
         hideBottomNav: true,

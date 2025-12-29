@@ -28,6 +28,11 @@ export enum PackageCategory {
   OPTICAL = "optical",
 }
 
+// Package type aliases
+export type PackageStatusType = 'active' | 'completed' | 'expired';
+
+export type PackageCategoryType = 'consultations' | 'lab_tests' | 'pharmacy' | 'dental' | 'optical' | 'maternity';
+
 export enum VisitStatus {
   PENDING = "pending",
   CONFIRMED = "confirmed",
@@ -144,6 +149,52 @@ export interface UserPackage {
   visitsRemaining: number;
   visitsUsed: number;
   status: PackageStatus;
+}
+
+// New Package Management Types
+export interface PackageType {
+  id: string;
+  name: string; // "Consultations", "Lab Tests", "Pharmacy"
+  category: PackageCategoryType;
+  description: string;
+  price: number;
+  visits: number; // Total visits in package
+  validityDays: number; // e.g., 30 days
+  copay: number; // Amount paid at facility per visit
+  facilities: number; // Number of partner facilities
+}
+
+export interface UserPackageType {
+  id: string;
+  userId: string;
+  packageId: string;
+  package: PackageType;
+  purchaseDate: string;
+  expiryDate: string;
+  completedDate?: string; // When all visits used
+  totalVisits: number;
+  usedVisits: number;
+  remainingVisits: number;
+  status: PackageStatusType;
+  usageHistory: PackageUsage[];
+}
+
+export interface PackageUsage {
+  id: string;
+  userPackageId: string;
+  personName: string; // User or dependent name
+  personInitials: string;
+  facilityName: string;
+  visitDate: string;
+  copayPaid: number;
+}
+
+// Helper type for display
+export interface PackageDisplayInfo {
+  isExpiringSoon: boolean; // < 7 days to expiry
+  isLowVisits: boolean; // 1 visit remaining
+  daysUntilExpiry: number;
+  totalCopayPaid: number;
 }
 
 // Visit Types

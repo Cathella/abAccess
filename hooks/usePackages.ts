@@ -3,31 +3,39 @@
 import { usePackageStore } from "@/stores/packageStore";
 
 export function usePackages() {
-  const packages = usePackageStore((state) => state.packages);
+  const availablePackages = usePackageStore((state) => state.availablePackages);
   const userPackages = usePackageStore((state) => state.userPackages);
   const selectedPackage = usePackageStore((state) => state.selectedPackage);
   const isLoading = usePackageStore((state) => state.isLoading);
-  const setPackages = usePackageStore((state) => state.setPackages);
+  const packageFilter = usePackageStore((state) => state.packageFilter);
+  const hasInitialized = usePackageStore((state) => state.hasInitialized);
+  const setAvailablePackages = usePackageStore((state) => state.setAvailablePackages);
   const setUserPackages = usePackageStore((state) => state.setUserPackages);
+  const addUserPackage = usePackageStore((state) => state.addUserPackage);
+  const updateUserPackage = usePackageStore((state) => state.updateUserPackage);
   const selectPackage = usePackageStore((state) => state.selectPackage);
-  const clearSelection = usePackageStore((state) => state.clearSelection);
-  const purchasePackage = usePackageStore((state) => state.purchasePackage);
-  const getActivePackages = usePackageStore((state) => state.getActivePackages);
-  const getExpiredPackages = usePackageStore((state) => state.getExpiredPackages);
-  const getTotalVisitsRemaining = usePackageStore((state) => state.getTotalVisitsRemaining);
+  const setPackageFilter = usePackageStore((state) => state.setPackageFilter);
+  const setLoading = usePackageStore((state) => state.setLoading);
+  const recordUsage = usePackageStore((state) => state.recordUsage);
+  const loadUserPackages = usePackageStore((state) => state.loadUserPackages);
+  const loadMockData = usePackageStore((state) => state.loadMockData);
 
   return {
-    packages,
+    availablePackages,
     userPackages,
     selectedPackage,
     isLoading,
-    setPackages,
+    packageFilter,
+    hasInitialized,
+    setAvailablePackages,
     setUserPackages,
+    addUserPackage,
+    updateUserPackage,
     selectPackage,
-    clearSelection,
-    purchasePackage,
-    getActivePackages,
-    getExpiredPackages,
-    getTotalVisitsRemaining,
+    setPackageFilter,
+    setLoading,
+    recordUsage,
+    loadUserPackages,
+    loadMockData,
   };
 }

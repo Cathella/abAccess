@@ -1,117 +1,155 @@
 import { create } from 'zustand'
-import { immer } from 'zustand/middleware/immer'
-import type { Package, UserPackage } from '@/types'
+import { persist } from 'zustand/middleware'
+import type { PackageType, UserPackageType, PackageUsage, PackageStatusType } from '@/types'
 
 interface PackageState {
-  // State
-  packages: Package[]
-  userPackages: UserPackage[]
-  selectedPackage: Package | null
+  // User's packages
+  userPackages: UserPackageType[]
+
+  // Available packages (for browsing/purchase)
+  availablePackages: PackageType[]
+
+  // Selected package for detail view
+  selectedPackage: UserPackageType | null
+
+  // Filter
+  packageFilter: 'active' | 'completed' | 'expired'
+
+  // Loading
   isLoading: boolean
 
-  // Actions
-  setPackages: (packages: Package[]) => void
-  setUserPackages: (userPackages: UserPackage[]) => void
-  selectPackage: (packageId: string) => void
-  clearSelection: () => void
-  purchasePackage: (userPackage: UserPackage) => void
-  setLoading: (isLoading: boolean) => void
-  updateUserPackage: (packageId: string, updates: Partial<UserPackage>) => void
+  // Has initialized (loaded data at least once)
+  hasInitialized: boolean
 
-  // Computed getters
-  getActivePackages: () => UserPackage[]
-  getExpiredPackages: () => UserPackage[]
-  getTotalVisitsRemaining: () => number
-  getPackageById: (id: string) => Package | undefined
-  getUserPackageById: (id: string) => UserPackage | undefined
+  // Actions
+  setUserPackages: (packages: UserPackageType[]) => void
+  addUserPackage: (pkg: UserPackageType) => void
+  updateUserPackage: (id: string, data: Partial<UserPackageType>) => void
+  setAvailablePackages: (packages: PackageType[]) => void
+  selectPackage: (pkg: UserPackageType | null) => void
+  setPackageFilter: (filter: 'active' | 'completed' | 'expired') => void
+  setLoading: (loading: boolean) => void
+  recordUsage: (packageId: string, usage: PackageUsage) => void
+  loadUserPackages: (userId: string) => Promise<void>
+  loadMockData: () => void
 }
 
 export const usePackageStore = create<PackageState>()(
-  immer((set, get) => ({
-    // Initial state
-    packages: [],
-    userPackages: [],
-    selectedPackage: null,
-    isLoading: false,
+  persist(
+    (set, get) => ({
+      // Initial state
+      userPackages: [],
+      availablePackages: [],
+      selectedPackage: null,
+      packageFilter: 'active',
+      isLoading: false,
+      hasInitialized: false,
 
-    // Actions
-    setPackages: (packages) =>
-      set((state) => {
-        state.packages = packages
-      }),
+      // Actions
+      setUserPackages: (packages) => set({ userPackages: packages }),
 
-    setUserPackages: (userPackages) =>
-      set((state) => {
-        state.userPackages = userPackages
-      }),
+      addUserPackage: (pkg) =>
+        set((state) => ({
+          userPackages: [...state.userPackages, pkg],
+        })),
 
-    selectPackage: (packageId) =>
-      set((state) => {
-        const pkg = state.packages.find(p => p.id === packageId)
-        state.selectedPackage = pkg || null
-      }),
+      updateUserPackage: (id, data) =>
+        set((state) => ({
+          userPackages: state.userPackages.map((pkg) =>
+            pkg.id === id ? { ...pkg, ...data } : pkg
+          ),
+        })),
 
-    clearSelection: () =>
-      set((state) => {
-        state.selectedPackage = null
-      }),
+      setAvailablePackages: (packages) =>
+        set({ availablePackages: packages }),
 
-    purchasePackage: (userPackage) =>
-      set((state) => {
-        state.userPackages.push(userPackage)
-      }),
+      selectPackage: (pkg) => set({ selectedPackage: pkg }),
 
-    setLoading: (isLoading) =>
-      set((state) => {
-        state.isLoading = isLoading
-      }),
+      setPackageFilter: (filter) => set({ packageFilter: filter }),
 
-    updateUserPackage: (packageId, updates) =>
-      set((state) => {
-        const index = state.userPackages.findIndex(p => p.id === packageId)
-        if (index !== -1) {
-          state.userPackages[index] = {
-            ...state.userPackages[index],
-            ...updates
-          }
+      setLoading: (loading) => set({ isLoading: loading }),
+
+      recordUsage: (packageId, usage) =>
+        set((state) => ({
+          userPackages: state.userPackages.map((pkg) => {
+            if (pkg.id === packageId) {
+              const newUsedVisits = pkg.usedVisits + 1
+              const newRemainingVisits = pkg.remainingVisits - 1
+              const newStatus: PackageStatusType =
+                newRemainingVisits === 0 ? 'completed' : pkg.status
+
+              return {
+                ...pkg,
+                usedVisits: newUsedVisits,
+                remainingVisits: newRemainingVisits,
+                status: newStatus,
+                completedDate:
+                  newRemainingVisits === 0 ? new Date().toISOString() : pkg.completedDate,
+                usageHistory: [...pkg.usageHistory, usage],
+              }
+            }
+            return pkg
+          }),
+        })),
+
+      loadUserPackages: async (userId: string) => {
+        const { isLoading, hasInitialized } = get()
+
+        // Skip if already loading or has data
+        if (isLoading || (hasInitialized && get().userPackages.length > 0)) {
+          return
         }
+
+        set({ isLoading: true })
+
+        try {
+          // Import dynamically to avoid circular dependencies
+          const { getUserPackages } = await import('@/lib/packages')
+          const packages = await getUserPackages(userId)
+
+          set({
+            userPackages: packages,
+            hasInitialized: true,
+            isLoading: false
+          })
+        } catch (error) {
+          console.error('Error loading user packages:', error)
+          set({ isLoading: false })
+        }
+      },
+
+      loadMockData: () => {
+        // Import mock data
+        const { mockUserPackages } = require('@/lib/packages/mockData')
+        set({
+          userPackages: mockUserPackages,
+          hasInitialized: true
+        })
+      },
+    }),
+    {
+      name: 'package-storage',
+      partialize: (state) => ({
+        userPackages: state.userPackages,
+        availablePackages: state.availablePackages,
+        hasInitialized: state.hasInitialized,
       }),
-
-    // Computed getters
-    getActivePackages: () => {
-      const { userPackages } = get()
-      return userPackages.filter(
-        (pkg) => pkg.status === 'active' && pkg.visitsRemaining > 0
-      )
-    },
-
-    getExpiredPackages: () => {
-      const { userPackages } = get()
-      const now = new Date().toISOString()
-      return userPackages.filter(
-        (pkg) =>
-          pkg.status === 'expired' ||
-          pkg.status === 'exhausted' ||
-          new Date(pkg.expiryDate) < new Date(now)
-      )
-    },
-
-    getTotalVisitsRemaining: () => {
-      const activePackages = get().getActivePackages()
-      return activePackages.reduce(
-        (total, pkg) => total + pkg.visitsRemaining,
-        0
-      )
-    },
-
-    getPackageById: (id) => {
-      const { packages } = get()
-      return packages.find(pkg => pkg.id === id)
-    },
-
-    getUserPackageById: (id) => {
-      const { userPackages } = get()
-      return userPackages.find(pkg => pkg.id === id)
-    },
-  }))
+    }
+  )
 )
+
+// Computed selectors
+export const useActivePackages = () =>
+  usePackageStore((state) =>
+    state.userPackages.filter((pkg) => pkg.status === 'active')
+  )
+
+export const useCompletedPackages = () =>
+  usePackageStore((state) =>
+    state.userPackages.filter((pkg) => pkg.status === 'completed')
+  )
+
+export const useExpiredPackages = () =>
+  usePackageStore((state) =>
+    state.userPackages.filter((pkg) => pkg.status === 'expired')
+  )
