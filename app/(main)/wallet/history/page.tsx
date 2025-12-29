@@ -118,14 +118,8 @@ export default function TransactionHistoryPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      {/* Header */}
-      <Header title="Transaction History" showBack />
-
-      {/* Divider */}
-      <div className="h-px bg-neutral-400" />
-
       {/* Content */}
-      <div className="flex-1 px-6">
+      <div className="flex-1 px-6 pt-16.25 pb-6 overflow-auto">
         {/* Search Input */}
         <div className="relative mt-4">
           <input
@@ -133,14 +127,14 @@ export default function TransactionHistoryPage() {
             placeholder="Search transactions..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-12 w-full rounded-xl border border-neutral-400 bg-white px-4 pr-12 text-base placeholder:text-neutral-500 focus:border-primary-900 focus:outline-none"
+            className="h-12 w-full rounded-xl border-[1.5px] border-neutral-400 bg-white px-4 pr-12 text-base placeholder:text-neutral-600 focus:border-primary-900 focus:outline-none"
           />
           <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-600" />
         </div>
 
         {/* Filter Row */}
         <div className="mt-4 flex items-center justify-between">
-          <span className="text-sm font-medium text-neutral-900">
+          <span className="text-base font-medium text-neutral-900">
             Transactions Filter
           </span>
 
@@ -148,7 +142,7 @@ export default function TransactionHistoryPage() {
           <div className="relative">
             <button
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-              className="flex items-center gap-2 rounded-lg border border-neutral-400 bg-white px-3 py-2 text-sm text-neutral-900 transition-colors hover:bg-neutral-100"
+              className="flex items-center gap-2 rounded-lg border-[1.5px] border-neutral-400 bg-white px-3 py-2 text-sm text-neutral-900 transition-colors hover:bg-neutral-100"
             >
               {getFilterLabel(filterType)}
               <ChevronDown className="h-4 w-4" />
@@ -198,7 +192,7 @@ export default function TransactionHistoryPage() {
         </div>
 
         {/* Transactions List */}
-        <div className="pb-8">
+        <div className="pb-4">
           {Object.keys(groupedTransactions).length === 0 ? (
             <div className="mt-24 text-center">
               <p className="text-base text-neutral-600">No transactions found</p>
@@ -233,9 +227,9 @@ export default function TransactionHistoryPage() {
                           }`}
                         >
                           {transaction.type === "top_up" ? (
-                            <ArrowDownToLine className="h-6 w-6 text-primary-900" />
+                            <ArrowDownToLine className="h-6 w-6 text-neutral-900" />
                           ) : (
-                            <ShoppingBag className="h-6 w-6 text-error-900" />
+                            <ShoppingBag className="h-6 w-6 text-neutral-900" />
                           )}
                         </div>
 
@@ -251,16 +245,16 @@ export default function TransactionHistoryPage() {
                       </div>
 
                       {/* Divider */}
-                      <div className="my-3 h-px bg-neutral-200" />
+                      <div className="my-3 h-px bg-neutral-400" />
 
                       {/* Bottom Row */}
                       <div className="flex items-center justify-between">
                         {/* Amount Badge */}
                         <div
-                          className={`rounded-lg px-3 py-1.5 text-sm font-semibold ${
+                          className={`rounded-full px-3 py-1.5 text-sm font-semibold ${
                             transaction.type === "top_up"
-                              ? "bg-primary-100 text-primary-900"
-                              : "bg-error-100 text-error-900"
+                              ? "bg-primary-100 text-neutral-900"
+                              : "bg-error-100 text-neutral-900"
                           }`}
                         >
                           {transaction.type === "top_up" ? "+ " : "- "}
@@ -277,6 +271,12 @@ export default function TransactionHistoryPage() {
             )
           )}
         </div>
+      </div>
+
+      {/* Fixed Header at Bottom */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white">
+        <Header title="Transaction History" showBack />
+        <div className="h-px bg-neutral-400" />
       </div>
     </div>
   );

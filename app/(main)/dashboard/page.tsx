@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useFamilyStore } from "@/stores/familyStore";
-import { ChevronDown, ChevronRight, Heart, Hospital, LogOut } from "lucide-react";
+import { ChevronDown, ChevronRight, Heart, Hospital, LogOut, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { transformVisitDataToWeeklyChart } from "@/lib/utils/visitChartData";
 import { UserHeader } from "@/components/common/UserHeader";
@@ -97,8 +97,8 @@ export default function DashboardPage() {
           <div className={cn(cards.panel, "p-5 rounded-[30px] mb-4")}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 text-2xl">
-                  <span role="img" aria-label="wallet">💰</span>
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
+                  <Wallet className="h-6 w-6 text-secondary-900" />
                 </div>
                 <div>
                   <p className="text-base font-normal text-neutral-900">Wallet</p>

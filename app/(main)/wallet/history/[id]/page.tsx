@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowDownToLine, ArrowUpToLine } from "lucide-react";
 import { Header } from "@/components/common/Header";
@@ -10,9 +10,9 @@ import { formatDate } from "@/lib/utils/dateUtils";
 import type { WalletTransaction } from "@/types";
 
 interface TransactionDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function TransactionDetailPage({
@@ -21,8 +21,11 @@ export default function TransactionDetailPage({
   const router = useRouter();
   const transactions = useWalletStore((state) => state.transactions);
 
+  // Unwrap params using React.use()
+  const { id } = use(params);
+
   // Find transaction by ID
-  const transaction = transactions.find((t) => t.id === params.id);
+  const transaction = transactions.find((t) => t.id === id);
 
   // Redirect if transaction not found
   useEffect(() => {
@@ -57,7 +60,8 @@ export default function TransactionDetailPage({
     const body = encodeURIComponent(
       `I would like to report an issue with the following transaction:\n\nTransaction ID: ${transaction.transactionId}\nType: ${transaction.type === "top_up" ? "Top Up" : "Package Purchase"}\nAmount: ${formatCurrency(transaction.amount)}\nDate: ${formattedDate} at ${formattedTime}\n\nIssue description:\n`
     );
-    window.location.href = `mailto:support@abaccess.com?subject=${subject}&body=${body}`;
+    // use assign() to navigate to mailto without assigning a read-only property
+    window.location.assign(`mailto:support@abaccess.com?subject=${subject}&body=${body}`);
   };
 
   const handleViewPackage = () => {
@@ -99,22 +103,22 @@ export default function TransactionDetailPage({
               }`}
             >
               {isTopUp ? (
-                <ArrowDownToLine className="h-8 w-8 text-primary-900" />
+                <ArrowDownToLine className="h-8 w-8 text-neutral-900" />
               ) : (
-                <ArrowUpToLine className="h-8 w-8 text-error-900" />
+                <ArrowUpToLine className="h-8 w-8 text-neutral-900" />
               )}
             </div>
           </div>
 
           {/* Type Label */}
-          <p className="mt-3 text-center text-sm text-neutral-600">
+          <p className="mt-3 text-center text-sm text-neutral-700">
             {isTopUp ? "Top Up" : "Package Purchase"}
           </p>
 
           {/* Amount Badge */}
           <div className="mt-2 flex justify-center">
             <div
-              className={`rounded-lg px-4 py-2 text-base font-semibold ${
+              className={`rounded-full px-4 py-2 text-base font-semibold ${
                 isTopUp
                   ? "bg-primary-100 text-neutral-900"
                   : "bg-error-100 text-neutral-900"
@@ -125,11 +129,8 @@ export default function TransactionDetailPage({
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="my-6 h-px bg-neutral-400" />
-
           {/* Details Grid */}
-          <div className="space-y-4">
+          <div className="space-y-4 mt-6 bg-neutral-200 p-4 border-t border-neutral-400">
             {/* Status */}
             <div className="flex items-center justify-between">
               <span className="text-sm text-neutral-600">Status</span>
@@ -222,7 +223,7 @@ export default function TransactionDetailPage({
             // Top Up: Report an issue button
             <button
               onClick={handleReportIssue}
-              className="h-14 w-full rounded-2xl border border-neutral-900 bg-primary-100 text-base font-medium text-neutral-900 transition-colors hover:bg-primary-200"
+              className="h-12 w-full rounded-xl border-[1.5px] border-neutral-900 bg-primary-100 text-base font-bold text-neutral-900 transition-colors hover:bg-primary-200"
             >
               Report an issue
             </button>

@@ -14,7 +14,7 @@ export default function WelcomePage() {
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {/* Main content - centered */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center text-center">
         {/* Logo */}
         <div className="mb-6 flex flex-col items-center">
           <Image
@@ -39,7 +39,7 @@ export default function WelcomePage() {
       </div>
 
       {/* Action buttons - fixed at bottom */}
-      <SafeArea inset="bottom" className="space-y-2 px-6 pb-8">
+      <SafeArea inset="bottom" className="space-y-2 pb-8">
         {/* Create Account Button */}
         <SecondaryButton href={ROUTES.REGISTER}>
           Create Account
