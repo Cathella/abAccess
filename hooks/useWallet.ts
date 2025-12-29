@@ -3,34 +3,54 @@
 import { useWalletStore } from "@/stores/walletStore";
 
 export function useWallet() {
-  const wallet = useWalletStore((state) => state.wallet);
+  const balance = useWalletStore((state) => state.balance);
   const transactions = useWalletStore((state) => state.transactions);
   const isLoading = useWalletStore((state) => state.isLoading);
-  const topUpAmount = useWalletStore((state) => state.topUpAmount);
-  const setWallet = useWalletStore((state) => state.setWallet);
+  const isProcessing = useWalletStore((state) => state.isProcessing);
+  const topUpData = useWalletStore((state) => state.topUpData);
+  const savedPaymentMethods = useWalletStore((state) => state.savedPaymentMethods);
+  const transactionFilter = useWalletStore((state) => state.transactionFilter);
+
+  const setBalance = useWalletStore((state) => state.setBalance);
+  const addBalance = useWalletStore((state) => state.addBalance);
+  const deductBalance = useWalletStore((state) => state.deductBalance);
   const setTransactions = useWalletStore((state) => state.setTransactions);
-  const setTopUpAmount = useWalletStore((state) => state.setTopUpAmount);
   const addTransaction = useWalletStore((state) => state.addTransaction);
-  const updateBalance = useWalletStore((state) => state.updateBalance);
-  const getRecentTransactions = useWalletStore((state) => state.getRecentTransactions);
-  const getPendingTransactions = useWalletStore((state) => state.getPendingTransactions);
-  const getTotalTopUps = useWalletStore((state) => state.getTotalTopUps);
-  const getTotalPurchases = useWalletStore((state) => state.getTotalPurchases);
+  const setSavedPaymentMethods = useWalletStore((state) => state.setSavedPaymentMethods);
+  const addSavedPaymentMethod = useWalletStore((state) => state.addSavedPaymentMethod);
+  const removeSavedPaymentMethod = useWalletStore((state) => state.removeSavedPaymentMethod);
+  const setDefaultPaymentMethod = useWalletStore((state) => state.setDefaultPaymentMethod);
+  const setTopUpData = useWalletStore((state) => state.setTopUpData);
+  const clearTopUpData = useWalletStore((state) => state.clearTopUpData);
+  const setLoading = useWalletStore((state) => state.setLoading);
+  const setProcessing = useWalletStore((state) => state.setProcessing);
+  const setTransactionFilter = useWalletStore((state) => state.setTransactionFilter);
+  const getFilteredTransactions = useWalletStore((state) => state.getFilteredTransactions);
+  const getDefaultPaymentMethod = useWalletStore((state) => state.getDefaultPaymentMethod);
 
   return {
-    wallet,
-    balance: wallet?.balance || 0,
+    balance,
     transactions,
     isLoading,
-    topUpAmount,
-    setWallet,
+    isProcessing,
+    topUpData,
+    savedPaymentMethods,
+    transactionFilter,
+    setBalance,
+    addBalance,
+    deductBalance,
     setTransactions,
-    setTopUpAmount,
     addTransaction,
-    updateBalance,
-    getRecentTransactions,
-    getPendingTransactions,
-    getTotalTopUps,
-    getTotalPurchases,
+    setSavedPaymentMethods,
+    addSavedPaymentMethod,
+    removeSavedPaymentMethod,
+    setDefaultPaymentMethod,
+    setTopUpData,
+    clearTopUpData,
+    setLoading,
+    setProcessing,
+    setTransactionFilter,
+    getFilteredTransactions,
+    getDefaultPaymentMethod,
   };
 }
