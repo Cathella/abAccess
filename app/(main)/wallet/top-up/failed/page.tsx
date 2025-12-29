@@ -62,27 +62,27 @@ export default function TopUpFailedPage() {
         <div className="mb-6 text-[64px] leading-none">🛑</div>
 
         {/* Title */}
-        <h1 className="mb-3 text-center text-2xl font-bold text-neutral-900">
+        <h1 className="mb-3 text-center text-xl font-bold text-neutral-900">
           Top up failed
         </h1>
 
         {/* Subtitle */}
-        <p className="mb-8 text-center text-base text-neutral-600">
+        <p className="mb-8 text-center text-base text-neutral-700">
           We couldn&apos;t process your payment.
         </p>
 
         {/* Error Card */}
-        <div className="w-full rounded-xl bg-secondary-100 p-4">
+        <div className="w-full rounded-2xl bg-secondary-100 p-4">
           {/* Header */}
           <div className="mb-3 flex items-center gap-2">
-            <Info className="h-4 w-4 text-neutral-900" />
-            <span className="text-sm font-semibold text-neutral-900">
+            <Info className="h-6 w-6 text-neutral-900" />
+            <span className="text-base font-bold text-neutral-900">
               What went wrong
             </span>
           </div>
 
           {/* Divider */}
-          <div className="mb-3 h-px bg-neutral-400" />
+          <div className="mb-3 h-px bg-secondary-900/20" />
 
           {/* Body */}
           <div className="space-y-2">
@@ -103,7 +103,7 @@ export default function TopUpFailedPage() {
         {/* Cancel link */}
         <button
           onClick={handleCancel}
-          className="mb-3 w-full text-center text-sm font-medium text-neutral-900 transition-opacity hover:opacity-70"
+          className="mb-3 w-full text-center text-base font-bold text-neutral-900 transition-opacity hover:opacity-70"
         >
           Cancel
         </button>
@@ -111,7 +111,7 @@ export default function TopUpFailedPage() {
         {/* Use different payment method Button */}
         <button
           onClick={handleDifferentMethod}
-          className="mb-3 h-14 w-full rounded-2xl border border-neutral-900 bg-primary-100 text-base font-medium text-neutral-900 transition-colors hover:bg-primary-200"
+          className="mb-3 h-12 w-full rounded-xl border-[1.5px] border-neutral-900 bg-primary-100 text-base font-bold text-neutral-900 transition-colors hover:bg-primary-200"
         >
           Use different payment method
         </button>
@@ -119,7 +119,7 @@ export default function TopUpFailedPage() {
         {/* Try again Button */}
         <button
           onClick={handleTryAgain}
-          className="h-14 w-full rounded-2xl bg-primary-900 text-base font-medium text-white transition-colors hover:bg-primary-800"
+          className="h-12 w-full rounded-xl bg-primary-900 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"
         >
           Try again
         </button>

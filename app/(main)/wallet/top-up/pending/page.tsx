@@ -105,12 +105,12 @@ export default function TopUpPendingPage() {
         </div>
 
         {/* Title */}
-        <h1 className="mb-3 text-center text-2xl font-bold text-neutral-900">
+        <h1 className="mb-3 text-center text-xl font-bold text-neutral-900">
           Check your phone
         </h1>
 
         {/* Subtitle */}
-        <p className="mb-8 text-center text-base leading-[160%] text-neutral-600">
+        <p className="mb-8 text-center text-base leading-[160%] text-neutral-700">
           We&apos;ve sent a payment request to your {getPaymentProviderName()}{" "}
           number.
         </p>
@@ -119,8 +119,8 @@ export default function TopUpPendingPage() {
         <div className="w-full max-w-md rounded-xl bg-secondary-100 p-4">
           {/* Header */}
           <div className="mb-3 flex items-center gap-2">
-            <Info className="h-4 w-4 text-neutral-900" />
-            <span className="text-sm font-semibold text-neutral-900">
+            <Info className="h-6 w-6 text-neutral-900" />
+            <span className="text-base font-bold text-neutral-900">
               What to do now
             </span>
           </div>
@@ -129,7 +129,7 @@ export default function TopUpPendingPage() {
           <div className="mb-3 h-px bg-secondary-900/20" />
 
           {/* Steps */}
-          <ol className="space-y-2 text-sm leading-[180%] text-neutral-700">
+          <ol className="space-y-2 text-sm leading-[180%] text-neutral-900">
             <li className="flex gap-2">
               <span className="font-medium">1.</span>
               <span>
@@ -150,7 +150,7 @@ export default function TopUpPendingPage() {
 
         {/* Timer */}
         <div className="mt-6 flex flex-col items-center gap-2">
-          <div className="flex items-center gap-2 text-sm text-neutral-600">
+          <div className="flex items-center gap-2 text-sm text-neutral-700">
             <Clock className="h-4 w-4" />
             <span>Waiting for confirmation...</span>
           </div>
@@ -163,14 +163,14 @@ export default function TopUpPendingPage() {
         <button
           onClick={handleResend}
           disabled={isResending}
-          className="mt-6 text-sm font-medium text-neutral-900 transition-opacity hover:opacity-70 disabled:opacity-50"
+          className="mt-6 text-base font-medium text-neutral-900 transition-opacity hover:opacity-70 disabled:opacity-50"
         >
           {isResending ? (
             "Resending..."
           ) : (
             <>
               Didn&apos;t receive prompt?{" "}
-              <span className="text-secondary-900">Resend</span>
+              <span className="text-secondary-900 underline">Resend</span>
             </>
           )}
         </button>
@@ -180,7 +180,7 @@ export default function TopUpPendingPage() {
       <div className="fixed bottom-0 left-0 right-0 bg-white p-6 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
         <button
           onClick={handleCompletePayment}
-          className="h-14 w-full rounded-2xl bg-primary-900 text-base font-medium text-white transition-colors hover:bg-primary-800"
+          className="h-12 w-full rounded-xl bg-primary-900 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"
         >
           I&apos;ve completed payment
         </button>

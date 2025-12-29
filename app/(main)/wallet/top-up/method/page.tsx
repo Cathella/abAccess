@@ -38,67 +38,113 @@ export default function PaymentMethodPage() {
   // Build payment options from saved methods
   const paymentOptions: PaymentOption[] = [];
 
-  // Add saved payment methods
-  savedPaymentMethods.forEach((method) => {
-    if (method.type === "mtn_momo" && method.phoneNumber) {
-      paymentOptions.push({
-        id: method.id,
-        type: "mtn_momo",
-        label: "MTN MoMo",
-        accountInfo: method.phoneNumber,
-        isSaved: true,
-        savedMethod: method,
-      });
-    } else if (method.type === "airtel_money" && method.phoneNumber) {
-      paymentOptions.push({
-        id: method.id,
-        type: "airtel_money",
-        label: "Airtel Money",
-        accountInfo: method.phoneNumber,
-        isSaved: true,
-        savedMethod: method,
-      });
-    } else if (method.type === "card" && method.cardLast4) {
-      paymentOptions.push({
-        id: method.id,
-        type: "card",
-        label: method.cardBrand || "Visa",
-        accountInfo: `•••• ${method.cardLast4}`,
-        isSaved: true,
-        savedMethod: method,
-      });
-    }
-  });
+  // Get the most recent saved method for each type (to avoid duplicates)
+  const getMostRecentMethod = (type: PaymentMethodType) => {
+    return savedPaymentMethods
+      .filter((m) => m.type === type)
+      .sort((a, b) => {
+        // Assuming newer IDs or add a timestamp if available
+        return b.id.localeCompare(a.id);
+      })[0];
+  };
 
-  // If no saved methods, add "Add new" options
-  if (savedPaymentMethods.length === 0) {
-    paymentOptions.push(
-      {
-        id: "new-mtn",
-        type: "mtn_momo",
-        label: "MTN MoMo",
-        accountInfo: "Add new",
-        isSaved: false,
-      },
-      {
-        id: "new-airtel",
-        type: "airtel_money",
-        label: "Airtel Money",
-        accountInfo: "Add new",
-        isSaved: false,
-      },
-      {
-        id: "new-card",
-        type: "card",
-        label: "Card",
-        accountInfo: "Add new",
-        isSaved: false,
-      }
-    );
+  const savedMTN = getMostRecentMethod("mtn_momo");
+  const savedAirtel = getMostRecentMethod("airtel_money");
+  const savedCard = getMostRecentMethod("card");
+
+  // Add saved payment methods (only the most recent for each type)
+  if (savedMTN && savedMTN.phoneNumber) {
+    paymentOptions.push({
+      id: savedMTN.id,
+      type: "mtn_momo",
+      label: "MTN MoMo",
+      accountInfo: savedMTN.phoneNumber,
+      isSaved: true,
+      savedMethod: savedMTN,
+    });
+  }
+
+  if (savedAirtel && savedAirtel.phoneNumber) {
+    paymentOptions.push({
+      id: savedAirtel.id,
+      type: "airtel_money",
+      label: "Airtel Money",
+      accountInfo: savedAirtel.phoneNumber,
+      isSaved: true,
+      savedMethod: savedAirtel,
+    });
+  }
+
+  if (savedCard && savedCard.cardLast4) {
+    paymentOptions.push({
+      id: savedCard.id,
+      type: "card",
+      label: savedCard.cardBrand || "Visa",
+      accountInfo: `•••• ${savedCard.cardLast4}`,
+      isSaved: true,
+      savedMethod: savedCard,
+    });
+  }
+
+  // Always add "Add new" option for each payment type that doesn't have a saved method
+  if (!savedMTN) {
+    paymentOptions.push({
+      id: "new-mtn",
+      type: "mtn_momo",
+      label: "MTN MoMo",
+      accountInfo: "Add new",
+      isSaved: false,
+    });
+  }
+
+  if (!savedAirtel) {
+    paymentOptions.push({
+      id: "new-airtel",
+      type: "airtel_money",
+      label: "Airtel Money",
+      accountInfo: "Add new",
+      isSaved: false,
+    });
+  }
+
+  if (!savedCard) {
+    paymentOptions.push({
+      id: "new-card",
+      type: "card",
+      label: "Card",
+      accountInfo: "Add new",
+      isSaved: false,
+    });
   }
 
   const handleOptionSelect = (option: PaymentOption) => {
     setSelectedOption(option);
+  };
+
+  const handleEditPaymentMethod = (e: React.MouseEvent, type: PaymentMethodType) => {
+    e.stopPropagation(); // Prevent radio button selection
+
+    // Keep the amount, set payment method type, clear other data
+    setTopUpData({
+      amount: topUpData.amount,
+      paymentMethod: type,
+      phoneNumber: undefined,
+      cardDetails: undefined,
+      saveForFuture: false,
+    });
+
+    // Navigate to the appropriate entry page
+    switch (type) {
+      case "mtn_momo":
+        router.push("/wallet/top-up/momo");
+        break;
+      case "airtel_money":
+        router.push("/wallet/top-up/airtel");
+        break;
+      case "card":
+        router.push("/wallet/top-up/card");
+        break;
+    }
   };
 
   const handleContinue = () => {
@@ -168,64 +214,77 @@ export default function PaymentMethodPage() {
 
           {/* Subtitle */}
           <p className="mt-2 mb-6 text-center text-sm text-neutral-600">
-            Choose how you'd like to pay.
+            Choose how you&apos;d like to pay.
           </p>
 
-          {/* Amount Row */}
-          <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
-            <span className="text-sm font-medium text-neutral-600">
-              Pay now
-            </span>
-            <span className="text-base font-semibold text-neutral-900">
-              {topUpData.amount ? formatCurrency(topUpData.amount) : "UGX 0"}
-            </span>
-          </div>
+          <div className="p-4 bg-neutral-200">
+            {/* Amount Row */}
+            <div className="flex items-center justify-between border-b-[1.5px] border-neutral-400 pb-4">
+              <span className="text-base text-neutral-900">
+                Pay now
+              </span>
+              <span className="text-base font-bold text-neutral-900">
+                {topUpData.amount ? formatCurrency(topUpData.amount) : "UGX 0"}
+              </span>
+            </div>
 
-          {/* Payment Method Label */}
-          <div className="mt-4 mb-3">
-            <span className="text-sm font-medium text-neutral-900">
-              Payment method
-            </span>
-          </div>
+            {/* Payment Method Label */}
+            <div className="mt-4 mb-3">
+              <span className="text-base font-bold text-neutral-900">
+                Payment method
+              </span>
+            </div>
 
-          {/* Payment Method Options */}
-          <div>
-            {paymentOptions.map((option, index) => (
-              <div key={option.id}>
-                <button
-                  onClick={() => handleOptionSelect(option)}
-                  className="flex w-full items-center gap-3 py-4 text-left transition-opacity hover:opacity-70"
-                >
-                  {/* Radio Button */}
-                  <div className="flex h-5 w-5 shrink-0 items-center justify-center">
-                    {selectedOption?.id === option.id ? (
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-primary-900">
-                        <div className="h-2.5 w-2.5 rounded-full bg-primary-900" />
-                      </div>
-                    ) : (
-                      <div className="h-5 w-5 rounded-full border-2 border-neutral-400" />
-                    )}
-                  </div>
+            {/* Payment Method Options */}
+            <div>
+              {paymentOptions.map((option, index) => (
+                <div key={option.id}>
+                  <button
+                    onClick={() => handleOptionSelect(option)}
+                    className="flex w-full items-center gap-3 py-4 text-left transition-opacity hover:opacity-70"
+                  >
+                    {/* Radio Button */}
+                    <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                      {selectedOption?.id === option.id ? (
+                        <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-primary-900">
+                          <div className="h-2.5 w-2.5 rounded-full bg-primary-900" />
+                        </div>
+                      ) : (
+                        <div className="h-5 w-5 rounded-full border-2 border-neutral-400" />
+                      )}
+                    </div>
 
-                  {/* Method Name */}
-                  <span className="flex-1 text-base text-neutral-900">
-                    {option.label}
-                  </span>
-
-                  {/* Account Info */}
-                  {option.accountInfo && (
-                    <span className="text-sm text-[#3A8DFF]">
-                      {option.accountInfo}
+                    {/* Method Name */}
+                    <span className="flex-1 text-base text-neutral-900">
+                      {option.label}
                     </span>
-                  )}
-                </button>
 
-                {/* Divider (except last item) */}
-                {index < paymentOptions.length - 1 && (
-                  <div className="h-px bg-neutral-200" />
-                )}
-              </div>
-            ))}
+                    {/* Account Info */}
+                    {option.accountInfo && (
+                      <>
+                        {option.isSaved ? (
+                          <span
+                            onClick={(e) => handleEditPaymentMethod(e, option.type)}
+                            className="text-base font-semibold text-secondary-900 underline cursor-pointer hover:opacity-70 transition-opacity"
+                          >
+                            {option.accountInfo}
+                          </span>
+                        ) : (
+                          <span className="text-base font-semibold text-secondary-900 underline">
+                            {option.accountInfo}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </button>
+
+                  {/* Divider (except last item) */}
+                  {index < paymentOptions.length - 1 && (
+                    <div className="h-px bg-neutral-200" />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -235,7 +294,7 @@ export default function PaymentMethodPage() {
         {/* Go Back Link */}
         <button
           onClick={handleGoBack}
-          className="mb-3 w-full text-center text-sm font-medium text-neutral-900 transition-opacity hover:opacity-70"
+          className="mb-3 w-full text-center text-base font-bold text-neutral-900 transition-opacity hover:opacity-70"
         >
           Go back
         </button>
@@ -244,7 +303,7 @@ export default function PaymentMethodPage() {
         <button
           onClick={handleContinue}
           disabled={!selectedOption}
-          className="h-14 w-full rounded-2xl bg-primary-900 text-base font-medium text-white transition-colors hover:bg-primary-800 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500"
+          className="h-12 w-full rounded-xl bg-primary-900 text-base font-bold border-[1.5px] border-neutral-900 text-neutral-900 transition-colors hover:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Continue
         </button>

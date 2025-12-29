@@ -98,21 +98,21 @@ export default function TopUpConfirmPage() {
       {/* Content */}
       <div className="flex-1 px-6 pt-6">
         {/* Confirmation Card */}
-        <div className="rounded-2xl border border-neutral-400 bg-white p-6">
+        <div className="rounded-2xl border-[1.5px] border-neutral-400 bg-white p-4">
           {/* Title */}
           <h1 className="text-center text-xl font-bold text-neutral-900">
             Confirm top up
           </h1>
 
           {/* Subtitle */}
-          <p className="mt-2 mb-6 text-center text-sm text-neutral-600">
+          <p className="mt-2 mb-6 text-center text-sm text-neutral-700">
             Review your top up details.
           </p>
 
           {/* Details Box */}
-          <div className="rounded-xl bg-neutral-100 p-4">
+          <div className="border-t-[1.5px] border-neutral-400 bg-neutral-200 p-4">
             {/* Amount */}
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between py-1">
               <span className="text-sm text-neutral-600">Amount</span>
               <span className="text-sm text-neutral-900">
                 {formatCurrency(amount)}
@@ -120,7 +120,7 @@ export default function TopUpConfirmPage() {
             </div>
 
             {/* Payment Method */}
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between py-1">
               <span className="text-sm text-neutral-600">Payment method</span>
               <span className="text-sm text-neutral-900">
                 {paymentMethodDisplay.label}
@@ -129,7 +129,7 @@ export default function TopUpConfirmPage() {
 
             {/* Phone/Card Number */}
             {paymentMethodDisplay.accountInfo && (
-              <div className="flex items-center justify-between py-2">
+              <div className="flex items-center justify-between py-1">
                 <span className="text-sm text-neutral-600">
                   {isMobileMoney ? "Phone" : "Card"}
                 </span>
@@ -140,7 +140,7 @@ export default function TopUpConfirmPage() {
             )}
 
             {/* Fee */}
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between py-1">
               <span className="text-sm text-neutral-600">
                 {paymentMethod === "card" ? "Processing fee (2.5%)" : "Fee"}
               </span>
@@ -154,10 +154,10 @@ export default function TopUpConfirmPage() {
 
             {/* Total */}
             <div className="flex items-center justify-between py-2">
-              <span className="text-sm font-semibold text-neutral-900">
+              <span className="text-base font-semibold text-neutral-900">
                 Total to pay
               </span>
-              <span className="text-sm font-semibold text-neutral-900">
+              <span className="text-base font-semibold text-neutral-900">
                 {formatCurrency(totalAmount)}
               </span>
             </div>
@@ -165,17 +165,17 @@ export default function TopUpConfirmPage() {
         </div>
 
         {/* Info Card */}
-        <div className="mt-4 rounded-xl bg-secondary-100 p-4">
+        <div className="rounded-xl bg-secondary-100 p-4 mt-6">
           {/* Header */}
-          <div className="mb-3 flex items-center gap-2">
-            <Info className="h-4 w-4 text-neutral-900" />
-            <span className="text-sm font-semibold text-neutral-900">
+          <div className="mb-3 flex items-center gap-2 pb-3 border-b border-secondary-900/20">
+            <Info className="h-6 w-6 text-neutral-900" />
+            <span className="text-base font-semibold text-neutral-900">
               {isMobileMoney ? "What happens next?" : "Card payments"}
             </span>
           </div>
 
           {/* Body */}
-          <p className="text-sm leading-[160%] text-neutral-700">
+          <p className="text-sm leading-[160%] text-neutral-900">
             {isMobileMoney
               ? "You'll receive a prompt on your phone to confirm the payment with your Mobile Money PIN."
               : "A small processing fee applies to card payments. Mobile money has no fees."}
@@ -188,7 +188,7 @@ export default function TopUpConfirmPage() {
         {/* Cancel Link */}
         <button
           onClick={handleCancel}
-          className="mb-3 w-full text-center text-sm font-medium text-neutral-900 transition-opacity hover:opacity-70"
+          className="mb-3 w-full text-center text-base font-bold text-neutral-900 transition-opacity hover:opacity-70"
         >
           Cancel
         </button>
@@ -196,7 +196,7 @@ export default function TopUpConfirmPage() {
         {/* Pay Button */}
         <button
           onClick={handlePay}
-          className="h-14 w-full rounded-2xl bg-primary-900 text-base font-medium text-white transition-colors hover:bg-primary-800"
+          className="h-12 w-full rounded-xl bg-primary-900 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"
         >
           Pay {formatCurrency(totalAmount)}
         </button>

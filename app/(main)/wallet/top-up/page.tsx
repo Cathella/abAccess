@@ -61,17 +61,17 @@ export default function TopUpAmountPage() {
       {/* Content */}
       <div className="flex flex-1 flex-col items-center px-6 pt-8">
         {/* Title */}
-        <h1 className="text-2xl font-bold text-neutral-900">Enter amount</h1>
+        <h1 className="text-xl font-bold text-neutral-900">Enter amount</h1>
 
         {/* Subtitle */}
-        <p className="mt-2 mb-8 text-center text-base text-neutral-600">
+        <p className="mt-2 mb-8 text-center text-base text-neutral-700">
           How much would you like to add to your wallet?
         </p>
 
         {/* Amount Input Card */}
         <div
           onClick={handleCardClick}
-          className="w-full cursor-text rounded-2xl border border-neutral-400 bg-white p-6"
+          className="w-full cursor-text rounded-2xl border-[1.5px] border-neutral-400 bg-white p-6"
         >
           {/* Hidden input for actual value */}
           <input
@@ -91,7 +91,7 @@ export default function TopUpAmountPage() {
         </div>
 
         {/* Minimum text */}
-        <p className="mt-3 text-sm text-neutral-600">
+        <p className="mt-3 text-sm text-neutral-700">
           Minimum: {formatCurrency(MIN_AMOUNT)}
         </p>
       </div>
@@ -101,7 +101,7 @@ export default function TopUpAmountPage() {
         <button
           onClick={handleContinue}
           disabled={!isValidAmount}
-          className="h-14 w-full rounded-2xl bg-primary-900 text-base font-medium text-white transition-colors hover:bg-primary-800 disabled:bg-neutral-300 disabled:text-neutral-500 disabled:cursor-not-allowed"
+          className="h-12 w-full rounded-xl bg-primary-900 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Continue
         </button>

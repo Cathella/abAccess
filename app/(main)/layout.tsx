@@ -138,6 +138,15 @@ export default function MainLayout({
         hideHeader: true,
         hideBottomNav: true,
       };
+    } else if (pathname?.startsWith('/wallet/top-up')) {
+      // Hide header and bottom nav for all wallet top-up flow pages
+      currentConfig = {
+        title: "",
+        showBack: false,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
     } else if (pathname?.startsWith('/wallet/history/') && pathname?.match(/^\/wallet\/history\/[^/]+$/)) {
       currentConfig = {
         title: "Transaction Details",

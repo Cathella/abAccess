@@ -14,6 +14,7 @@ type FamilyMemberRow = Database["public"]["Tables"]["family_members"]["Row"];
 
 interface DashboardData {
   walletBalance: number;
+  transactionCount: number;
   familyMembersCount: number;
   familyMembers: FamilyMemberRow[];
   packagesCount: number;
@@ -38,6 +39,7 @@ interface UseDashboardReturn {
 export function useDashboard(userId: string | undefined): UseDashboardReturn {
   const [data, setData] = useState<DashboardData>({
     walletBalance: 0,
+    transactionCount: 0,
     familyMembersCount: 0,
     familyMembers: [],
     packagesCount: 0,
@@ -90,6 +92,7 @@ export function useDashboard(userId: string | undefined): UseDashboardReturn {
 
       setData({
         walletBalance: walletResult.balance,
+        transactionCount: walletResult.transactionCount,
         familyMembersCount: familyCountResult.count,
         familyMembers: familyMembersResult.members,
         packagesCount: packagesResult.count,

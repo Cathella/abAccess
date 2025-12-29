@@ -5,6 +5,8 @@ import {
   DialogContent,
   DialogOverlay,
   DialogPortal,
+  DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { SafeArea } from "@/components/common/SafeArea";
 
@@ -39,14 +41,14 @@ export function RemoveDependentModal({
               </div>
 
               {/* Title */}
-              <h2 className="mb-3 text-xl font-bold text-neutral-900">
+              <DialogTitle className="mb-3 text-xl font-bold text-neutral-900">
                 Remove {dependentName} from your family?
-              </h2>
+              </DialogTitle>
 
               {/* Description */}
-              <p className="mb-8 text-base text-neutral-600 leading-[160%]">
+              <DialogDescription className="mb-8 text-base text-neutral-600 leading-[160%]">
                 {dependentName} will no longer appear in your account. Any upcoming visits booked for {dependentName} will be cancelled.
-              </p>
+              </DialogDescription>
 
               {/* Cancel Link */}
               <button

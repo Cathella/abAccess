@@ -82,7 +82,7 @@ export default function EnterPinPage() {
         <AuthHeader backTo={ROUTES.SIGN_IN} />
 
         {/* Main content */}
-        <div className="flex-1 px-6">
+        <div className="flex-1">
           {/* Title */}
           <h1 className="mb-2 mt-8 text-2xl font-bold text-neutral-900">
             Enter your PIN

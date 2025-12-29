@@ -10,8 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Info } from "lucide-react";
 
-// Airtel prefixes
-const AIRTEL_PREFIXES = ["070", "074", "075"];
+// Airtel prefixes (first 2 digits after the leading 0)
+const AIRTEL_PREFIXES = ["70", "74", "75"];
 
 export default function AirtelMoneyPage() {
   const router = useRouter();
@@ -35,19 +35,19 @@ export default function AirtelMoneyPage() {
     // Remove all non-digit characters
     const digits = value.replace(/\D/g, "");
 
-    // Limit to 9 digits (without leading 0)
-    const limitedDigits = digits.substring(0, 9);
+    // Limit to 10 digits (with leading 0)
+    const limitedDigits = digits.substring(0, 10);
 
-    // Format as: XXX XXX XXX
+    // Format as: 0XXX XXX XXX
     let formatted = "";
     if (limitedDigits.length > 0) {
-      formatted += limitedDigits.substring(0, 3);
+      formatted += limitedDigits.substring(0, 4);
     }
-    if (limitedDigits.length > 3) {
-      formatted += " " + limitedDigits.substring(3, 6);
+    if (limitedDigits.length > 4) {
+      formatted += " " + limitedDigits.substring(4, 7);
     }
-    if (limitedDigits.length > 6) {
-      formatted += " " + limitedDigits.substring(6, 9);
+    if (limitedDigits.length > 7) {
+      formatted += " " + limitedDigits.substring(7, 10);
     }
 
     return formatted;
@@ -62,18 +62,19 @@ export default function AirtelMoneyPage() {
   // Validate Airtel number
   const isValidAirtel = (): boolean => {
     const digits = phoneNumber.replace(/\D/g, "");
-    if (digits.length !== 9) return false;
+    if (digits.length !== 10) return false;
+    if (digits[0] !== '0') return false;
 
-    const prefix = digits.substring(0, 3);
+    const prefix = digits.substring(1, 3); // Get first 2 digits after the 0
     return AIRTEL_PREFIXES.includes(prefix);
   };
 
   const handlePay = () => {
     if (!isValidAirtel()) return;
 
-    // Convert to E.164 format
+    // Convert to E.164 format (remove leading 0 and add +256)
     const digits = phoneNumber.replace(/\D/g, "");
-    const e164Phone = `+256${digits}`;
+    const e164Phone = `+256${digits.substring(1)}`; // Remove leading 0
 
     // Store in topUpData
     setTopUpData({
@@ -99,37 +100,34 @@ export default function AirtelMoneyPage() {
       {/* Content */}
       <div className="flex-1 px-6">
         {/* Title */}
-        <h1 className="mt-6 text-2xl font-bold text-neutral-900">
+        <h1 className="mt-6 text-xl font-bold text-neutral-900">
           Enter Airtel Money number
         </h1>
 
         {/* Subtitle */}
-        <p className="mt-2 mb-8 text-base leading-[160%] text-neutral-600">
+        <p className="mt-2 mb-8 text-base leading-[160%] text-neutral-700">
           Enter the Airtel number you want to pay from.
         </p>
 
         {/* Phone Input */}
         <div className="space-y-2">
-          <Label htmlFor="airtel-phone" className="text-sm font-medium text-neutral-900">
+          <Label htmlFor="airtel-phone" className="text-base text-neutral-900">
             Airtel Money number
           </Label>
-          <div className="relative">
-            <div className="pointer-events-none absolute left-4 top-1/2 flex -translate-y-1/2 items-center text-base text-neutral-900">
-              +256
-            </div>
+          <div className="relative mt-2">
             <Input
               id="airtel-phone"
               type="tel"
               inputMode="numeric"
-              placeholder="7XX XXX XXX"
+              placeholder="0700 123 456"
               value={phoneNumber}
               onChange={handlePhoneChange}
-              className="h-12 rounded-xl border-[1.5px] border-neutral-300 pl-16 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="h-12 rounded-xl border-[1.5px] border-neutral-300 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0"
             />
           </div>
           {phoneNumber && !isValid && (
             <p className="text-sm text-warning-900">
-              Please enter a valid Airtel number (070, 074, 075)
+              Please enter a valid Airtel number (0700, 0740, 0750)
             </p>
           )}
         </div>
@@ -143,7 +141,7 @@ export default function AirtelMoneyPage() {
           />
           <label
             htmlFor="save-number"
-            className="text-sm font-medium leading-none text-neutral-900 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="text-base leading-none text-neutral-700 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             Save this number for future payments
           </label>
@@ -152,16 +150,16 @@ export default function AirtelMoneyPage() {
         {/* Info Card */}
         <div className="rounded-xl bg-secondary-100 p-4">
           {/* Header */}
-          <div className="flex items-center gap-2 pb-3 border-b border-secondary-200">
-            <Info className="h-4 w-4 text-neutral-900" />
-            <span className="text-sm font-semibold text-neutral-900">
+          <div className="flex items-center gap-2 pb-3 border-b border-secondary-900/20">
+            <Info className="h-6 w-6 text-neutral-900" />
+            <span className="text-base font-semibold text-neutral-900">
               Payment prompt
             </span>
           </div>
 
           {/* Body */}
-          <p className="mt-3 text-sm leading-[160%] text-neutral-700">
-            You'll receive a payment prompt on this number. Make sure you have
+          <p className="mt-3 text-sm leading-[160%] text-neutral-900">
+            You&apos;ll receive a payment prompt on this number. Make sure you have
             access to it.
           </p>
         </div>
@@ -172,7 +170,7 @@ export default function AirtelMoneyPage() {
         <button
           onClick={handlePay}
           disabled={!isValid}
-          className="h-14 w-full rounded-2xl bg-primary-900 text-base font-medium text-white transition-colors hover:bg-primary-800 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500"
+          className="h-12 w-full rounded-xl bg-primary-900 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Pay {formatCurrency(displayAmount)}
         </button>

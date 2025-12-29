@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/common/Header";
 import { useWalletStore } from "@/stores/walletStore";
@@ -28,12 +28,24 @@ const detectCardBrand = (cardNumber: string): string | null => {
   return null;
 };
 
-// Luhn algorithm validation
-const validateLuhn = (cardNumber: string): boolean => {
+// Card validation (lenient for development)
+const validateCardNumber = (cardNumber: string): boolean => {
   const digits = cardNumber.replace(/\D/g, "");
 
+  // Must be 16 digits
   if (digits.length !== 16) return false;
 
+  // Common test cards that should always pass
+  const testCards = [
+    "4242424242424242", // Stripe test Visa
+    "5555555555554444", // Stripe test Mastercard
+    "4111111111111111", // Generic test Visa
+    "5105105105105100", // Generic test Mastercard
+  ];
+
+  if (testCards.includes(digits)) return true;
+
+  // Luhn algorithm validation for real cards
   let sum = 0;
   let isEven = false;
 
@@ -118,8 +130,6 @@ export default function CardEntryPage() {
   const [name, setName] = useState("");
   const [saveForFuture, setSaveForFuture] = useState(false);
 
-  const [cardBrand, setCardBrand] = useState<string | null>(null);
-
   // Route protection: Require amount and payment method
   useEffect(() => {
     if (!topUpData.amount || topUpData.amount <= 0) {
@@ -129,11 +139,8 @@ export default function CardEntryPage() {
     }
   }, [topUpData.amount, topUpData.paymentMethod, router]);
 
-  // Detect card brand as user types
-  useEffect(() => {
-    const brand = detectCardBrand(cardNumber);
-    setCardBrand(brand);
-  }, [cardNumber]);
+  // Detect card brand as user types (derived value)
+  const cardBrand = useMemo(() => detectCardBrand(cardNumber), [cardNumber]);
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCardNumber(e.target.value);
@@ -156,7 +163,7 @@ export default function CardEntryPage() {
   };
 
   // Validation
-  const isCardNumberValid = validateLuhn(cardNumber);
+  const isCardNumberValid = validateCardNumber(cardNumber);
   const isExpiryValid = validateExpiry(expiry);
   const isCvvValid = cvv.length >= 3 && cvv.length <= 4;
   const isNameValid = name.trim().length >= 2;
@@ -197,18 +204,18 @@ export default function CardEntryPage() {
       {/* Content */}
       <div className="flex-1 px-6">
         {/* Title */}
-        <h1 className="mt-6 text-2xl font-bold text-neutral-900">
+        <h1 className="mt-6 text-xl font-bold text-neutral-900">
           Enter card details
         </h1>
 
         {/* Subtitle */}
-        <p className="mt-2 mb-8 text-base text-neutral-600">
+        <p className="mt-2 mb-8 text-base text-neutral-700">
           Your card information is encrypted and secure.
         </p>
 
         {/* Card Number Input */}
         <div className="mb-5 space-y-2">
-          <Label htmlFor="card-number" className="text-sm font-medium text-neutral-900">
+          <Label htmlFor="card-number" className="text-base text-neutral-900">
             Card number
           </Label>
           <div className="relative">
@@ -219,7 +226,7 @@ export default function CardEntryPage() {
               placeholder="0000 - 0000 - 0000 - 0000"
               value={cardNumber}
               onChange={handleCardNumberChange}
-              className="h-12 rounded-xl border-[1.5px] border-neutral-300 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="h-12 rounded-xl border-[1.5px] mt-2 border-neutral-300 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0"
             />
             {cardBrand && (
               <div className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-medium text-neutral-600">
@@ -236,7 +243,7 @@ export default function CardEntryPage() {
 
         {/* Expiry Date Input */}
         <div className="mb-5 space-y-2">
-          <Label htmlFor="expiry" className="text-sm font-medium text-neutral-900">
+          <Label htmlFor="expiry" className="text-base text-neutral-900">
             Expiry date
           </Label>
           <div className="relative">
@@ -247,7 +254,7 @@ export default function CardEntryPage() {
               placeholder="MM / YY"
               value={expiry}
               onChange={handleExpiryChange}
-              className="h-12 rounded-xl border-[1.5px] border-neutral-300 pr-12 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="h-12 rounded-xl border-[1.5px] border-neutral-300 mt-2 pr-12 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0"
             />
             <Calendar className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500" />
           </div>
@@ -260,7 +267,7 @@ export default function CardEntryPage() {
 
         {/* CVV Input */}
         <div className="mb-5 space-y-2">
-          <Label htmlFor="cvv" className="text-sm font-medium text-neutral-900">
+          <Label htmlFor="cvv" className="text-base text-neutral-900">
             CVV
           </Label>
           <Input
@@ -270,7 +277,7 @@ export default function CardEntryPage() {
             placeholder="000"
             value={cvv}
             onChange={handleCvvChange}
-            className="h-12 rounded-xl border-[1.5px] border-neutral-300 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="h-12 rounded-xl border-[1.5px] mt-2 border-neutral-300 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
           {cvv && !isCvvValid && (
             <p className="text-sm text-warning-900">
@@ -281,7 +288,7 @@ export default function CardEntryPage() {
 
         {/* Name Input */}
         <div className="mb-4 space-y-2">
-          <Label htmlFor="name" className="text-sm font-medium text-neutral-900">
+          <Label htmlFor="name" className="text-base text-neutral-900">
             Name on card
           </Label>
           <Input
@@ -290,7 +297,7 @@ export default function CardEntryPage() {
             placeholder="Catherine Nakitto"
             value={name}
             onChange={handleNameChange}
-            className="h-12 rounded-xl border-[1.5px] border-neutral-300 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="h-12 rounded-xl border-[1.5px] mt-2 border-neutral-300 text-base placeholder:text-neutral-500 focus-visible:border-primary-900 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
           {name && !isNameValid && (
             <p className="text-sm text-warning-900">
@@ -308,7 +315,7 @@ export default function CardEntryPage() {
           />
           <label
             htmlFor="save-card"
-            className="text-sm font-medium leading-none text-neutral-900 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="text-base leading-none text-neutral-900 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
           >
             Save this card for future payments
           </label>
@@ -320,7 +327,7 @@ export default function CardEntryPage() {
         <button
           onClick={handlePay}
           disabled={!isFormValid}
-          className="h-14 w-full rounded-2xl bg-primary-900 text-base font-medium text-white transition-colors hover:bg-primary-800 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-500"
+          className="h-12 w-full rounded-xl bg-primary-900 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Pay {formatCurrency(totalAmount)}
         </button>

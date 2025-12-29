@@ -5,6 +5,8 @@ import {
   DialogContent,
   DialogOverlay,
   DialogPortal,
+  DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 interface LimitReachedModalProps {
@@ -28,14 +30,14 @@ export function LimitReachedModal({ isOpen, onClose }: LimitReachedModalProps) {
             </div>
 
             {/* Title */}
-            <h2 className="mb-3 text-xl font-bold text-neutral-900">
-              You've reached the limit
-            </h2>
+            <DialogTitle className="mb-3 text-xl font-bold text-neutral-900">
+              You&apos;ve reached the limit
+            </DialogTitle>
 
             {/* Description */}
-            <p className="mb-8 text-base text-neutral-600 leading-[160%]">
-              You can add up to 3 children to your account. To add another child, you'll need to remove one first.
-            </p>
+            <DialogDescription className="mb-8 text-base text-neutral-600 leading-[160%]">
+              You can add up to 3 children to your account. To add another child, you&apos;ll need to remove one first.
+            </DialogDescription>
 
             {/* Got it Button */}
             <button

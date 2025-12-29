@@ -92,6 +92,11 @@ export const useWalletStore = create<WalletState>()(
 
       addSavedPaymentMethod: (method) =>
         set((state) => {
+          // Remove any existing payment methods of the same type (to prevent duplicates)
+          state.savedPaymentMethods = state.savedPaymentMethods.filter(
+            (m) => m.type !== method.type
+          )
+
           // If this is set as default, unset all others
           if (method.isDefault) {
             state.savedPaymentMethods.forEach((m) => {

@@ -83,8 +83,8 @@ export default function DashboardPage() {
 
       <div className="space-y-8 px-4 pb-8 pt-24 sm:px-6">
         {/* Wallet */}
-        {dashboardData.walletBalance === 0 ? (
-          // Empty wallet state - using WalletCard component
+        {dashboardData.transactionCount === 0 ? (
+          // Empty wallet state - no transactions yet
           <WalletCard
             balance={dashboardData.walletBalance}
             onTopUp={() => {
@@ -93,7 +93,7 @@ export default function DashboardPage() {
             className="mb-4"
           />
         ) : (
-          // Wallet with balance
+          // Wallet with transactions (even if balance is 0)
           <div className={cn(cards.panel, "p-5 rounded-[30px] mb-4")}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">

@@ -7,17 +7,18 @@ type UserPackageRow = Database["public"]["Tables"]["user_packages"]["Row"];
 type FacilityRow = Database["public"]["Tables"]["facilities"]["Row"];
 
 /**
- * Get user's wallet balance
+ * Get user's wallet balance and transaction count
  */
 export async function getWalletBalance(
   userId: string
-): Promise<{ balance: number; error?: string }> {
+): Promise<{ balance: number; transactionCount: number; error?: string }> {
   try {
     const supabase = createClient();
 
+    // Get wallet
     const { data, error } = await supabase
       .from("wallets")
-      .select("balance")
+      .select("balance, id")
       .eq("user_id", userId)
       .single<WalletRow>();
 
@@ -27,23 +28,34 @@ export async function getWalletBalance(
         const { data: newWallet, error: createError } = await supabase
           .from("wallets")
           .insert({ user_id: userId, balance: 0 })
-          .select("balance")
+          .select("balance, id")
           .single<WalletRow>();
 
         if (createError) {
-          return { balance: 0, error: createError.message };
+          return { balance: 0, transactionCount: 0, error: createError.message };
         }
 
-        return { balance: newWallet?.balance || 0 };
+        return { balance: newWallet?.balance || 0, transactionCount: 0 };
       }
 
-      return { balance: 0, error: error.message };
+      return { balance: 0, transactionCount: 0, error: error.message };
     }
 
-    return { balance: data?.balance || 0 };
+    // Get transaction count
+    const { count, error: countError } = await supabase
+      .from("transactions")
+      .select("*", { count: "exact", head: true })
+      .eq("wallet_id", data.id);
+
+    if (countError) {
+      console.error("Error fetching transaction count:", countError);
+    }
+
+    return { balance: data?.balance || 0, transactionCount: count || 0 };
   } catch (error) {
     return {
       balance: 0,
+      transactionCount: 0,
       error: error instanceof Error ? error.message : "Failed to fetch wallet balance",
     };
   }

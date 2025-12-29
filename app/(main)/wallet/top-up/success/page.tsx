@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useWalletStore } from "@/stores/walletStore";
 import { formatCurrency, generateTransactionId, getPaymentMethodName } from "@/lib/wallet";
@@ -16,6 +16,7 @@ export default function TopUpSuccessPage() {
   const clearTopUpData = useWalletStore((state) => state.clearTopUpData);
 
   const [transaction, setTransaction] = useState<WalletTransaction | null>(null);
+  const preventBackRef = useRef<(() => void) | null>(null);
 
   const amount = topUpData.amount || 0;
   const paymentMethod = topUpData.paymentMethod;
@@ -29,10 +30,14 @@ export default function TopUpSuccessPage() {
       window.history.pushState(null, "", window.location.href);
     };
 
+    preventBackRef.current = preventBack;
+
     window.history.pushState(null, "", window.location.href);
     window.addEventListener("popstate", preventBack);
 
     // Create and add transaction
+    let transactionTimeout: number | undefined;
+
     if (amount > 0 && paymentMethod && !transaction) {
       const newTransaction: WalletTransaction = {
         id: crypto.randomUUID(),
@@ -50,7 +55,11 @@ export default function TopUpSuccessPage() {
       // Add balance and transaction
       addBalance(amount);
       addTransaction(newTransaction);
-      setTransaction(newTransaction);
+
+      // Defer setting local state to avoid synchronous setState inside effect
+      transactionTimeout = window.setTimeout(() => {
+        setTransaction(newTransaction);
+      }, 0);
 
       // Save payment method if user opted in
       if (saveForFuture && paymentMethod) {
@@ -77,17 +86,28 @@ export default function TopUpSuccessPage() {
 
     return () => {
       window.removeEventListener("popstate", preventBack);
+      if (transactionTimeout) {
+        clearTimeout(transactionTimeout);
+      }
     };
   }, [amount, paymentMethod, phoneNumber, cardDetails, saveForFuture, addBalance, addTransaction, addSavedPaymentMethod, transaction]);
 
   const handleDone = () => {
+    // Remove back navigation prevention before navigating
+    if (preventBackRef.current) {
+      window.removeEventListener("popstate", preventBackRef.current);
+    }
     clearTopUpData();
-    router.push("/dashboard");
+    router.replace("/dashboard");
   };
 
   const handleBrowsePackages = () => {
+    // Remove back navigation prevention before navigating
+    if (preventBackRef.current) {
+      window.removeEventListener("popstate", preventBackRef.current);
+    }
     clearTopUpData();
-    router.push("/packages");
+    router.replace("/packages");
   };
 
   if (!transaction) {
@@ -118,12 +138,12 @@ export default function TopUpSuccessPage() {
         <div className="mb-6 text-[64px] leading-none">🎊</div>
 
         {/* Title */}
-        <h1 className="mb-3 text-center text-2xl font-bold text-neutral-900">
+        <h1 className="mb-3 text-center text-xl font-bold text-neutral-900">
           Top up successful!
         </h1>
 
         {/* Subtitle */}
-        <p className="mb-8 text-center text-base text-neutral-600">
+        <p className="mb-8 text-center text-base text-neutral-700">
           {formatCurrency(amount)} has been added to your wallet.
         </p>
 
@@ -134,14 +154,11 @@ export default function TopUpSuccessPage() {
             <div className="text-[32px] font-bold leading-none text-neutral-900">
               UGX. {formatCurrency(balance, false)}
             </div>
-            <p className="mt-1 text-sm text-neutral-600">New balance</p>
+            <p className="mt-1 text-sm text-neutral-700">New balance</p>
           </div>
 
-          {/* Divider */}
-          <div className="my-4 h-px bg-neutral-400" />
-
           {/* Transaction Details */}
-          <div className="space-y-3">
+          <div className="space-y-3 bg-neutral-200 p-4 border-t-[1.5px] border-neutral-400 mt-6">
             {/* Transaction ID */}
             <div className="flex items-center justify-between">
               <span className="text-sm text-neutral-600">Transaction ID</span>
@@ -170,7 +187,7 @@ export default function TopUpSuccessPage() {
         {/* Browse packages link */}
         <button
           onClick={handleBrowsePackages}
-          className="mb-3 w-full text-center text-sm font-medium text-neutral-900 transition-opacity hover:opacity-70"
+          className="mb-3 w-full text-center text-base font-bold text-neutral-900 transition-opacity hover:opacity-70"
         >
           Browse packages
         </button>
@@ -178,7 +195,7 @@ export default function TopUpSuccessPage() {
         {/* Done Button */}
         <button
           onClick={handleDone}
-          className="h-14 w-full rounded-2xl bg-primary-900 text-base font-medium text-white transition-colors hover:bg-primary-800"
+          className="h-12 w-full rounded-xl bg-primary-900 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"
         >
           Done
         </button>

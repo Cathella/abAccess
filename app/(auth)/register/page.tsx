@@ -92,7 +92,7 @@ export default function RegisterPage() {
         <AuthHeader backTo={ROUTES.WELCOME} />
 
         {/* Main content */}
-        <div className="flex-1 px-6">
+        <div className="flex-1">
           {/* Title */}
           <h1 className="mb-2 mt-8 text-2xl font-bold text-neutral-900">
             Create an account
@@ -161,7 +161,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Bottom section - fixed */}
-        <SafeArea inset="bottom" className="space-y-4 px-6 pb-6">
+        <SafeArea inset="bottom" className="space-y-4 pb-6">
           {/* Step Indicator */}
           <StepIndicator totalSteps={4} currentStep={1} />
 
