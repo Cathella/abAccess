@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useFamilyStore } from "@/stores/familyStore";
-import { ChevronDown, ChevronRight, Heart, Hospital, LogOut, Wallet } from "lucide-react";
+import { ChevronDown, ChevronRight, Heart, Hospital, LogOut, Package, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { transformVisitDataToWeeklyChart } from "@/lib/utils/visitChartData";
 import { UserHeader } from "@/components/common/UserHeader";
@@ -16,8 +16,8 @@ import Link from "next/link";
 import { ROUTES } from "@/lib/constants";
 
 const cards = {
-  action: "border-[1.5px] border-neutral-300 rounded-[26px] bg-white",
-  panel: "border-[1.5px] border-neutral-300 rounded-[26px] bg-white",
+  action: "border border-neutral-400 rounded-4xl bg-white",
+  panel: "border border-neutral-400 rounded-xl bg-white",
   pill: "inline-flex items-center gap-2 rounded-full bg-primary-100 px-4 py-2 text-sm font-semibold text-primary-900",
   subtleButton:
     "inline-flex items-center justify-center rounded-full border border-neutral-900 bg-primary-100 px-6 py-2 text-base font-semibold text-neutral-900 hover:bg-primary-100/70",
@@ -31,10 +31,18 @@ export default function DashboardPage() {
   const dependents = useFamilyStore((state) => state.dependents);
   const [selectedDependent, setSelectedDependent] = useState<string>("All");
   const [timeframe, setTimeframe] = useState<"This week" | "This month" | "Last 3 months">("This week");
+  const [showTimeframeDropdown, setShowTimeframeDropdown] = useState(false);
 
   const greeting = useMemo(() => {
     if (!user) return "Good morning";
     return `Good morning, ${user.firstName}`;
+  }, [user]);
+
+  const initials = useMemo(() => {
+    if (!user) return "U";
+    const firstName = user.firstName || "";
+    const lastName = user.lastName || "";
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "U";
   }, [user]);
 
   // Refetch dashboard data when page becomes visible
@@ -68,7 +76,7 @@ export default function DashboardPage() {
   if (!user || dashboardLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-neutral-600">Loading...</p>
+        <p className="text-primary-900">Loading your health data...</p>
       </div>
     );
   }
@@ -79,7 +87,13 @@ export default function DashboardPage() {
 
   return (
     <>
-      <UserHeader greeting={greeting} memberId={user.memberId ? `ID: ${user.memberId}` : "ID: N/A"} />
+      <UserHeader
+        greeting={greeting}
+        memberId={user.memberId ? `ID: ${user.memberId}` : "ID: N/A"}
+        initials={initials}
+        onNotificationsClick={() => router.push(ROUTES.NOTIFICATIONS)}
+        onSettingsClick={() => router.push(ROUTES.PROFILE)}
+      />
 
       <div className="space-y-8 px-4 pb-8 pt-24 sm:px-6">
         {/* Wallet */}
@@ -94,11 +108,11 @@ export default function DashboardPage() {
           />
         ) : (
           // Wallet with transactions (even if balance is 0)
-          <div className={cn(cards.panel, "p-5 rounded-[30px] mb-4")}>
+          <div className={cn(cards.panel, "p-4 rounded-4xl mb-4")}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary-100">
-                  <Wallet className="h-6 w-6 text-secondary-900" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200">
+                  <Wallet className="h-6 w-6 text-neutral-900" />
                 </div>
                 <div>
                   <p className="text-base font-normal text-neutral-900">Wallet</p>
@@ -111,10 +125,13 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-2 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <p className="text-[40px] font-semibold text-neutral-900 tracking-tight leading-none">
-                  {dashboardData.walletBalance.toLocaleString()}
+                <p className="text-[24px] font-bold text-neutral-900 tracking-tight leading-none">
+                  {dashboardData.walletBalance.toLocaleString('en-UG', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
                 </p>
                 <p className="text-sm font-normal text-neutral-700 leading-none">UGX</p>
               </div>
@@ -139,14 +156,13 @@ export default function DashboardPage() {
             />
           ) : (
             <Link href={ROUTES.FAMILY} className={cn(cards.action, "p-4 relative overflow-hidden")}>
-              <div className="flex flex-col items-center gap-3">
-                <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-                  <Heart className="h-6 w-6 text-secondary-900" />
+              <div className="flex flex-col items-center gap-1">
+                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200">
+                  <Heart className="h-6 w-6 text-neutral-900" />
                 </div>
                 <div className="flex w-full items-center justify-between">
-                  <p className="flex items-center gap-1 text-neutral-900">
-                    <span className="text-[20px] font-semibold">{familyMembersCount}</span> 
-                    <span className="text-sm font-normal">Dependents</span>
+                  <p className="font-medium text-sm text-neutral-900">
+                    {familyMembersCount} Dependents
                   </p>
                   <ChevronRight className="h-5 w-5 text-neutral-900" />
                 </div>
@@ -164,13 +180,13 @@ export default function DashboardPage() {
             />
           ) : (
             <Link href="#" className={cn(cards.action, "p-4 relative overflow-hidden")}>
-              <div className="flex flex-col items-center gap-3">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-                  <span role="img" aria-label="packages" className="text-3xl">📦</span>
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200">
+                  <Package className="h-6 w-6 text-neutral-900" />
                 </div>
                 <div className="flex w-full items-center justify-between">
-                  <p className="text-xl font-semibold text-neutral-900">
-                    <span className="text-[20px] font-semibold">{dashboardData.packagesCount}</span> <span className="text-base font-normal">Packages</span>
+                  <p className="text-sm font-medium text-neutral-900">
+                    {dashboardData.packagesCount} Packages
                   </p>
                   <span className="text-2xl text-neutral-900">›</span>
                 </div>
@@ -196,20 +212,20 @@ export default function DashboardPage() {
                     key={`${facility.id}-${idx}`}
                     className={cn(
                       cards.panel,
-                      "min-w-[92%] max-w-[95%] space-y-4 rounded-[26px] border-none p-0"
+                      "min-w-[70%] max-w-[70%] space-y-4 rounded-[26px] border-none p-0"
                     )}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-100 text-2xl">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-neutral-200 text-2xl">
                         <span role="img" aria-label="facility" className="text-2xl">
-                          <Hospital className="h-6 w-6 text-secondary-900" />
+                          <Hospital className="h-6 w-6 text-neutral-900" />
                         </span>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-base text-neutral-900">{facility.name}</p>
-                        <p className="mb-2 text-sm text-neutral-600">{facility.address}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="truncate text-base font-medium text-neutral-900">{facility.name}</p>
+                        <p className="truncate mb-2 text-sm text-neutral-700">{facility.address}</p>
                         {facility.accepts_booking && (
-                            <span className="rounded-full px-3 py-1 text-sm bg-[#d8f1dd] text-neutral-900">
+                            <span className="rounded-full px-3 py-1 text-sm bg-secondary-100 text-neutral-900">
                               Bookings available
                             </span>
                         )}
@@ -217,7 +233,7 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="">
-                      <button className="w-full h-10 rounded-[14px] border-2 border-neutral-900 bg-[#e4eefd] px-4 text-base font-semibold text-neutral-900 hover:bg-[#d6e6fb]">
+                      <button className="w-full h-10 rounded-xl border-[1.5px] border-neutral-900 bg-primary-100 px-4 text-base font-semibold text-neutral-900">
                         Book a Visit
                       </button>
                     </div>
@@ -237,16 +253,54 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-neutral-900">Your visit trends</h2>
             <div className="relative">
-              <select
-                value={timeframe}
-                onChange={(e) => setTimeframe(e.target.value as typeof timeframe)}
-                className="appearance-none rounded-xl border-[1.5px] border-neutral-300 bg-white px-3 pr-8 py-2 text-sm text-neutral-900 focus:outline-none"
+              <button
+                onClick={() => setShowTimeframeDropdown(!showTimeframeDropdown)}
+                className="flex items-center gap-2 rounded-lg border-[1.5px] border-neutral-400 bg-white px-3 py-2 text-sm text-neutral-900 transition-colors hover:bg-neutral-100"
               >
-                <option>This week</option>
-                <option>This month</option>
-                <option>Last 3 months</option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-700" />
+                {timeframe}
+                <ChevronDown className="h-4 w-4" />
+              </button>
+
+              {/* Dropdown Menu */}
+              {showTimeframeDropdown && (
+                <>
+                  {/* Backdrop */}
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setShowTimeframeDropdown(false)}
+                  />
+
+                  {/* Menu */}
+                  <div className="absolute right-0 top-full z-20 mt-2 w-48 rounded-xl border border-neutral-400 bg-white py-2 shadow-lg">
+                    {(["This week", "This month", "Last 3 months"] as const).map(
+                      (option) => (
+                        <button
+                          key={option}
+                          onClick={() => {
+                            setTimeframe(option);
+                            setShowTimeframeDropdown(false);
+                          }}
+                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-neutral-900 transition-colors hover:bg-neutral-100"
+                        >
+                          {/* Radio button */}
+                          <div
+                            className={`h-5 w-5 rounded-full border-2 ${
+                              timeframe === option
+                                ? "border-secondary-900 bg-secondary-900"
+                                : "border-neutral-400 bg-white"
+                            } flex items-center justify-center`}
+                          >
+                            {timeframe === option && (
+                              <div className="h-2 w-2 rounded-full bg-white" />
+                            )}
+                          </div>
+                          {option}
+                        </button>
+                      )
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -257,7 +311,7 @@ export default function DashboardPage() {
                 className={cn(
                   "rounded-full px-2 text-sm h-6 flex items-center justify-center",
                   selectedDependent === "All"
-                    ? "bg-primary-900 text-neutral-900 font-semibold"
+                    ? "bg-primary-700 text-neutral-900 font-semibold"
                     : "bg-neutral-200 text-neutral-700 font-normal border-0"
                 )}
               >
@@ -272,7 +326,7 @@ export default function DashboardPage() {
                     className={cn(
                       "rounded-full px-2 text-sm h-6 flex items-center justify-center",
                       isActive
-                        ? "bg-primary-900 text-neutral-900 font-semibold"
+                        ? "bg-primary-700 text-neutral-900 font-semibold"
                         : "bg-neutral-200 text-neutral-700 font-normal border-0"
                     )}
                   >

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { ChevronLeft, BarChart3, Check, XCircle } from "lucide-react";
+import { BarChart3, Check, XCircle } from "lucide-react";
 import { usePackageStore } from "@/stores/packageStore";
 import { formatPackageDate, getCategoryDisplayName, getPackageDisplayInfo, getVisitsForfeited } from "@/lib/packages";
 import { UsageHistoryCard } from "@/components/packages/UsageHistoryCard";
@@ -38,29 +38,12 @@ export default function PackageDetailPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
-      {/* Header */}
-      <div className="bg-white">
-        <div className="flex items-center gap-3 px-6 py-4">
-          <button
-            onClick={() => router.push("/my-packages")}
-            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-neutral-200 transition-colors"
-            aria-label="Go back"
-          >
-            <ChevronLeft className="h-6 w-6 text-neutral-900" />
-          </button>
-          <h1 className="text-[20px] font-bold text-neutral-900">
-            {pkg.totalVisits} Visits Pack
-          </h1>
-        </div>
-        <div className="h-px bg-neutral-400" />
-      </div>
-
+    <div className="flex flex-col bg-white">
       {/* Content */}
-      <div className="flex-1 px-4 pb-32">
+      <div className="flex-1 px-6 pb-32">
         {/* Expiring Soon Banner */}
         {showExpiringSoon && (
-          <div className="mt-6 rounded-xl bg-error-100 px-4 py-3">
+          <div className="mt-6 rounded-lg bg-error-100 px-4 py-3">
             <p className="text-center text-sm font-semibold text-error-900">
               Expiring soon
             </p>
@@ -69,7 +52,7 @@ export default function PackageDetailPage() {
 
         {/* Low Visits Banner */}
         {showLowVisits && (
-          <div className="mt-6 rounded-xl bg-warning-100 px-4 py-3">
+          <div className="mt-6 rounded-lg bg-warning-100 px-4 py-3">
             <p className="text-center text-sm font-semibold text-neutral-900">
               Only 1 visit left
             </p>
@@ -230,7 +213,7 @@ export default function PackageDetailPage() {
 
       {/* Bottom Fixed Button */}
       {!isCompleted && !isExpired && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white px-4 pb-6 pt-4">
+        <div className="fixed bottom-0 left-0 right-0 bg-white p-4">
           <button
             onClick={() => router.push(`/redeem?packageId=${pkg.id}`)}
             className="w-full rounded-xl bg-primary-900 h-12 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"
@@ -242,7 +225,7 @@ export default function PackageDetailPage() {
 
       {/* Buy Again Button for Completed/Expired Packages */}
       {(isCompleted || isExpired) && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white px-4 pb-6 pt-4">
+        <div className="fixed bottom-0 left-0 right-0 bg-white p-4">
           <button
             onClick={() => router.push(`/packages/${pkg.packageId}/purchase`)}
             className="w-full h-12 rounded-xl bg-primary-900 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"

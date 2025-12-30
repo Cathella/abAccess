@@ -1,10 +1,13 @@
 import Link from "next/link";
+import { Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface UserHeaderProps {
   greeting: string;
   memberId?: string;
+  initials?: string;
   onNotificationsClick?: () => void;
+  onSettingsClick?: () => void;
   className?: string;
 }
 
@@ -15,7 +18,9 @@ interface UserHeaderProps {
 export function UserHeader({
   greeting,
   memberId,
+  initials = "U",
   onNotificationsClick,
+  onSettingsClick,
   className,
 }: UserHeaderProps) {
   return (
@@ -38,13 +43,24 @@ export function UserHeader({
                 </Link>
               )}
             </div>
-            <button
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary-100 text-2xl"
-              aria-label="Notifications"
-              onClick={onNotificationsClick}
-            >
-              <span role="img" aria-label="bell">🔔</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200"
+                aria-label="Notifications"
+                onClick={onNotificationsClick}
+              >
+                <Bell className="h-6 w-6 text-neutral-900" />
+              </button>
+              <button
+                className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200"
+                aria-label="Settings"
+                onClick={onSettingsClick}
+              >
+                <span className="text-base font-bold text-neutral-900">
+                  {initials}
+                </span>
+              </button>
+            </div>
           </div>
           <div className="h-[1.5px] w-full bg-neutral-900" />
         </div>

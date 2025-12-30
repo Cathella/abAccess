@@ -25,6 +25,13 @@ export default function MyPackagesPage() {
     return `Good evening, ${user.firstName}`;
   }, [user]);
 
+  const initials = useMemo(() => {
+    if (!user) return "U";
+    const firstName = user.firstName || "";
+    const lastName = user.lastName || "";
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "U";
+  }, [user]);
+
   // Filter packages based on selected tab
   const filteredPackages = useMemo(() => {
     return userPackages.filter((pkg) => pkg.status === packageFilter);
@@ -43,7 +50,9 @@ export default function MyPackagesPage() {
       <UserHeader
         greeting={greeting}
         memberId={user.memberId ? `ID: ${user.memberId}` : "ID: N/A"}
+        initials={initials}
         onNotificationsClick={() => router.push(ROUTES.NOTIFICATIONS)}
+        onSettingsClick={() => router.push(ROUTES.PROFILE)}
       />
 
       <div className="flex flex-1 flex-col">

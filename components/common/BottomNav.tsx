@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { CalendarCheck, Home, Package, Users } from "lucide-react";
-import { useAuthStore, useUIStore } from "@/stores";
+import { useUIStore } from "@/stores";
 import { cn } from "@/lib/utils";
 
 interface NavTab {
@@ -24,15 +23,6 @@ export function BottomNav() {
   const router = useRouter();
   const pathname = usePathname();
   const { isBottomNavVisible, setActiveTab } = useUIStore();
-  const user = useAuthStore((state) => state.user);
-
-  const initials = useMemo(() => {
-    if (!user) return "NC";
-    const parts = `${user.firstName} ${user.lastName}`.trim().split(/\s+/);
-    const first = parts[0]?.[0] ?? "";
-    const second = parts[1]?.[0] ?? "";
-    return `${first}${second || ""}`.toUpperCase() || "NC";
-  }, [user]);
 
   const activeTabId =
     tabs.find((tab) => pathname?.startsWith(tab.path))?.id || "home";
@@ -42,7 +32,7 @@ export function BottomNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 w-screen bg-transparent">
       <div className="w-screen px-0">
-        <div className="flex items-center justify-between rounded-t-[32px] rounded-b-none border-2 border-neutral-900 bg-white px-4 py-3">
+        <div className="flex items-start justify-between rounded-t-[32px] rounded-b-none border-2 border-neutral-900 bg-white px-4 pb-6 pt-4">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTabId === tab.id;
@@ -71,10 +61,6 @@ export function BottomNav() {
               </button>
             );
           })}
-
-          <div className="ml-2 flex h-12 w-12 items-center justify-center rounded-full bg-[#e8f1ff] text-base font-semibold text-neutral-900">
-            {initials}
-          </div>
         </div>
       </div>
     </nav>

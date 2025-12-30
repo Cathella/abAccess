@@ -144,13 +144,20 @@ export default function MainLayout({
         hideHeader: true,
         hideBottomNav: true,
       };
-    } else if (pathname?.startsWith('/my-packages/') && pathname?.match(/^\/my-packages\/[^/]+$/)) {
-      // Package detail page with custom header
+    } else if (pathname?.startsWith('/my-packages/') && pathname?.includes('/history')) {
+      // Package history page
       currentConfig = {
-        title: "",
-        showBack: false,
+        title: "Usage history",
+        showBack: true,
         showNotifications: false,
-        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/my-packages/') && pathname?.match(/^\/my-packages\/[^/]+$/)) {
+      // Package detail page - need to get dynamic title, for now use generic
+      currentConfig = {
+        title: "Package Details",
+        showBack: true,
+        showNotifications: false,
         hideBottomNav: true,
       };
     } else if (pathname?.startsWith('/wallet/top-up')) {

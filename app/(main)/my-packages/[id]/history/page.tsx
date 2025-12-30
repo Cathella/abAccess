@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
 import { usePackageStore } from "@/stores/packageStore";
 import { formatPackageDate, getCategoryDisplayName } from "@/lib/packages";
 
@@ -35,32 +34,15 @@ export default function PackageHistoryPage() {
   );
 
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-200">
-      {/* Header */}
-      <div className="bg-white">
-        <div className="flex items-center gap-3 px-6 py-4">
-          <button
-            onClick={() => router.push(`/my-packages/${packageId}`)}
-            className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-neutral-200 transition-colors"
-            aria-label="Go back"
-          >
-            <ChevronLeft className="h-6 w-6 text-neutral-900" />
-          </button>
-          <h1 className="text-[20px] font-bold text-neutral-900">
-            Usage History
-          </h1>
-        </div>
-        <div className="h-px bg-neutral-400" />
-      </div>
-
+    <div className="flex min-h-screen flex-col bg-white">
       {/* Content */}
       <div className="flex-1 px-6 py-6">
         {/* Package Summary Card */}
-        <div className="rounded-xl bg-neutral-100 p-4">
-          <h2 className="text-base font-bold text-neutral-900">
+        <div className="">
+          <h2 className="text-xl font-bold text-neutral-900 text-center">
             {getCategoryDisplayName(pkg.package.category)}
           </h2>
-          <p className="mt-1 text-sm text-neutral-600">
+          <p className="flex items-center justify-center mt-1 text-sm text-neutral-700">
             {pkg.totalVisits} visits · {pkg.usedVisits} used · {pkg.remainingVisits} remaining
           </p>
         </div>
@@ -74,10 +56,10 @@ export default function PackageHistoryPage() {
               className="w-full rounded-2xl border border-neutral-400 bg-white p-4 text-left transition-colors hover:bg-neutral-50"
             >
               {/* Avatar + Name + Facility */}
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-3">
                 {/* Avatar */}
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary-100">
-                  <span className="text-sm font-semibold text-secondary-900">
+                  <span className="text-sm font-semibold text-neutral-900">
                     {visit.personInitials}
                   </span>
                 </div>
@@ -87,21 +69,22 @@ export default function PackageHistoryPage() {
                   <h3 className="text-base font-semibold text-neutral-900">
                     {visit.personName}
                   </h3>
-                  <p className="text-sm text-neutral-600">
+                  <p className="text-sm mt-1 text-neutral-700">
                     {visit.facilityName}
                   </p>
                 </div>
               </div>
 
               {/* Divider */}
-              <div className="my-3 h-px bg-neutral-200" />
+              <div className="my-3 h-px bg-neutral-400" />
 
               {/* Visit Details */}
-              <div className="space-y-1">
-                <p className="text-sm text-neutral-600">
+              <div className="flex items-center gap-2 text-sm text-neutral-700">
+                <p className="">
                   Visited on: {formatPackageDate(visit.visitDate)}
                 </p>
-                <p className="text-sm text-neutral-600">
+                <p>·</p>
+                <p className="">
                   Co-paid: UGX {visit.copayPaid.toLocaleString()}
                 </p>
               </div>

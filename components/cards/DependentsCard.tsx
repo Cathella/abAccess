@@ -17,23 +17,23 @@ export function DependentsCard({ onAddDependent, className }: DependentsCardProp
     <button
       onClick={onAddDependent}
       className={cn(
-        "w-full rounded-[24px] border-2 border-dashed border-neutral-400 bg-white p-4",
+        "w-full rounded-4xl border border-dashed border-neutral-400 bg-white p-4",
         "flex flex-col items-center justify-center",
         "transition-colors hover:bg-neutral-50",
         className
       )}
     >
       {/* Icon Circle */}
-      <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-primary-100">
-        <Heart className="h-6 w-6 text-secondary-900" />
+      <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200">
+        <Heart className="h-6 w-6 text-neutral-900" />
       </div>
 
       {/* Action Row */}
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-neutral-900">
-          Add dependent
+        <span className="text-sm font-semibold text-secondary-900">
+          Add dependents
         </span>
-        <ChevronRight className="h-5 w-5 text-neutral-900" />
+        <ChevronRight className="h-5 w-5 text-secondary-900" />
       </div>
     </button>
   );

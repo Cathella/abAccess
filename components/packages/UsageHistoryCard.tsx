@@ -28,11 +28,11 @@ export function UsageHistoryCard({ packageId, usageHistory }: UsageHistoryCardPr
         {/* Visit Row */}
         <button
           onClick={() => router.push(`/visits/${mostRecentVisit.id}`)}
-          className="flex w-full items-start gap-3 text-left transition-colors hover:bg-neutral-50 p-2 -m-2 rounded-xl"
+          className="flex w-full items-end gap-3 text-left transition-colors hover:bg-neutral-50 p-2 -m-2 rounded-xl"
         >
           {/* Avatar */}
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-secondary-100">
-            <span className="text-sm font-semibold text-secondary-900">
+            <span className="text-sm font-semibold text-neutral-900">
               {mostRecentVisit.personInitials}
             </span>
           </div>
@@ -42,20 +42,20 @@ export function UsageHistoryCard({ packageId, usageHistory }: UsageHistoryCardPr
             <h4 className="text-base font-semibold text-neutral-900">
               {mostRecentVisit.personName}
             </h4>
-            <p className="text-sm text-neutral-600">
+            <p className="text-sm text-neutral-700">
               {mostRecentVisit.facilityName}
             </p>
           </div>
 
           {/* Chevron */}
-          <ChevronRight className="h-5 w-5 shrink-0 text-neutral-600" />
+          <ChevronRight className="h-5 w-5 shrink-0 text-neutral-900" />
         </button>
 
         {/* Divider */}
-        <div className="my-3 h-px bg-neutral-200" />
+        <div className="my-3 h-px bg-neutral-400" />
 
         {/* Bottom Info */}
-        <div className="flex items-center gap-1.5 text-sm text-neutral-600">
+        <div className="flex items-center gap-1.5 text-sm text-neutral-700">
           <span>Visited on: {formatPackageDate(mostRecentVisit.visitDate)}</span>
           <span>·</span>
           <span>Co-paid: {mostRecentVisit.copayPaid.toLocaleString()}</span>
@@ -68,10 +68,10 @@ export function UsageHistoryCard({ packageId, usageHistory }: UsageHistoryCardPr
           onClick={() => router.push(`/my-packages/${packageId}/history`)}
           className="mt-3 flex w-full items-center justify-between rounded-xl bg-secondary-100 px-4 py-3.5 transition-colors hover:bg-secondary-200"
         >
-          <span className="text-sm font-medium text-secondary-900">
+          <span className="text-base font-medium text-secondary-900">
             + {usageHistory.length - 1} more {usageHistory.length - 1 === 1 ? 'visit' : 'visits'}
           </span>
-          <ChevronRight className="h-5 w-5 text-secondary-900" />
+          <ChevronRight className="h-5 w-5 text-neutral-900" />
         </button>
       )}
     </div>

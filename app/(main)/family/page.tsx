@@ -28,12 +28,23 @@ export default function FamilyPage() {
     return `Good morning, ${user.firstName}`;
   }, [user]);
 
+  const initials = useMemo(() => {
+    if (!user) return "U";
+    const firstName = user.firstName || "";
+    const lastName = user.lastName || "";
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "U";
+  }, [user]);
+
   const handleAddDependent = () => {
     router.push(ROUTES.FAMILY_ADD);
   };
 
   const handleNotificationsClick = () => {
     router.push(ROUTES.NOTIFICATIONS);
+  };
+
+  const handleSettingsClick = () => {
+    router.push(ROUTES.PROFILE);
   };
 
   const handleDependentClick = (dependentId: string) => {
@@ -47,7 +58,9 @@ export default function FamilyPage() {
         <UserHeader
           greeting={greeting}
           memberId={user?.memberId ? `ID: ${user.memberId}` : "ID: N/A"}
+          initials={initials}
           onNotificationsClick={handleNotificationsClick}
+          onSettingsClick={handleSettingsClick}
         />
 
         <div className="flex min-h-[calc(100vh-80px)] items-center justify-center px-6 pt-24">
@@ -84,7 +97,9 @@ export default function FamilyPage() {
       <UserHeader
         greeting={greeting}
         memberId={user?.memberId ? `ID: ${user.memberId}` : "ID: N/A"}
+        initials={initials}
         onNotificationsClick={handleNotificationsClick}
+        onSettingsClick={handleSettingsClick}
       />
 
       <div className="px-6 pb-8 pt-24">
