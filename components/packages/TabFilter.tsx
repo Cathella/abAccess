@@ -26,10 +26,10 @@ export function TabFilter({ activeTab, onTabChange, counts }: TabFilterProps) {
           <button
             key={tab.value}
             onClick={() => onTabChange(tab.value)}
-            className={`flex-1 rounded-[10px] px-4 py-2.5 text-sm font-medium transition-all ${
+            className={`flex-1 rounded-[10px] px-4 py-2.5 text-sm transition-all ${
               activeTab === tab.value
-                ? "bg-white text-neutral-900 shadow-sm"
-                : "bg-transparent text-neutral-600"
+                ? "bg-white text-neutral-900 font-bold shadow-sm"
+                : "bg-transparent text-neutral-700"
             }`}
           >
             {tab.label}

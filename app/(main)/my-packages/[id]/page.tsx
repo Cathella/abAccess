@@ -38,7 +38,7 @@ export default function PackageDetailPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-200">
+    <div className="flex min-h-screen flex-col bg-white">
       {/* Header */}
       <div className="bg-white">
         <div className="flex items-center gap-3 px-6 py-4">
@@ -57,7 +57,7 @@ export default function PackageDetailPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 px-6 pb-32">
+      <div className="flex-1 px-4 pb-32">
         {/* Expiring Soon Banner */}
         {showExpiringSoon && (
           <div className="mt-6 rounded-xl bg-error-100 px-4 py-3">
@@ -77,14 +77,14 @@ export default function PackageDetailPage() {
         )}
 
         {/* Package Info Card */}
-        <div className={`${showExpiringSoon || showLowVisits ? 'mt-4' : 'mt-6'} rounded-2xl border border-neutral-400 bg-white p-6`}>
+        <div className={`${showExpiringSoon || showLowVisits ? 'mt-4' : 'mt-6'} rounded-2xl border border-neutral-400 bg-white p-4`}>
           {/* Package Name */}
-          <h2 className="mb-2 text-center text-[20px] font-bold text-neutral-900">
+          <h2 className="mb-2 text-center text-xl font-bold text-neutral-900">
             {getCategoryDisplayName(pkg.package.category)}
           </h2>
 
           {/* Dates */}
-          <p className="mb-4 text-center text-sm text-neutral-600">
+          <p className="mb-4 text-center text-sm text-neutral-700">
             Purchased: {formatPackageDate(pkg.purchaseDate)}
             {isCompleted && pkg.completedDate
               ? ` · Completed: ${formatPackageDate(pkg.completedDate)}`
@@ -99,8 +99,8 @@ export default function PackageDetailPage() {
           {/* Status Badge or Visit Badges */}
           {isCompleted ? (
             <div className="flex justify-center">
-              <div className="flex items-center gap-2 rounded-[20px] bg-neutral-200 px-4 py-2">
-                <Check className="h-4 w-4 text-neutral-900" />
+              <div className="flex items-center gap-1 rounded-full bg-primary-100 pl-2 pr-4 py-1">
+                <Check className="h-6 w-6 text-neutral-900" />
                 <span className="text-sm font-medium text-neutral-900">
                   Completed
                 </span>
@@ -108,8 +108,8 @@ export default function PackageDetailPage() {
             </div>
           ) : isExpired ? (
             <div className="flex justify-center">
-              <div className="flex items-center gap-2 rounded-[20px] bg-neutral-200 px-4 py-2">
-                <XCircle className="h-4 w-4 text-neutral-900" />
+              <div className="flex items-center gap-1 rounded-full bg-error-100 pl-2 pr-4 py-1">
+                <XCircle className="h-6 w-6 text-neutral-900" />
                 <span className="text-sm font-medium text-neutral-900">
                   Expired
                 </span>
@@ -117,18 +117,18 @@ export default function PackageDetailPage() {
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
-              <div className="rounded-lg bg-secondary-100 px-3 py-1.5">
-                <span className="text-xs font-medium text-secondary-900">
+              <div className="rounded-full bg-secondary-100 px-3 py-1">
+                <span className="text-sm font-medium text-neutral-900">
                   Visits: {pkg.totalVisits}
                 </span>
               </div>
-              <div className="rounded-lg bg-neutral-200 px-3 py-1.5">
-                <span className="text-xs font-medium text-neutral-900">
+              <div className="rounded-full bg-neutral-200 px-3 py-1">
+                <span className="text-sm font-medium text-neutral-900">
                   Used: {pkg.usedVisits}
                 </span>
               </div>
-              <div className="rounded-lg bg-warning-100 px-3 py-1.5">
-                <span className="text-xs font-medium text-warning-900">
+              <div className="rounded-full bg-warning-100 px-3 py-1">
+                <span className="text-sm font-medium text-neutral-900">
                   Remaining: {pkg.remainingVisits}
                 </span>
               </div>
@@ -139,31 +139,31 @@ export default function PackageDetailPage() {
         {/* Co-pay Card (Reminder for active, Total for completed, Warning for expired) */}
         {isCompleted ? (
           <div className="mt-4 rounded-xl bg-primary-100 p-4">
-            <h3 className="mb-2 text-sm font-semibold text-neutral-900">
+            <h3 className="mb-2 text-base font-bold text-neutral-900">
               Total co-pay paid
             </h3>
-            <div className="mb-2 h-px bg-primary-200" />
-            <p className="text-sm text-neutral-700">
+            <div className="mb-2 h-px bg-primary-900/20" />
+            <p className="text-sm text-neutral-900">
               UGX {displayInfo?.totalCopayPaid.toLocaleString()} ({pkg.usedVisits} visit{pkg.usedVisits !== 1 ? 's' : ''})
             </p>
           </div>
         ) : isExpired ? (
           <div className="mt-4 rounded-xl bg-error-100 p-4">
-            <h3 className="mb-2 text-sm font-semibold text-neutral-900">
+            <h3 className="mb-2 text-base font-bold text-neutral-900">
               This package has expired
             </h3>
-            <div className="mb-2 h-px bg-error-200" />
-            <p className="text-sm text-neutral-700">
+            <div className="mb-2 h-px bg-error-900/20" />
+            <p className="text-sm text-neutral-900">
               {getVisitsForfeited(pkg)} unused visit{getVisitsForfeited(pkg) !== 1 ? 's were' : ' was'} forfeited
             </p>
           </div>
         ) : (
           <div className="mt-4 rounded-xl bg-primary-100 p-4">
-            <h3 className="mb-2 text-sm font-semibold text-neutral-900">
+            <h3 className="mb-2 text-base font-bold text-neutral-900">
               Co-pay reminder
             </h3>
-            <div className="mb-2 h-px bg-primary-200" />
-            <p className="text-sm leading-[160%] text-neutral-700">
+            <div className="mb-2 h-px bg-primary-900/20" />
+            <p className="text-sm leading-[160%] text-neutral-900">
               You&apos;ll pay UGX {pkg.package.copay.toLocaleString()} at the facility
               during each visit.
             </p>
@@ -179,7 +179,7 @@ export default function PackageDetailPage() {
             {pkg.usageHistory.length > 1 && (
               <button
                 onClick={() => router.push(`/my-packages/${pkg.id}/history`)}
-                className="text-sm font-medium text-secondary-900 transition-colors hover:text-secondary-800"
+                className="text-base font-medium text-secondary-900 underline transition-colors hover:text-secondary-800"
               >
                 View all
               </button>
@@ -220,7 +220,7 @@ export default function PackageDetailPage() {
           {showLowVisits && (
             <button
               onClick={() => router.push("/packages")}
-              className="mt-4 w-full text-center text-sm font-medium text-neutral-900 transition-colors hover:text-neutral-700"
+              className="mt-4 w-full text-center text-base font-bold text-neutral-900 transition-colors hover:text-neutral-700"
             >
               Buy another package
             </button>
@@ -230,10 +230,10 @@ export default function PackageDetailPage() {
 
       {/* Bottom Fixed Button */}
       {!isCompleted && !isExpired && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white px-6 pb-8 pt-4">
+        <div className="fixed bottom-0 left-0 right-0 bg-white px-4 pb-6 pt-4">
           <button
             onClick={() => router.push(`/redeem?packageId=${pkg.id}`)}
-            className="w-full rounded-2xl bg-primary-900 py-4 text-base font-medium text-white transition-colors hover:bg-primary-800"
+            className="w-full rounded-xl bg-primary-900 h-12 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"
           >
             Use now
           </button>
@@ -242,10 +242,10 @@ export default function PackageDetailPage() {
 
       {/* Buy Again Button for Completed/Expired Packages */}
       {(isCompleted || isExpired) && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white px-6 pb-8 pt-4">
+        <div className="fixed bottom-0 left-0 right-0 bg-white px-4 pb-6 pt-4">
           <button
             onClick={() => router.push(`/packages/${pkg.packageId}/purchase`)}
-            className="w-full h-14 rounded-2xl bg-primary-900 text-base font-medium text-white transition-colors hover:bg-primary-800"
+            className="w-full h-12 rounded-xl bg-primary-900 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"
           >
             Buy this package again
           </button>

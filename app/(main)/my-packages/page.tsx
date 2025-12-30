@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useEffect } from "react";
+import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { usePackageStore } from "@/stores/packageStore";
@@ -15,16 +15,7 @@ export default function MyPackagesPage() {
   const userPackages = usePackageStore((state) => state.userPackages);
   const packageFilter = usePackageStore((state) => state.packageFilter);
   const setPackageFilter = usePackageStore((state) => state.setPackageFilter);
-  const loadMockData = usePackageStore((state) => state.loadMockData);
-  const hasInitialized = usePackageStore((state) => state.hasInitialized);
   const isLoading = usePackageStore((state) => state.isLoading);
-
-  // Load mock data on mount if not already loaded
-  useEffect(() => {
-    if (!hasInitialized && !isLoading) {
-      loadMockData();
-    }
-  }, [hasInitialized, isLoading, loadMockData]);
 
   const greeting = useMemo(() => {
     if (!user) return "Good morning";
@@ -55,11 +46,11 @@ export default function MyPackagesPage() {
         onNotificationsClick={() => router.push(ROUTES.NOTIFICATIONS)}
       />
 
-      <div className="flex min-h-screen flex-col px-4 pt-24 pb-8">
+      <div className="flex flex-1 flex-col">
         {userPackages.length === 0 ? (
           // Empty State
-          <div className="flex flex-1 flex-col items-center justify-center">
-            <div className="flex max-w-[300px] flex-col items-center text-center">
+          <div className="flex flex-col min-h-[calc(100vh-80px)] items-center justify-center">
+            <div className="flex max-w-75 flex-col items-center text-center">
               {/* Package Icon */}
               <div className="mb-6 flex h-16 w-16 items-center justify-center">
                 <span role="img" aria-label="package" className="text-[64px] leading-none">
@@ -68,7 +59,7 @@ export default function MyPackagesPage() {
               </div>
 
               {/* Title */}
-              <h1 className="mb-3 text-[20px] font-bold text-neutral-900">
+              <h1 className="mb-3 text-xl font-bold text-neutral-900">
                 No packages yet
               </h1>
 
@@ -80,7 +71,7 @@ export default function MyPackagesPage() {
               {/* Browse Packages Button */}
               <button
                 onClick={() => router.push(ROUTES.PACKAGES)}
-                className="rounded-xl border border-neutral-900 bg-transparent px-6 py-3.5 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50"
+                className="rounded-xl border-[1.5px] border-neutral-900 bg-primary-100 px-6 h-10 text-base font-bold text-neutral-900 transition-colors hover:bg-neutral-50"
               >
                 Browse packages
               </button>
@@ -88,13 +79,13 @@ export default function MyPackagesPage() {
           </div>
         ) : (
           // Packages List
-          <div className="flex flex-col">
+          <div className="min-h-[calc(100vh-80px)] px-4 pb-8 pt-24">
             {/* Section Title Row */}
             <div className="flex items-center justify-between">
               <h2 className="text-[20px] font-bold text-neutral-900">My packages</h2>
               <button
                 onClick={() => router.push(ROUTES.PACKAGES)}
-                className="rounded-[20px] bg-primary-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-primary-800"
+                className="rounded-xl bg-primary-900 px-5 h-10 text-base font-semibold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"
               >
                 Add Package
               </button>

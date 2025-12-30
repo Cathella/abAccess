@@ -61,14 +61,14 @@ export default function FamilyPage() {
             </h1>
 
             {/* Description */}
-            <p className="mb-8 max-w-75 text-base text-neutral-600 leading-[160%]">
+            <p className="mb-8 max-w-75 text-base text-neutral-700 leading-[160%]">
               You can add up to 3 dependents to your account. They&apos;ll share your bundles and visit history.
             </p>
 
             {/* Add Button */}
             <button
               onClick={handleAddDependent}
-              className="rounded-xl border-2 h-10 border-neutral-900 bg-primary-100 px-6 text-base font-bold text-neutral-900 transition-colors hover:bg-primary-100/80"
+              className="rounded-xl border-[1.5px] h-10 border-neutral-900 bg-primary-100 px-6 text-base font-bold text-neutral-900 transition-colors hover:bg-primary-100/80"
             >
               Add a dependent
             </button>

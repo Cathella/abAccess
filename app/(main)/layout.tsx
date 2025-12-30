@@ -68,6 +68,11 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
     showBack: true,
     showNotifications: false,
   },
+  "/dev-tools": {
+    title: "Dev Tools",
+    showBack: true,
+    showNotifications: false,
+  },
 };
 
 export default function MainLayout({
@@ -96,12 +101,12 @@ export default function MainLayout({
     };
   }, []);
 
-  // Check authentication
+  // Check authentication (skip for dev-tools)
   useEffect(() => {
-    if (hasHydrated && !user) {
+    if (hasHydrated && !user && pathname !== '/dev-tools') {
       router.push(ROUTES.WELCOME);
     }
-  }, [user, router, hasHydrated]);
+  }, [user, router, hasHydrated, pathname]);
 
   // Fetch and sync dependents when user is authenticated
   useEffect(() => {
@@ -182,12 +187,12 @@ export default function MainLayout({
     }
   }
 
-  // Don't render if not authenticated
+  // Don't render if not authenticated (except for dev-tools)
   if (!hasHydrated) {
     return null;
   }
 
-  if (!user) {
+  if (!user && pathname !== '/dev-tools') {
     return null;
   }
 

@@ -19,6 +19,7 @@ export function usePackages() {
   const recordUsage = usePackageStore((state) => state.recordUsage);
   const loadUserPackages = usePackageStore((state) => state.loadUserPackages);
   const loadMockData = usePackageStore((state) => state.loadMockData);
+  const clearAllData = usePackageStore((state) => state.clearAllData);
 
   return {
     availablePackages,
@@ -37,5 +38,6 @@ export function usePackages() {
     recordUsage,
     loadUserPackages,
     loadMockData,
+    clearAllData,
   };
 }

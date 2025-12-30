@@ -16,7 +16,7 @@ interface NavTab {
 const tabs: NavTab[] = [
   { id: "home", label: "Home", icon: Home, path: "/dashboard" },
   { id: "family", label: "Family", icon: Users, path: "/family" },
-  { id: "packages", label: "Packages", icon: Package, path: "/packages" },
+  { id: "packages", label: "Packages", icon: Package, path: "/my-packages" },
   { id: "visits", label: "Visits", icon: CalendarCheck, path: "/visits" },
 ];
 

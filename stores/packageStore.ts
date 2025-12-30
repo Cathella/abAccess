@@ -32,6 +32,7 @@ interface PackageState {
   recordUsage: (packageId: string, usage: PackageUsage) => void
   loadUserPackages: (userId: string) => Promise<void>
   loadMockData: () => void
+  clearAllData: () => void
 }
 
 export const usePackageStore = create<PackageState>()(
@@ -124,6 +125,16 @@ export const usePackageStore = create<PackageState>()(
         set({
           userPackages: mockUserPackages,
           hasInitialized: true
+        })
+      },
+
+      clearAllData: () => {
+        set({
+          userPackages: [],
+          availablePackages: [],
+          selectedPackage: null,
+          hasInitialized: false,
+          packageFilter: 'active',
         })
       },
     }),
