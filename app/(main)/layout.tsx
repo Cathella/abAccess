@@ -185,6 +185,32 @@ export default function MainLayout({
         hideHeader: true,
         hideBottomNav: true,
       };
+    } else if (pathname?.startsWith('/packages/purchase')) {
+      // Hide header and bottom nav for all package purchase flow pages
+      currentConfig = {
+        title: "",
+        showBack: false,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/packages/') && pathname?.match(/^\/packages\/[^/]+\/[^/]+$/)) {
+      // Package detail page (e.g., /packages/consultations/cons-5)
+      currentConfig = {
+        title: "Package Details",
+        showBack: true,
+        showNotifications: false,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/packages/') && pathname?.match(/^\/packages\/[^/]+$/)) {
+      // Category page (e.g., /packages/consultations)
+      currentConfig = {
+        title: "",
+        showBack: true,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: false,
+      };
     } else {
       currentConfig = {
         title: "ABA Access",

@@ -1,5 +1,7 @@
 // App Constants
 
+import type { CategoryInfo, AvailablePackage, BrowsePackageCategory } from "@/types";
+
 export const APP_NAME = "ABA Access";
 export const APP_VERSION = "1.0.0";
 
@@ -131,3 +133,180 @@ export const ROUTES = {
   FAMILY_DETAIL: (id: string) => `/family/${id}`,
   NOTIFICATIONS: "/notifications",
 } as const;
+
+// Browse Packages Feature Constants
+
+export const PACKAGE_CATEGORIES: CategoryInfo[] = [
+  {
+    id: 'consultations',
+    name: 'Consultations',
+    description: 'GP visits at partner clinics',
+    emoji: '👩‍⚕️',
+  },
+  {
+    id: 'lab_tests',
+    name: 'Lab Tests',
+    description: 'Diagnostics at partner labs',
+    emoji: '🔬',
+  },
+  {
+    id: 'maternal_care',
+    name: 'Maternal Care',
+    description: 'Antenatal visits & scans',
+    emoji: '🤱',
+  },
+  {
+    id: 'child_wellness',
+    name: 'Child Wellness',
+    description: 'Pediatric checkups & vaccinations',
+    emoji: '👶',
+  },
+  {
+    id: 'pharmacy',
+    name: 'Pharmacy',
+    description: 'Medication pickups',
+    emoji: '💊',
+  },
+];
+
+// Mock packages data for each category
+export const AVAILABLE_PACKAGES: Record<BrowsePackageCategory, AvailablePackage[]> = {
+  consultations: [
+    {
+      id: 'cons-3',
+      categoryId: 'consultations',
+      name: '3 Visits Pack',
+      price: 45000,
+      visits: 3,
+      copay: 5000,
+      validityDays: 30,
+      totalValue: 54000,
+      savingsPercent: 12,
+      partnerCount: 24,
+      inclusions: [
+        '3 GP consultations',
+        'Valid at 24 partner clinics',
+        'Shared across your family',
+        'Valid for 30 days from purchase',
+      ],
+    },
+    {
+      id: 'cons-5',
+      categoryId: 'consultations',
+      name: '5 Visits Pack',
+      price: 65000,
+      visits: 5,
+      copay: 5000,
+      validityDays: 30,
+      totalValue: 90000,
+      savingsPercent: 17,
+      partnerCount: 24,
+      isBestValue: true,
+      inclusions: [
+        '5 GP consultations',
+        'Valid at 24 partner clinics',
+        'Shared across your family',
+        'Valid for 30 days from purchase',
+      ],
+    },
+    {
+      id: 'cons-10',
+      categoryId: 'consultations',
+      name: '10 Visits Pack',
+      price: 110000,
+      visits: 10,
+      copay: 5000,
+      validityDays: 30,
+      totalValue: 150000,
+      savingsPercent: 22,
+      partnerCount: 24,
+      inclusions: [
+        '10 GP consultations',
+        'Valid at 24 partner clinics',
+        'Shared across your family',
+        'Valid for 30 days from purchase',
+      ],
+    },
+  ],
+  lab_tests: [
+    {
+      id: 'lab-3',
+      categoryId: 'lab_tests',
+      name: '3 Tests Pack',
+      price: 75000,
+      visits: 3,
+      copay: 10000,
+      validityDays: 30,
+      totalValue: 105000,
+      savingsPercent: 15,
+      partnerCount: 12,
+      inclusions: [
+        '3 lab tests',
+        'Valid at 12 partner labs',
+        'Shared across your family',
+        'Valid for 30 days from purchase',
+      ],
+    },
+  ],
+  maternal_care: [
+    {
+      id: 'mat-4',
+      categoryId: 'maternal_care',
+      name: '4 Visits Pack',
+      price: 120000,
+      visits: 4,
+      copay: 10000,
+      validityDays: 60,
+      totalValue: 160000,
+      savingsPercent: 20,
+      partnerCount: 8,
+      isBestValue: true,
+      inclusions: [
+        '4 antenatal visits',
+        'Valid at 8 partner facilities',
+        'Includes basic scans',
+        'Valid for 60 days from purchase',
+      ],
+    },
+  ],
+  child_wellness: [
+    {
+      id: 'child-3',
+      categoryId: 'child_wellness',
+      name: '3 Visits Pack',
+      price: 55000,
+      visits: 3,
+      copay: 5000,
+      validityDays: 30,
+      totalValue: 70000,
+      savingsPercent: 15,
+      partnerCount: 18,
+      inclusions: [
+        '3 pediatric checkups',
+        'Valid at 18 partner clinics',
+        'For children under 18',
+        'Valid for 30 days from purchase',
+      ],
+    },
+  ],
+  pharmacy: [
+    {
+      id: 'pharm-5',
+      categoryId: 'pharmacy',
+      name: '5 Pickups Pack',
+      price: 25000,
+      visits: 5,
+      copay: 0,
+      validityDays: 30,
+      totalValue: 35000,
+      savingsPercent: 18,
+      partnerCount: 30,
+      inclusions: [
+        '5 medication pickups',
+        'Valid at 30 partner pharmacies',
+        'Shared across your family',
+        'Valid for 30 days from purchase',
+      ],
+    },
+  ],
+};

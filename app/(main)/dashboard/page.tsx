@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useFamilyStore } from "@/stores/familyStore";
-import { ChevronDown, ChevronRight, Heart, Hospital, LogOut, Package, Wallet } from "lucide-react";
+import { ChevronDown, ChevronRight, Heart, Hospital, LogOut, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { transformVisitDataToWeeklyChart } from "@/lib/utils/visitChartData";
 import { UserHeader } from "@/components/common/UserHeader";
@@ -32,11 +32,6 @@ export default function DashboardPage() {
   const [selectedDependent, setSelectedDependent] = useState<string>("All");
   const [timeframe, setTimeframe] = useState<"This week" | "This month" | "Last 3 months">("This week");
   const [showTimeframeDropdown, setShowTimeframeDropdown] = useState(false);
-
-  const greeting = useMemo(() => {
-    if (!user) return "Good morning";
-    return `Good morning, ${user.firstName}`;
-  }, [user]);
 
   const initials = useMemo(() => {
     if (!user) return "U";
@@ -88,7 +83,7 @@ export default function DashboardPage() {
   return (
     <>
       <UserHeader
-        greeting={greeting}
+        firstName={user.firstName}
         memberId={user.memberId ? `ID: ${user.memberId}` : "ID: N/A"}
         initials={initials}
         onNotificationsClick={() => router.push(ROUTES.NOTIFICATIONS)}
@@ -171,28 +166,7 @@ export default function DashboardPage() {
           )}
 
           {/* Packages Card */}
-          {dashboardData.packagesCount === 0 ? (
-            <PackagesCard
-              onBrowsePackages={() => {
-                // TODO: Navigate to packages page
-                console.log("Browse packages clicked");
-              }}
-            />
-          ) : (
-            <Link href="#" className={cn(cards.action, "p-4 relative overflow-hidden")}>
-              <div className="flex flex-col items-center gap-1">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200">
-                  <Package className="h-6 w-6 text-neutral-900" />
-                </div>
-                <div className="flex w-full items-center justify-between">
-                  <p className="text-sm font-medium text-neutral-900">
-                    {dashboardData.packagesCount} Packages
-                  </p>
-                  <span className="text-2xl text-neutral-900">›</span>
-                </div>
-              </div>
-            </Link>
-          )}
+          <PackagesCard />
         </div>
 
         {/* Partners */}
@@ -304,7 +278,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className={cn(cards.panel, "p-4 space-y-4 bg-neutral-100")}>
+          <div className={cn(cards.panel, "p-4 space-y-4 bg-neutral-100 rounded-4xl")}>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedDependent("All")}
@@ -327,7 +301,7 @@ export default function DashboardPage() {
                       "rounded-full px-2 text-sm h-6 flex items-center justify-center",
                       isActive
                         ? "bg-primary-700 text-neutral-900 font-semibold"
-                        : "bg-neutral-200 text-neutral-700 font-normal border-0"
+                        : "bg-neutral-200 text-neutral-700 font-normal border border-neutral-400"
                     )}
                   >
                     {dependent.name}
@@ -342,7 +316,7 @@ export default function DashboardPage() {
                 const heightPct = Math.min(visit.value, maxVisits) / maxVisits * 100;
                 return (
                   <div key={`${visit.label}-${idx}`} className="flex flex-1 flex-col items-center gap-2">
-                    <div className="flex h-24 w-full items-end rounded-2xl bg-secondary-100/40 p-1">
+                    <div className="flex h-40 w-full items-end rounded-2xl bg-secondary-100 p-1">
                       <div
                         className="w-full rounded-xl bg-secondary-900"
                         style={{ height: `${heightPct}%` }}
@@ -369,7 +343,7 @@ export default function DashboardPage() {
         <section className="pb-4">
           <button
             onClick={logout}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border-[1.5px] border-neutral-300 bg-white px-6 py-3 text-base font-semibold text-neutral-900 transition-colors hover:bg-neutral-100"
+            className="flex w-full items-center justify-center gap-2 rounded-xl h-12 border border-neutral-400 bg-white text-base font-semibold text-neutral-900 transition-colors hover:bg-neutral-100"
           >
             <LogOut className="h-5 w-5" />
             Sign Out

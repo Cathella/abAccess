@@ -17,14 +17,6 @@ export default function MyPackagesPage() {
   const setPackageFilter = usePackageStore((state) => state.setPackageFilter);
   const isLoading = usePackageStore((state) => state.isLoading);
 
-  const greeting = useMemo(() => {
-    if (!user) return "Good morning";
-    const hour = new Date().getHours();
-    if (hour < 12) return `Good morning, ${user.firstName}`;
-    if (hour < 18) return `Good afternoon, ${user.firstName}`;
-    return `Good evening, ${user.firstName}`;
-  }, [user]);
-
   const initials = useMemo(() => {
     if (!user) return "U";
     const firstName = user.firstName || "";
@@ -48,7 +40,7 @@ export default function MyPackagesPage() {
   return (
     <>
       <UserHeader
-        greeting={greeting}
+        firstName={user.firstName}
         memberId={user.memberId ? `ID: ${user.memberId}` : "ID: N/A"}
         initials={initials}
         onNotificationsClick={() => router.push(ROUTES.NOTIFICATIONS)}

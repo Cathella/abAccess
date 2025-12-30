@@ -353,3 +353,48 @@ export interface TopUpData {
   };
   saveForFuture: boolean;
 }
+
+// Browse Packages Feature Types
+
+// Package Categories for browsing
+export type BrowsePackageCategory =
+  | 'consultations'
+  | 'lab_tests'
+  | 'maternal_care'
+  | 'child_wellness'
+  | 'pharmacy';
+
+export interface CategoryInfo {
+  id: BrowsePackageCategory;
+  name: string;
+  description: string;
+  emoji: string;
+}
+
+// Available Package (for browsing)
+export interface AvailablePackage {
+  id: string;
+  categoryId: BrowsePackageCategory;
+  name: string;              // e.g., "5 Visits Pack"
+  price: number;             // e.g., 65000
+  visits: number;            // e.g., 5
+  copay: number;             // e.g., 5000
+  validityDays: number;      // e.g., 30
+  totalValue: number;        // e.g., 90000
+  savingsPercent: number;    // e.g., 17
+  partnerCount: number;      // e.g., 24
+  isBestValue?: boolean;
+  inclusions: string[];      // e.g., ["5 GP consultations", "Valid at 24 partner clinics"]
+}
+
+// Purchase flow types
+export type RecipientType = 'myself' | 'child' | 'family';
+
+export interface PurchaseData {
+  package: AvailablePackage | null;
+  recipient: RecipientType;
+  paymentMethod: 'wallet' | 'mobile_money';
+  termsAccepted: boolean;
+}
+
+export type PurchaseStatus = 'idle' | 'processing' | 'success' | 'failed' | 'network_error';
