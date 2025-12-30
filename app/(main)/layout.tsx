@@ -25,8 +25,9 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
   },
   [ROUTES.MY_PACKAGES]: {
     title: "My Packages",
-    showBack: true,
-    showNotifications: true,
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
   },
   [ROUTES.VISITS]: {
     title: "Visits",
@@ -67,6 +68,11 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
     showBack: true,
     showNotifications: false,
   },
+  "/dev-tools": {
+    title: "Dev Tools",
+    showBack: true,
+    showNotifications: false,
+  },
 };
 
 export default function MainLayout({
@@ -95,12 +101,12 @@ export default function MainLayout({
     };
   }, []);
 
-  // Check authentication
+  // Check authentication (skip for dev-tools)
   useEffect(() => {
-    if (hasHydrated && !user) {
+    if (hasHydrated && !user && pathname !== '/dev-tools') {
       router.push(ROUTES.WELCOME);
     }
-  }, [user, router, hasHydrated]);
+  }, [user, router, hasHydrated, pathname]);
 
   // Fetch and sync dependents when user is authenticated
   useEffect(() => {
@@ -138,6 +144,22 @@ export default function MainLayout({
         hideHeader: true,
         hideBottomNav: true,
       };
+    } else if (pathname?.startsWith('/my-packages/') && pathname?.includes('/history')) {
+      // Package history page
+      currentConfig = {
+        title: "Usage history",
+        showBack: true,
+        showNotifications: false,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/my-packages/') && pathname?.match(/^\/my-packages\/[^/]+$/)) {
+      // Package detail page - need to get dynamic title, for now use generic
+      currentConfig = {
+        title: "Package Details",
+        showBack: true,
+        showNotifications: false,
+        hideBottomNav: true,
+      };
     } else if (pathname?.startsWith('/wallet/top-up')) {
       // Hide header and bottom nav for all wallet top-up flow pages
       currentConfig = {
@@ -172,12 +194,12 @@ export default function MainLayout({
     }
   }
 
-  // Don't render if not authenticated
+  // Don't render if not authenticated (except for dev-tools)
   if (!hasHydrated) {
     return null;
   }
 
-  if (!user) {
+  if (!user && pathname !== '/dev-tools') {
     return null;
   }
 
