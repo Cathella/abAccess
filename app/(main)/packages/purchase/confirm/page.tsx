@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/common/Header";
 import PaymentMethodSelector from "@/components/forms/PaymentMethodSelector";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useWalletStore } from "@/stores/walletStore";
 import { usePurchaseStore } from "@/stores/purchaseStore";
@@ -97,12 +96,12 @@ export default function ConfirmPaymentPage() {
         {/* Co-pay reminder info card */}
         <div
           className="rounded-2xl p-4"
-          style={{ backgroundColor: "#E8F4F1" }}
+          style={{ backgroundColor: "#DFF7EE" }}
         >
-          <h3 className="font-semibold text-neutral-900 pb-2 border-b border-neutral-300">
+          <h3 className="font-bold text-base text-neutral-900 pb-2 border-b border-primary-900/20">
             Co-pay reminder
           </h3>
-          <div className="mt-2 text-sm text-neutral-700">
+          <div className="mt-2 text-sm text-neutral-900">
             You&apos;ll pay {formatCurrency(selectedPackage.copay)} at the facility during each visit.
           </div>
         </div>
@@ -115,9 +114,9 @@ export default function ConfirmPaymentPage() {
             onCheckedChange={handleCheckboxChange}
             className="mt-0.5"
           />
-          <label htmlFor="terms" className="text-sm text-neutral-700 cursor-pointer">
+          <label htmlFor="terms" className="text-sm text-neutral-900 cursor-pointer">
             By purchasing, you agree to the{" "}
-            <Link href="/terms" className="text-[#3A8DFF] underline">
+            <Link href="/terms" className="text-secondary-900 font-bold underline">
               package terms and conditions
             </Link>
             .
@@ -126,15 +125,25 @@ export default function ConfirmPaymentPage() {
       </div>
 
       {/* Fixed bottom button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-neutral-400">
-        <Button
+      <div className="fixed bottom-0 left-0 right-0 p-4">
+        <button
           onClick={handleConfirm}
           disabled={!localTermsAccepted}
-          className="w-full h-12 text-base font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
-          style={{ backgroundColor: localTermsAccepted ? "#32C28A" : undefined }}
+          className="w-full h-12 rounded-xl font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ backgroundColor: localTermsAccepted ? "#32C28A" : "#32C28A" }}
+          onMouseEnter={(e) => {
+            if (localTermsAccepted) {
+              e.currentTarget.style.backgroundColor = "#2AAA75";
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (localTermsAccepted) {
+              e.currentTarget.style.backgroundColor = "#32C28A";
+            }
+          }}
         >
           {paymentMethod === "wallet" ? "Confirm & Pay" : "Pay with Mobile Money"}
-        </Button>
+        </button>
       </div>
     </>
   );

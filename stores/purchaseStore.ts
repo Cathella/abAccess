@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { AvailablePackage, RecipientType, PurchaseStatus } from '@/types';
 
 interface PurchaseState {
@@ -33,14 +34,22 @@ const initialState = {
   errorMessage: null,
 };
 
-export const usePurchaseStore = create<PurchaseState>((set) => ({
-  ...initialState,
+export const usePurchaseStore = create<PurchaseState>()(
+  persist(
+    (set) => ({
+      ...initialState,
 
-  setSelectedPackage: (pkg) => set({ selectedPackage: pkg }),
-  setRecipient: (recipient) => set({ recipient }),
-  setPaymentMethod: (method) => set({ paymentMethod: method }),
-  setTermsAccepted: (accepted) => set({ termsAccepted: accepted }),
-  setStatus: (status) => set({ status }),
-  setErrorMessage: (message) => set({ errorMessage: message }),
-  resetPurchase: () => set(initialState),
-}));
+      setSelectedPackage: (pkg) => set({ selectedPackage: pkg }),
+      setRecipient: (recipient) => set({ recipient }),
+      setPaymentMethod: (method) => set({ paymentMethod: method }),
+      setTermsAccepted: (accepted) => set({ termsAccepted: accepted }),
+      setStatus: (status) => set({ status }),
+      setErrorMessage: (message) => set({ errorMessage: message }),
+      resetPurchase: () => set(initialState),
+    }),
+    {
+      name: 'purchase-storage',
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);

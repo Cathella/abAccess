@@ -42,62 +42,67 @@ const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
     {
       value: 'mobile_money' as const,
       label: 'Mobile Money',
-      rightText: 'MTN MoMo / Airtel',
+      rightText: 'Add new',
       disabled: false,
       errorText: undefined,
     },
   ];
 
   return (
-    <div className="space-y-3">
+    <div>
       {/* Label */}
-      <label className="font-semibold text-gray-700">Payment method</label>
+      <div className="mb-3">
+        <span className="text-base font-bold text-neutral-900">
+          Payment method
+        </span>
+      </div>
 
-      {/* Options */}
-      <div className="space-y-3">
-        {paymentOptions.map((option) => (
+      {/* Payment Method Options */}
+      <div>
+        {paymentOptions.map((option, index) => (
           <div key={option.value}>
-            <div
+            <button
               onClick={option.disabled ? undefined : () => onSelect(option.value)}
-              className={`
-                flex items-center justify-between p-4 rounded-xl border
-                ${option.disabled
-                  ? 'opacity-50 cursor-not-allowed bg-gray-50 border-gray-200'
-                  : 'cursor-pointer hover:bg-gray-50 border-neutral-400 bg-white'
-                }
-                transition-colors
-              `}
+              disabled={option.disabled}
+              className="flex w-full items-center gap-3 py-4 text-left transition-opacity hover:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {/* Left side: Radio + Label */}
-              <div className="flex items-center gap-3">
-                {/* Radio Button */}
-                <div
-                  className={`
-                    w-5 h-5 rounded-full border-2 flex items-center justify-center
-                    transition-all
-                    ${selectedMethod === option.value
-                      ? 'border-[#3A8DFF] bg-[#3A8DFF]'
-                      : 'border-gray-300 bg-white'
-                    }
-                  `}
-                >
-                  {selectedMethod === option.value && (
-                    <div className="w-2 h-2 rounded-full bg-white" />
-                  )}
-                </div>
-
-                {/* Label */}
-                <span className="font-semibold text-gray-900">{option.label}</span>
+              {/* Radio Button */}
+              <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                {selectedMethod === option.value ? (
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-primary-900">
+                    <div className="h-2.5 w-2.5 rounded-full bg-primary-900" />
+                  </div>
+                ) : (
+                  <div className="h-5 w-5 rounded-full border-2 border-neutral-400" />
+                )}
               </div>
 
-              {/* Right side: Balance/Info */}
+              {/* Method Name */}
+              <span className="flex-1 text-base text-neutral-900">
+                {option.label}
+              </span>
+
+              {/* Right Text */}
               <div className="text-right">
-                <div className="font-semibold text-gray-900">{option.rightText}</div>
+                {option.value === 'mobile_money' ? (
+                  <span className="text-base font-semibold text-secondary-900 underline">
+                    {option.rightText}
+                  </span>
+                ) : (
+                  <span className="text-base text-neutral-900">
+                    {option.rightText}
+                  </span>
+                )}
                 {option.errorText && (
                   <div className="text-sm text-red-600 mt-1">{option.errorText}</div>
                 )}
               </div>
-            </div>
+            </button>
+
+            {/* Divider (except last item) */}
+            {index < paymentOptions.length - 1 && (
+              <div className="h-px bg-neutral-200" />
+            )}
           </div>
         ))}
       </div>

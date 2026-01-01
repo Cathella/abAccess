@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
 
 interface ResultScreenProps {
   emoji: string;
@@ -37,9 +36,11 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         </h1>
 
         {/* Subtitle */}
-        <p className="text-gray-500 text-center mb-6 max-w-sm">
-          {subtitle}
-        </p>
+        {subtitle && (
+          <p className="text-gray-500 text-center mb-6 max-w-sm">
+            {subtitle}
+          </p>
+        )}
 
         {/* Optional children content */}
         {children && <div className="w-full max-w-md">{children}</div>}
@@ -51,23 +52,29 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         {secondaryAction && (
           <button
             onClick={secondaryAction.onPress}
-            className="w-full text-center font-semibold text-neutral-900 py-3"
+            className="w-full text-center font-bold text-neutral-900 py-3 transition-opacity hover:opacity-70"
           >
             {secondaryAction.label}
           </button>
         )}
 
         {/* Primary action button */}
-        <Button
+        <button
           onClick={primaryAction.onPress}
-          className="w-full h-12 text-base font-semibold rounded-xl"
+          className="w-full h-12 rounded-xl font-bold border-[1.5px] border-neutral-900 transition-colors"
           style={{
-            backgroundColor: "#E8F4F1",
+            backgroundColor: "#32C28A",
             color: "#1A1A1A",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "#2AAA75";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "#32C28A";
           }}
         >
           {primaryAction.label}
-        </Button>
+        </button>
       </div>
     </div>
   );

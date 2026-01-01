@@ -1,6 +1,13 @@
 // App Constants
 
-import type { CategoryInfo, AvailablePackage, BrowsePackageCategory } from "@/types";
+import type {
+  CategoryInfo,
+  AvailablePackage,
+  BrowsePackageCategory,
+  VisitTabFilter,
+  VisitStatusType,
+  VisitRecord
+} from "@/types";
 
 export const APP_NAME = "ABA Access";
 export const APP_VERSION = "1.0.0";
@@ -310,3 +317,158 @@ export const AVAILABLE_PACKAGES: Record<BrowsePackageCategory, AvailablePackage[
     },
   ],
 };
+
+// Visit Feature Constants
+
+export const VISIT_TAB_OPTIONS: { value: VisitTabFilter; label: string }[] = [
+  { value: 'upcoming', label: 'Upcoming' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'canceled', label: 'Canceled' },
+];
+
+export const VISIT_STATUS_CONFIG: Record<VisitStatusType, {
+  label: string;
+  variant: 'success' | 'warning' | 'error' | 'info';
+  icon: 'check' | 'clock' | 'alert' | 'x';
+}> = {
+  pending_confirmation: {
+    label: 'Pending confirmation',
+    variant: 'warning',
+    icon: 'clock',
+  },
+  confirmed: {
+    label: 'Confirmed',
+    variant: 'success',
+    icon: 'check',
+  },
+  completed: {
+    label: 'Completed',
+    variant: 'success',
+    icon: 'check',
+  },
+  remotely_approved: {
+    label: 'Remotely Approved',
+    variant: 'success',
+    icon: 'check',
+  },
+  canceled: {
+    label: 'Canceled',
+    variant: 'error',
+    icon: 'alert',
+  },
+  no_show: {
+    label: 'No-show',
+    variant: 'error',
+    icon: 'alert',
+  },
+};
+
+// Mock visits data for development
+export const MOCK_VISITS: VisitRecord[] = [
+  {
+    id: 'visit-1',
+    memberId: 'user-1',
+    memberName: 'Catherine Nakitto',
+    memberInitials: 'CN',
+    isSelf: true,
+    facilityId: 'fac-1',
+    facilityName: 'City Medical Centre',
+    packageId: 'pkg-1',
+    packageCategory: 'Consultations',
+    packageName: '5 visits pack',
+    visitDate: '2025-01-05',
+    visitTime: '20:30 PM',
+    status: 'confirmed',
+    createdAt: '2025-01-02T10:00:00Z',
+    updatedAt: '2025-01-02T10:00:00Z',
+  },
+  {
+    id: 'visit-2',
+    memberId: 'dep-1',
+    memberName: 'Ben Were',
+    memberInitials: 'BW',
+    isSelf: false,
+    facilityId: 'fac-2',
+    facilityName: 'Mukono Family Clinic',
+    packageId: 'pkg-1',
+    packageCategory: 'Consultations',
+    packageName: '5 visits pack',
+    visitDate: '2025-01-10',
+    visitTime: '10:00 AM',
+    status: 'pending_confirmation',
+    createdAt: '2025-01-02T11:00:00Z',
+    updatedAt: '2025-01-02T11:00:00Z',
+  },
+  {
+    id: 'visit-3',
+    memberId: 'user-1',
+    memberName: 'Catherine Nakitto',
+    memberInitials: 'CN',
+    isSelf: true,
+    facilityId: 'fac-2',
+    facilityName: 'Mukono Family Clinic',
+    packageId: 'pkg-1',
+    packageCategory: 'Consultations',
+    packageName: '5 visits pack',
+    visitDate: '2025-01-04',
+    visitTime: '10:34 AM',
+    status: 'completed',
+    copayAmount: 5000,
+    createdAt: '2025-01-01T10:00:00Z',
+    updatedAt: '2025-01-04T10:34:00Z',
+  },
+  {
+    id: 'visit-4',
+    memberId: 'dep-1',
+    memberName: 'Ben Were',
+    memberInitials: 'BW',
+    isSelf: false,
+    facilityId: 'fac-1',
+    facilityName: 'City Medical Centre',
+    packageId: 'pkg-1',
+    packageCategory: 'Consultations',
+    packageName: '5 visits pack',
+    visitDate: '2025-01-03',
+    visitTime: '2:15 PM',
+    status: 'remotely_approved',
+    copayAmount: 5000,
+    createdAt: '2025-01-01T09:00:00Z',
+    updatedAt: '2025-01-03T14:15:00Z',
+  },
+  {
+    id: 'visit-5',
+    memberId: 'dep-1',
+    memberName: 'Ben Were',
+    memberInitials: 'BW',
+    isSelf: false,
+    facilityId: 'fac-2',
+    facilityName: 'Mukono Family Clinic',
+    packageId: 'pkg-1',
+    packageCategory: 'Consultations',
+    packageName: '5 visits pack',
+    visitDate: '2025-01-02',
+    visitTime: '3:00 PM',
+    status: 'canceled',
+    refundNote: 'Visit refunded',
+    createdAt: '2024-12-28T10:00:00Z',
+    updatedAt: '2025-01-02T12:00:00Z',
+  },
+  {
+    id: 'visit-6',
+    memberId: 'user-1',
+    memberName: 'Catherine Nakitto',
+    memberInitials: 'CN',
+    isSelf: true,
+    facilityId: 'fac-1',
+    facilityName: 'City Medical Centre',
+    packageId: 'pkg-1',
+    packageCategory: 'Consultations',
+    packageName: '5 visits pack',
+    visitDate: '2024-12-15',
+    visitTime: '10:00 AM',
+    status: 'no_show',
+    refundNote: 'Visit forfeited',
+    createdAt: '2024-12-10T10:00:00Z',
+    updatedAt: '2024-12-15T12:00:00Z',
+  },
+];

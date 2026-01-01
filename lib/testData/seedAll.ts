@@ -324,7 +324,7 @@ export const seedAuthStore = () => {
     phone: '+256782087786',
     firstName: 'Catherine',
     lastName: 'Nakitto',
-    pinHash: '$2a$10$rOZxQQcw5V7V7V7V7V7V7V7V7V7V7V7V7V7V7V7V7V7V7V', // Hashed "1234"
+    pinHash: '$2b$10$sBA4GeLZcbtUANGFBmWqG.UXiuK64/c1Pv3QjDi3OVgdXhfXogwBm', // Hashed "1234"
     memberId: 'A-123456',
     nin: undefined,
     avatar: undefined,

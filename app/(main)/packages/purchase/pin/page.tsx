@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { usePurchaseStore } from "@/stores/purchaseStore";
 import { useAuthStore } from "@/stores/authStore";
 import { PIN_LENGTH } from "@/lib/constants";
+import { verifyPin } from "@/lib/supabase/auth";
 
 export default function PurchasePinPage() {
   const router = useRouter();
@@ -45,8 +46,13 @@ export default function PurchasePinPage() {
 
     try {
       // Validate PIN against stored hash
-      // Mock validation for now - in production, this would check against user.pinHash
-      const isValidPin = await validatePin(completedPin);
+      if (!user?.pinHash) {
+        setError("User PIN not found. Please contact support.");
+        setIsProcessing(false);
+        return;
+      }
+
+      const isValidPin = await verifyPin(completedPin, user.pinHash);
 
       if (isValidPin) {
         // Success - navigate to processing page
@@ -77,15 +83,6 @@ export default function PurchasePinPage() {
     }
   };
 
-  // Mock PIN validation function
-  // In production, this would validate against user.pinHash using bcrypt
-  const validatePin = async (enteredPin: string): Promise<boolean> => {
-    // For demo purposes, accept "1234" as valid PIN
-    // In production: return bcrypt.compare(enteredPin, user?.pinHash || "")
-    await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate API call
-    return enteredPin === "1234";
-  };
-
   // Redirect if no package selected
   if (!selectedPackage) {
     router.push("/packages");
@@ -101,12 +98,12 @@ export default function PurchasePinPage() {
         {/* Main content */}
         <div className="flex-1 px-4 pt-6">
           {/* Title */}
-          <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+          <h1 className="text-xl font-bold text-neutral-900 mb-2">
             Confirm your purchase
           </h1>
 
           {/* Subtitle */}
-          <p className="text-base text-gray-600 mb-8">
+          <p className="text-base text-neutral-700 mb-8">
             Enter your {PIN_LENGTH}-digit PIN to pay{" "}
             {formatCurrency(selectedPackage.price)} for {selectedPackage.name}.
           </p>
@@ -143,8 +140,8 @@ export default function PurchasePinPage() {
               htmlFor="show-pin"
               className={`text-base cursor-pointer select-none ${
                 attempts >= maxAttempts || isProcessing
-                  ? "text-gray-400"
-                  : "text-gray-600"
+                  ? "text-neutral-400"
+                  : "text-neutral-600"
               }`}
             >
               Show PIN

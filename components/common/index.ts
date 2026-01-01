@@ -1,2 +1,8 @@
 export { StatusBadge } from "./StatusBadge";
 export { VisitBadges } from "./VisitBadges";
+export { VisitStatusBadge } from "./VisitStatusBadge";
+export { VisitTabFilter } from "./VisitTabFilter";
+export { MemberFilterDropdown } from "./MemberFilterDropdown";
+export { MemberFilterDropdownConnected } from "./MemberFilterDropdownConnected";
+export { MonthGroupHeader } from "./MonthGroupHeader";
+export { VisitsEmptyState } from "./VisitsEmptyState";

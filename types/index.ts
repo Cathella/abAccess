@@ -398,3 +398,55 @@ export interface PurchaseData {
 }
 
 export type PurchaseStatus = 'idle' | 'processing' | 'success' | 'failed' | 'network_error';
+
+// Visit Feature Types (List View)
+
+// Visit status types
+export type VisitStatusType =
+  | 'pending_confirmation'  // Upcoming - awaiting facility confirmation
+  | 'confirmed'             // Upcoming - confirmed by facility
+  | 'completed'             // Past - visit completed successfully
+  | 'remotely_approved'     // Past - approved without physical visit
+  | 'canceled'              // Cancelled - user or facility cancelled
+  | 'no_show';              // Cancelled - user didn't show up
+
+// Tab filter type
+export type VisitTabFilter = 'upcoming' | 'completed' | 'canceled';
+
+// Visit record
+export interface VisitRecord {
+  id: string;
+
+  // Who
+  memberId: string;          // User ID or dependent ID
+  memberName: string;        // Full name
+  memberInitials: string;    // e.g., "CN", "BW"
+  isSelf: boolean;           // true if primary account holder
+
+  // Where
+  facilityId: string;
+  facilityName: string;      // e.g., "Mukono Family Clinic"
+
+  // What
+  packageId: string;
+  packageCategory: string;   // e.g., "Consultations"
+  packageName: string;       // e.g., "5 visits pack"
+
+  // When
+  visitDate: string;         // ISO date string
+  visitTime: string;         // e.g., "10:00 AM"
+
+  // Status
+  status: VisitStatusType;
+  copayAmount?: number;      // Only for completed visits
+  refundNote?: string;       // e.g., "Visit refunded" or "Visit forfeited"
+
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Filter state
+export interface VisitFilters {
+  tab: VisitTabFilter;
+  memberId: string | 'all';  // 'all' for all family members
+}

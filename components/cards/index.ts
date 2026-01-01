@@ -4,3 +4,4 @@ export { CopayReminderCard } from "./CopayReminderCard";
 export { ExpiredWarningCard } from "./ExpiredWarningCard";
 export { TotalCopayCard } from "./TotalCopayCard";
 export { UsageHistoryCard } from "./UsageHistoryCard";
+export { VisitCard } from "./VisitCard";

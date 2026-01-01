@@ -68,60 +68,102 @@ export default function PurchaseSuccessPage() {
       return;
     }
 
-    // Create UserPackage record
-    const purchaseDate = new Date();
-    const expiryDate = getExpiryDate();
+    const processPurchase = async () => {
+      try {
+        // Save to Supabase database using the browse package data
+        const { purchasePackageWithData } = await import('@/lib/packages');
+        const result = await purchasePackageWithData(user.id, {
+          id: selectedPackage.id,
+          name: selectedPackage.name,
+          category: mapCategoryType(selectedPackage.categoryId),
+          price: selectedPackage.price,
+          visits: selectedPackage.visits,
+          validityDays: selectedPackage.validityDays,
+          copay: selectedPackage.copay,
+          facilities: selectedPackage.partnerCount,
+          description: `${selectedPackage.visits} visits pack`,
+        });
 
-    const userPackage: UserPackageType = {
-      id: `pkg-${Date.now()}`, // Generate unique ID
-      userId: user.id,
-      packageId: selectedPackage.id,
-      package: {
-        id: selectedPackage.id,
-        name: selectedPackage.name,
-        category: mapCategoryType(selectedPackage.categoryId),
-        description: `${selectedPackage.visits} visits pack`,
-        price: selectedPackage.price,
-        visits: selectedPackage.visits,
-        validityDays: selectedPackage.validityDays,
-        copay: selectedPackage.copay,
-        facilities: selectedPackage.partnerCount,
-      },
-      purchaseDate: purchaseDate.toISOString(),
-      expiryDate: expiryDate.toISOString(),
-      totalVisits: selectedPackage.visits,
-      usedVisits: 0,
-      remainingVisits: selectedPackage.visits,
-      status: "active",
-      usageHistory: [],
+        if (result.success && result.userPackage) {
+          // Add to local package store
+          addUserPackage(result.userPackage);
+
+          // Deduct from wallet if paid with wallet
+          if (paymentMethod === "wallet") {
+            deductBalance(selectedPackage.price);
+
+            // Add transaction record
+            addTransaction({
+              id: `txn-${Date.now()}`,
+              type: "purchase",
+              amount: selectedPackage.price,
+              fee: 0,
+              status: "completed",
+              paymentMethod: "mtn_momo", // Placeholder
+              packageName: selectedPackage.name,
+              packageVisits: selectedPackage.visits,
+              transactionId: `TXN-2025-${String(Math.floor(Math.random() * 10000)).padStart(5, "0")}`,
+              createdAt: new Date().toISOString(),
+            });
+          }
+        } else {
+          // If database save fails, fallback to local-only storage
+          console.error('Failed to save package to database:', result.error);
+
+          // Create local UserPackage record as fallback
+          const purchaseDate = new Date();
+          const expiryDate = getExpiryDate();
+
+          const userPackage: UserPackageType = {
+            id: `pkg-${Date.now()}`,
+            userId: user.id,
+            packageId: selectedPackage.id,
+            package: {
+              id: selectedPackage.id,
+              name: selectedPackage.name,
+              category: mapCategoryType(selectedPackage.categoryId),
+              description: `${selectedPackage.visits} visits pack`,
+              price: selectedPackage.price,
+              visits: selectedPackage.visits,
+              validityDays: selectedPackage.validityDays,
+              copay: selectedPackage.copay,
+              facilities: selectedPackage.partnerCount,
+            },
+            purchaseDate: purchaseDate.toISOString(),
+            expiryDate: expiryDate.toISOString(),
+            totalVisits: selectedPackage.visits,
+            usedVisits: 0,
+            remainingVisits: selectedPackage.visits,
+            status: "active",
+            usageHistory: [],
+          };
+
+          addUserPackage(userPackage);
+
+          if (paymentMethod === "wallet") {
+            deductBalance(selectedPackage.price);
+            addTransaction({
+              id: `txn-${Date.now()}`,
+              type: "purchase",
+              amount: selectedPackage.price,
+              fee: 0,
+              status: "completed",
+              paymentMethod: "mtn_momo",
+              packageName: selectedPackage.name,
+              packageVisits: selectedPackage.visits,
+              transactionId: `TXN-2025-${String(Math.floor(Math.random() * 10000)).padStart(5, "0")}`,
+              createdAt: new Date().toISOString(),
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error processing purchase:', error);
+      }
     };
 
-    // Add to package store
-    addUserPackage(userPackage);
+    processPurchase();
 
-    // Deduct from wallet if paid with wallet
-    if (paymentMethod === "wallet") {
-      deductBalance(selectedPackage.price);
-
-      // Add transaction record
-      // Note: Using 'mtn_momo' as placeholder for wallet payment type
-      // In production, may need a separate wallet payment type
-      addTransaction({
-        id: `txn-${Date.now()}`,
-        type: "purchase",
-        amount: selectedPackage.price,
-        fee: 0,
-        status: "completed",
-        paymentMethod: paymentMethod === "wallet" ? "mtn_momo" : "mtn_momo", // Placeholder
-        packageName: selectedPackage.name,
-        packageVisits: selectedPackage.visits,
-        transactionId: `TXN-2025-${String(Math.floor(Math.random() * 10000)).padStart(5, "0")}`,
-        createdAt: new Date().toISOString(),
-      });
-    }
-
-    // Clear purchase store (purchase complete)
-    // Note: We do this in cleanup to ensure user can see package details
+    // Clear purchase store on cleanup
     return () => {
       resetPurchase();
     };

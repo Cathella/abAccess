@@ -155,6 +155,93 @@ export async function purchasePackage(
 }
 
 /**
+ * Purchase a package with custom package data (for browse packages)
+ * This allows purchasing without requiring the package to exist in the packages table
+ */
+export async function purchasePackageWithData(
+  userId: string,
+  packageData: {
+    id: string
+    name: string
+    category: PackageCategoryType
+    price: number
+    visits: number
+    validityDays: number
+    copay: number
+    facilities: number
+    description?: string
+  }
+): Promise<{
+  success: boolean
+  userPackage?: UserPackageType
+  error?: string
+}> {
+  try {
+    const supabase = createClient()
+
+    // Calculate expiry date
+    const purchaseDate = new Date()
+    const expiryDate = new Date(purchaseDate)
+    expiryDate.setDate(expiryDate.getDate() + packageData.validityDays)
+
+    // Create user package with embedded package data
+    const { data, error } = await supabase
+      .from('user_packages')
+      .insert({
+        user_id: userId,
+        package_id: packageData.id,
+        purchase_date: purchaseDate.toISOString(),
+        expiry_date: expiryDate.toISOString(),
+        total_visits: packageData.visits,
+        used_visits: 0,
+        remaining_visits: packageData.visits,
+        status: 'active',
+        usage_history: [],
+      })
+      .select()
+      .single()
+
+    if (error) throw error
+
+    const userPackage: UserPackageType = {
+      id: data.id,
+      userId: data.user_id,
+      packageId: data.package_id,
+      package: {
+        id: packageData.id,
+        name: packageData.name,
+        category: packageData.category,
+        description: packageData.description || `${packageData.visits} visits pack`,
+        price: packageData.price,
+        visits: packageData.visits,
+        validityDays: packageData.validityDays,
+        copay: packageData.copay,
+        facilities: packageData.facilities,
+      },
+      purchaseDate: data.purchase_date,
+      expiryDate: data.expiry_date,
+      completedDate: data.completed_date,
+      totalVisits: data.total_visits,
+      usedVisits: data.used_visits,
+      remainingVisits: data.remaining_visits,
+      status: data.status,
+      usageHistory: data.usage_history || [],
+    }
+
+    return {
+      success: true,
+      userPackage,
+    }
+  } catch (error) {
+    console.error('Error purchasing package with data:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to purchase package',
+    }
+  }
+}
+
+/**
  * Calculate package display info
  */
 export function getPackageDisplayInfo(pkg: UserPackageType): PackageDisplayInfo {

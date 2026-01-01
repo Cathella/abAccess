@@ -1,14 +1,166 @@
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Visits - ABA Access",
-  description: "Track upcoming and past visits",
-};
+import { useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { useVisitsStore } from "@/stores/visitsStore";
+import { UserHeader } from "@/components/common/UserHeader";
+import { VisitTabFilter } from "@/components/common/VisitTabFilter";
+import { MemberFilterDropdownConnected } from "@/components/common/MemberFilterDropdownConnected";
+import { MonthGroupHeader } from "@/components/common/MonthGroupHeader";
+import { VisitsEmptyState } from "@/components/common/VisitsEmptyState";
+import { VisitCard } from "@/components/cards/VisitCard";
+import { ROUTES } from "@/lib/constants";
 
 export default function VisitsPage() {
+  const router = useRouter();
+  const { user } = useAuth();
+
+  // Visits store
+  const visits = useVisitsStore((state) => state.visits);
+  const activeTab = useVisitsStore((state) => state.activeTab);
+  const selectedMemberId = useVisitsStore((state) => state.selectedMemberId);
+  const setActiveTab = useVisitsStore((state) => state.setActiveTab);
+  const setSelectedMemberId = useVisitsStore((state) => state.setSelectedMemberId);
+  const getFilteredVisits = useVisitsStore((state) => state.getFilteredVisits);
+  const getVisitsByTab = useVisitsStore((state) => state.getVisitsByTab);
+  const groupVisitsByMonth = useVisitsStore((state) => state.groupVisitsByMonth);
+
+  // User initials for header
+  const initials = useMemo(() => {
+    if (!user) return "U";
+    const firstName = user.firstName || "";
+    const lastName = user.lastName || "";
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "U";
+  }, [user]);
+
+  // Get filtered visits
+  const filteredVisits = getFilteredVisits();
+
+  // Calculate counts for tab badges
+  const tabCounts = useMemo(() => ({
+    upcoming: getVisitsByTab('upcoming').length,
+    completed: getVisitsByTab('completed').length,
+    canceled: getVisitsByTab('canceled').length,
+  }), [getVisitsByTab]);
+
+  // Group visits by month for completed tab
+  const groupedVisits = useMemo(() => {
+    if (activeTab === 'completed') {
+      return groupVisitsByMonth(filteredVisits);
+    }
+    return {};
+  }, [activeTab, filteredVisits, groupVisitsByMonth]);
+
+  // Check if user has any visits at all
+  const hasAnyVisits = visits.length > 0;
+
+  // Check if filtered list is empty
+  const hasFilteredVisits = filteredVisits.length > 0;
+
+  if (!user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-neutral-600">Loading...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <h1 className="text-2xl font-bold">Visits Page</h1>
-    </div>
+    <>
+      {/* Header */}
+      <UserHeader
+        firstName={user.firstName}
+        memberId={user.memberId ? `ID: ${user.memberId}` : "ID: N/A"}
+        initials={initials}
+        onNotificationsClick={() => router.push(ROUTES.NOTIFICATIONS)}
+        onSettingsClick={() => router.push(ROUTES.PROFILE)}
+      />
+
+      {/* Main Content */}
+      <div className="min-h-screen px-4 pb-24 pt-24">
+        {!hasAnyVisits ? (
+          // Show empty state if user has no visits at all
+          <VisitsEmptyState />
+        ) : (
+          <div className="space-y-4">
+            {/* Title + Book a Visit Button Row */}
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold text-gray-900">Visits</h1>
+              <button
+                onClick={() => router.push(ROUTES.PACKAGES)}
+                className="rounded-xl bg-[#32C28A] px-4 py-2 font-semibold text-gray-900 transition-colors hover:bg-[#2AAA75] border-[1.5px] border-neutral-900"
+              >
+                Book a Visit
+              </button>
+            </div>
+
+            {/* Tab Filter */}
+            <VisitTabFilter
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              counts={tabCounts}
+            />
+
+            {/* Filter Row */}
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-sm font-medium text-gray-700">Filter</span>
+              <div className="flex-1 max-w-xs">
+                <MemberFilterDropdownConnected
+                  selectedMemberId={selectedMemberId}
+                  onSelect={setSelectedMemberId}
+                />
+              </div>
+            </div>
+
+            {/* Visits List */}
+            {!hasFilteredVisits ? (
+              // Show "no visits for this filter" message
+              <div className="flex flex-1 items-center justify-center py-16 text-center">
+                <p className="text-base text-gray-500">
+                  No {activeTab} visits
+                  {selectedMemberId !== 'all' && ' for selected member'}
+                </p>
+              </div>
+            ) : activeTab === 'completed' ? (
+              // Completed tab: Group by month
+              <div className="space-y-6">
+                {Object.entries(groupedVisits).map(([month, monthVisits]) => (
+                  <div key={month} className="space-y-3">
+                    <MonthGroupHeader month={month} />
+                    <div className="space-y-3">
+                      {monthVisits.map((visit) => (
+                        <VisitCard
+                          key={visit.id}
+                          visit={visit}
+                          onPress={() => {
+                            // Navigate to visit detail page
+                            router.push(`/visits/${visit.id}`);
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // Upcoming/Canceled tabs: Flat list
+              <div className="space-y-3">
+                {filteredVisits.map((visit) => (
+                  <VisitCard
+                    key={visit.id}
+                    visit={visit}
+                    onPress={() => {
+                      // Navigate to visit detail page
+                      router.push(`/visits/${visit.id}`);
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
