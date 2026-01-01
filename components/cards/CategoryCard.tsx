@@ -18,10 +18,10 @@ export function CategoryCard({
   variant = "card"
 }: CategoryCardProps) {
   const containerClasses = variant === "inline"
-    ? `flex w-full items-center gap-4 py-3 transition-colors hover:bg-gray-50 ${
-        showDivider ? "border-b border-gray-200" : ""
+    ? `flex w-full items-center gap-4 py-5 transition-colors hover:bg-neutral-100 ${
+        showDivider ? "border-b border-neutral-400" : ""
       }`
-    : `flex w-full items-center gap-4 rounded-2xl border border-gray-100 bg-white p-4 transition-colors hover:bg-gray-50`;
+    : `flex w-full items-center gap-4 rounded-2xl border border-neutral-100 bg-white p-4 transition-colors hover:bg-neutral-50`;
 
   return (
     <Link
@@ -30,18 +30,18 @@ export function CategoryCard({
       className={containerClasses}
     >
       {/* Left: Circular mint background with emoji */}
-      <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#E8F4F1]">
-        <span className="text-3xl">{category.emoji}</span>
+      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary-100">
+        <span className="text-2xl">{category.emoji}</span>
       </div>
 
       {/* Center: Category name and description */}
       <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-gray-900">{category.name}</h3>
-        <p className="text-sm text-gray-500">{category.description}</p>
+        <h3 className="font-semibold text-neutral-900 text-base">{category.name}</h3>
+        <p className="text-sm mt-1 text-neutral-700">{category.description}</p>
       </div>
 
       {/* Right: Chevron icon */}
-      <ChevronRight className="h-5 w-5 flex-shrink-0 text-gray-400" />
+      <ChevronRight className="h-5 w-5 shrink-0 text-neutral-700" />
     </Link>
   );
 }

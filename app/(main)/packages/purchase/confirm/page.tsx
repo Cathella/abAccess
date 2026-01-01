@@ -64,25 +64,25 @@ export default function ConfirmPaymentPage() {
       {/* Main content */}
       <div className="px-4 pt-6 pb-32 space-y-6">
         {/* Main card */}
-        <div className="bg-white rounded-2xl border border-neutral-400 p-6 space-y-6">
+        <div className="rounded-2xl border border-neutral-400 p-6 space-y-6">
           {/* Category and Package name */}
           <div className="text-center space-y-1">
             <h2 className="font-bold text-xl text-neutral-900">{categoryName}</h2>
-            <p className="text-gray-500">{selectedPackage.name}</p>
+            <p className="text-neutral-700 text-sm">{selectedPackage.name}</p>
           </div>
 
           {/* Pricing section */}
-          <div className="bg-gray-50 rounded-xl p-4 space-y-4">
+          <div className="bg-neutral-200 rounded-xl p-4 space-y-4">
             {/* Pay now row */}
             <div className="flex items-center justify-between">
-              <span className="font-semibold text-gray-900">Pay now</span>
+              <span className="font-semibold text-neutral-900">Pay now</span>
               <span className="font-bold text-xl text-neutral-900">
                 {formatCurrency(selectedPackage.price)}
               </span>
             </div>
 
             {/* Divider */}
-            <div className="h-px bg-gray-300" />
+            <div className="h-px bg-neutral-400" />
 
             {/* Payment method selector */}
             <PaymentMethodSelector
@@ -99,11 +99,11 @@ export default function ConfirmPaymentPage() {
           className="rounded-2xl p-4"
           style={{ backgroundColor: "#E8F4F1" }}
         >
-          <h3 className="font-semibold text-gray-900 pb-2 border-b border-gray-300">
+          <h3 className="font-semibold text-neutral-900 pb-2 border-b border-neutral-300">
             Co-pay reminder
           </h3>
-          <div className="mt-2 text-sm text-gray-700">
-            You'll pay {formatCurrency(selectedPackage.copay)} at the facility during each visit.
+          <div className="mt-2 text-sm text-neutral-700">
+            You&apos;ll pay {formatCurrency(selectedPackage.copay)} at the facility during each visit.
           </div>
         </div>
 
@@ -115,7 +115,7 @@ export default function ConfirmPaymentPage() {
             onCheckedChange={handleCheckboxChange}
             className="mt-0.5"
           />
-          <label htmlFor="terms" className="text-sm text-gray-700 cursor-pointer">
+          <label htmlFor="terms" className="text-sm text-neutral-700 cursor-pointer">
             By purchasing, you agree to the{" "}
             <Link href="/terms" className="text-[#3A8DFF] underline">
               package terms and conditions

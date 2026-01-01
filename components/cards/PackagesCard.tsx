@@ -49,13 +49,19 @@ export function PackagesCard({ className }: PackagesCardProps) {
 
       {/* Action Row */}
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-secondary-900">
+        <span className={cn(
+          "text-sm font-semibold",
+          hasActivePackages ? "text-neutral-900" : "text-secondary-900"
+        )}>
           {hasActivePackages
             ? `${activePackages.length} active ${activePackages.length === 1 ? 'package' : 'packages'}`
             : "Add packages"
           }
         </span>
-        <ChevronRight className="h-5 w-5 text-secondary-900" />
+        <ChevronRight className={cn(
+          "h-5 w-5",
+          hasActivePackages ? "text-neutral-900" : "text-secondary-900"
+        )} />
       </div>
     </button>
   );

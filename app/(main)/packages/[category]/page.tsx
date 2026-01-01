@@ -2,11 +2,11 @@
 
 import React from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
 import { PACKAGE_CATEGORIES, AVAILABLE_PACKAGES } from '@/lib/constants';
 import { BrowsePackageCategory } from '@/types';
 import PackageListCard from '@/components/cards/PackageListCard';
 import InfoCard from '@/components/common/InfoCard';
+import { Header } from '@/components/common/Header';
 
 export default function CategoryPackagesPage() {
   const router = useRouter();
@@ -22,25 +22,19 @@ export default function CategoryPackagesPage() {
   // Handle invalid category
   if (!categoryInfo || packages.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4">
-        <div className="max-w-md mx-auto">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-700 mb-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back</span>
-          </button>
-          <div className="bg-white rounded-2xl p-8 text-center">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+      <>
+        <Header title="Category Not Found" showBack />
+        <div className="px-4 pt-6 pb-8">
+          <div className="bg-white rounded-xl p-8 text-center">
+            <h2 className="text-xl font-semibold text-neutral-900 mb-2">
               Category Not Found
             </h2>
-            <p className="text-gray-600">
-              The category you're looking for doesn't exist or has no packages available.
+            <p className="text-neutral-700">
+              The category you&apos;re looking for doesn&apos;t exist or has no packages available.
             </p>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -49,30 +43,18 @@ export default function CategoryPackagesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-md mx-auto px-4 py-4">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-700 mb-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Back</span>
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {categoryInfo.name}
-          </h1>
-          <p className="text-gray-600">
-            {categoryInfo.description}. Share across your whole family.
-          </p>
-        </div>
-      </div>
+    <>
+      {/* Header with back button */}
+      <Header title={categoryInfo.name} showBack />
 
       {/* Content */}
-      <div className="max-w-md mx-auto px-4 py-6 space-y-4">
+      <div className="px-4 pt-6 pb-8 space-y-4">
+        {/* Category description */}
+        <p className="text-neutral-700">
+          {categoryInfo.description}. Share across your whole family.
+        </p>
         {/* Package List */}
-        <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
+        <div className="rounded-2xl border border-neutral-400 mt-6">
           {packages.map((pkg, index) => (
             <PackageListCard
               key={pkg.id}
@@ -90,6 +72,6 @@ export default function CategoryPackagesPage() {
           </p>
         </InfoCard>
       </div>
-    </div>
+    </>
   );
 }

@@ -13,11 +13,11 @@ export default function BrowsePackagesPage() {
       {/* Main content */}
       <div className="px-4 pt-6 pb-8 space-y-4">
         {/* Page title and subtitle */}
-        <div>
-          <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+        <div className="mb-6">
+          <h1 className="text-xl font-bold text-neutral-900 mb-2">
             Packages
           </h1>
-          <p className="text-gray-600">
+          <p className="text-neutral-700">
             Save on healthcare with prepaid visit packages for you and your family.
           </p>
         </div>

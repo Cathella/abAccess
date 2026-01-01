@@ -22,6 +22,8 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
     title: "Packages",
     showBack: false,
     showNotifications: true,
+    hideHeader: true,
+    hideBottomNav: true,
   },
   [ROUTES.MY_PACKAGES]: {
     title: "My Packages",
@@ -200,6 +202,7 @@ export default function MainLayout({
         title: "Package Details",
         showBack: true,
         showNotifications: false,
+        hideHeader: true,
         hideBottomNav: true,
       };
     } else if (pathname?.startsWith('/packages/') && pathname?.match(/^\/packages\/[^/]+$/)) {
@@ -209,7 +212,7 @@ export default function MainLayout({
         showBack: true,
         showNotifications: false,
         hideHeader: true,
-        hideBottomNav: false,
+        hideBottomNav: true,
       };
     } else {
       currentConfig = {
