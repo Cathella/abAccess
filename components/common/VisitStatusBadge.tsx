@@ -23,20 +23,20 @@ export function VisitStatusBadge({ status, showIcon = true }: VisitStatusBadgePr
   // Define color styles based on design specs
   const colorStyles = {
     success: {
-      bgColor: "bg-[#E8F4E8]",
-      textColor: "text-[#2D5A2D]",
+      bgColor: "bg-primary-100",
+      textColor: "text-neutral-900",
     },
     warning: {
-      bgColor: "bg-transparent",
-      textColor: "text-[#D97706]",
+      bgColor: "bg-warning-100",
+      textColor: "text-neutral-900",
     },
     error: {
-      bgColor: "bg-[#FEE2E2]",
-      textColor: "text-[#991B1B]",
+      bgColor: "bg-error-100",
+      textColor: "text-error-900",
     },
     info: {
-      bgColor: "bg-[#E8F4E8]",
-      textColor: "text-[#2D5A2D]",
+      bgColor: "bg-secondary-100",
+      textColor: "text-neutral-900",
     },
   };
 

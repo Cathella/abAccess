@@ -76,11 +76,11 @@ export function MemberFilterDropdown({
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full border border-gray-300 rounded-xl px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50 transition-colors"
+        className="flex items-center justify-between w-full border border-neutral-400 rounded-xl px-3 h-10 text-sm font-medium text-neutral-900 hover:bg-neutral-50 transition-colors"
       >
         <span>{getSelectedLabel()}</span>
         <ChevronDown
-          className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${
+          className={`h-5 w-5 text-neutral-700 transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`}
         />
@@ -88,21 +88,21 @@ export function MemberFilterDropdown({
 
       {/* Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-full min-w-[250px] bg-white rounded-2xl shadow-lg z-50 p-2">
+        <div className="absolute right-0 mt-2 w-full min-w-62.5 bg-white rounded-2xl shadow-lg z-50 p-2">
           {options.map((option, index) => (
             <div key={option.id}>
               {/* Option Button */}
               <button
                 onClick={() => handleSelect(option.id)}
-                className="w-full flex items-center gap-3 p-4 hover:bg-gray-50 rounded-xl transition-colors text-left"
+                className="w-full flex items-center gap-3 p-4 hover:bg-neutral-200 rounded-xl transition-colors text-left"
               >
                 {/* Radio Button */}
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <div
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                       option.isSelected
-                        ? 'border-[#3A8DFF] bg-[#3A8DFF]'
-                        : 'border-gray-300 bg-white'
+                        ? 'border-secondary-900 bg-secondary-900'
+                        : 'border-neutral-400 bg-white'
                     }`}
                   >
                     {option.isSelected && (
@@ -114,7 +114,7 @@ export function MemberFilterDropdown({
                 {/* Label */}
                 <span
                   className={`text-sm font-medium ${
-                    option.isSelected ? 'text-gray-900' : 'text-gray-700'
+                    option.isSelected ? 'text-neutral-900' : 'text-neutral-700'
                   }`}
                 >
                   {option.label}
@@ -123,7 +123,7 @@ export function MemberFilterDropdown({
 
               {/* Divider (not after last item) */}
               {index < options.length - 1 && (
-                <div className="border-b border-gray-100 my-1" />
+                <div className="border-b border-neutral-100 my-1" />
               )}
             </div>
           ))}

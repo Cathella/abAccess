@@ -9,6 +9,7 @@ import { ChevronDown, ChevronRight, Heart, Hospital, LogOut, Wallet } from "luci
 import { cn } from "@/lib/utils";
 import { transformVisitDataToWeeklyChart } from "@/lib/utils/visitChartData";
 import { UserHeader } from "@/components/common/UserHeader";
+import { PartnersEmptyState } from "@/components/common/PartnersEmptyState";
 import { WalletCard } from "@/components/cards/WalletCard";
 import { DependentsCard } from "@/components/cards/DependentsCard";
 import { PackagesCard } from "@/components/cards/PackagesCard";
@@ -90,7 +91,7 @@ export default function DashboardPage() {
         onSettingsClick={() => router.push(ROUTES.PROFILE)}
       />
 
-      <div className="space-y-8 px-4 pb-8 pt-24 sm:px-6">
+      <div className="space-y-8 px-4 pt-24 pb-8 sm:px-6">
         {/* Wallet */}
         {dashboardData.transactionCount === 0 ? (
           // Empty wallet state - no transactions yet
@@ -159,7 +160,7 @@ export default function DashboardPage() {
                   <p className="font-medium text-sm text-neutral-900">
                     {familyMembersCount} Dependents
                   </p>
-                  <ChevronRight className="h-5 w-5 text-neutral-900" />
+                  <ChevronRight className="h-5 w-5 text-neutral-700" />
                 </div>
               </div>
             </Link>
@@ -214,9 +215,16 @@ export default function DashboardPage() {
                   </div>
                 ))
               ) : (
-                <div className="flex min-w-full items-center justify-center py-8">
-                  <p className="text-sm text-neutral-600">No partner facilities available yet</p>
-                </div>
+                <PartnersEmptyState
+                  onEnableLocation={() => {
+                    // TODO: Implement location request
+                    console.log("Enable location requested");
+                  }}
+                  onSelectManually={() => {
+                    // TODO: Navigate to area selection
+                    console.log("Select area manually requested");
+                  }}
+                />
               )}
             </div>
           </div>

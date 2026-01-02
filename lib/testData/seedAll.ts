@@ -4,6 +4,7 @@
  */
 
 import type { Dependent } from '@/types'
+import { Relationship } from '@/types'
 import { MOCK_VISITS } from '@/lib/constants'
 
 /**
@@ -15,7 +16,7 @@ export const mockDependents: Dependent[] = [
     id: 'dep-1',
     userId: 'user_1',
     name: 'Ben Were',
-    relationship: 'child',
+    relationship: Relationship.CHILD,
     dateOfBirth: '2018-03-15', // 6 years old
     gender: 'male',
     photo: undefined,
@@ -26,7 +27,7 @@ export const mockDependents: Dependent[] = [
     id: 'dep-2',
     userId: 'user_1',
     name: 'Sarah Namugga',
-    relationship: 'child',
+    relationship: Relationship.CHILD,
     dateOfBirth: '2020-07-22', // 4 years old
     gender: 'female',
     photo: undefined,
@@ -37,7 +38,7 @@ export const mockDependents: Dependent[] = [
     id: 'dep-3',
     userId: 'user_1',
     name: 'Michael Okello',
-    relationship: 'child',
+    relationship: Relationship.CHILD,
     dateOfBirth: '2022-05-10', // 2 years old
     gender: 'male',
     photo: undefined,

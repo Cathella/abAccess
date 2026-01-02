@@ -22,23 +22,23 @@ const TAB_CONFIGS: TabConfig[] = [
   {
     value: 'upcoming',
     label: 'Upcoming',
-    activeStyles: 'bg-white text-gray-900 shadow-sm',
+    activeStyles: 'bg-white text-neutral-900 shadow-sm',
   },
   {
     value: 'completed',
     label: 'Completed',
-    activeStyles: 'bg-[#32C28A] text-white',
+    activeStyles: 'bg-primary-100 text-neutral-900',
   },
   {
     value: 'canceled',
     label: 'Canceled',
-    activeStyles: 'bg-[#FEE2E2] text-[#991B1B]',
+    activeStyles: 'bg-error-100 text-error-900',
   },
 ];
 
 export function VisitTabFilter({ activeTab, onTabChange, counts }: VisitTabFilterProps) {
   return (
-    <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+    <div className="flex gap-1 bg-neutral-200 rounded-xl p-1">
       {TAB_CONFIGS.map((tab) => {
         const isActive = activeTab === tab.value;
         const count = counts?.[tab.value];
@@ -54,7 +54,7 @@ export function VisitTabFilter({ activeTab, onTabChange, counts }: VisitTabFilte
               ${
                 isActive
                   ? tab.activeStyles
-                  : 'bg-transparent text-gray-600'
+                  : 'bg-transparent text-neutral-700'
               }
             `}
           >

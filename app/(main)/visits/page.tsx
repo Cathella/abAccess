@@ -63,7 +63,7 @@ export default function VisitsPage() {
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-neutral-600">Loading...</p>
+        <p className="text-neutral-700">Loading...</p>
       </div>
     );
   }
@@ -80,7 +80,7 @@ export default function VisitsPage() {
       />
 
       {/* Main Content */}
-      <div className="min-h-screen px-4 pb-24 pt-24">
+      <div className="px-4 py-8"> 
         {!hasAnyVisits ? (
           // Show empty state if user has no visits at all
           <VisitsEmptyState />
@@ -88,10 +88,10 @@ export default function VisitsPage() {
           <div className="space-y-4">
             {/* Title + Book a Visit Button Row */}
             <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-gray-900">Visits</h1>
+              <h1 className="text-xl font-bold text-neutral-900">Visits</h1>
               <Button
                 asChild
-                className="bg-[#32C28A] hover:bg-[#2AA677] text-white rounded-xl px-4 py-2 font-semibold"
+                className="bg-primary-900 hover:bg-primary-800 text-neutral-900 rounded-xl px-4 py-2 font-bold text-base border-[1.5px] border-neutral-900 h-10"
               >
                 <Link href="/packages">Book a Visit</Link>
               </Button>
@@ -106,7 +106,7 @@ export default function VisitsPage() {
 
             {/* Filter Row */}
             <div className="flex items-center justify-between gap-4">
-              <span className="text-sm font-medium text-gray-700">Filter</span>
+              <span className="text-base font-bold text-neutral-700">Filter</span>
               <div className="flex-1 max-w-xs">
                 <MemberFilterDropdownConnected
                   selectedMemberId={selectedMemberId}
@@ -119,7 +119,7 @@ export default function VisitsPage() {
             {!hasFilteredVisits ? (
               // Show "no visits for this filter" message
               <div className="flex flex-1 items-center justify-center py-16 text-center">
-                <p className="text-base text-gray-500">
+                <p className="text-base text-neutral-700">
                   No {activeTab} visits
                   {selectedMemberId !== 'all' && ' for selected member'}
                 </p>
