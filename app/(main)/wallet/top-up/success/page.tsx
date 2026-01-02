@@ -10,9 +10,6 @@ export default function TopUpSuccessPage() {
   const router = useRouter();
   const balance = useWalletStore((state) => state.balance);
   const topUpData = useWalletStore((state) => state.topUpData);
-  const addBalance = useWalletStore((state) => state.addBalance);
-  const addTransaction = useWalletStore((state) => state.addTransaction);
-  const addSavedPaymentMethod = useWalletStore((state) => state.addSavedPaymentMethod);
   const clearTopUpData = useWalletStore((state) => state.clearTopUpData);
 
   const [transaction, setTransaction] = useState<WalletTransaction | null>(null);
@@ -24,7 +21,7 @@ export default function TopUpSuccessPage() {
   const cardDetails = topUpData.cardDetails;
   const saveForFuture = topUpData.saveForFuture;
 
-  // Prevent back navigation and create transaction
+  // Prevent back navigation
   useEffect(() => {
     const preventBack = () => {
       window.history.pushState(null, "", window.location.href);
@@ -35,11 +32,11 @@ export default function TopUpSuccessPage() {
     window.history.pushState(null, "", window.location.href);
     window.addEventListener("popstate", preventBack);
 
-    // Create and add transaction
-    let transactionTimeout: number | undefined;
-
+    // The transaction was already created and balance updated by processTopUp in the processing page
+    // Just display the transaction details from the store
     if (amount > 0 && paymentMethod && !transaction) {
-      const newTransaction: WalletTransaction = {
+      // Create a display transaction object for UI
+      const displayTransaction: WalletTransaction = {
         id: crypto.randomUUID(),
         type: "top_up",
         amount,
@@ -52,45 +49,13 @@ export default function TopUpSuccessPage() {
         createdAt: new Date().toISOString(),
       };
 
-      // Add balance and transaction
-      addBalance(amount);
-      addTransaction(newTransaction);
-
-      // Defer setting local state to avoid synchronous setState inside effect
-      transactionTimeout = window.setTimeout(() => {
-        setTransaction(newTransaction);
-      }, 0);
-
-      // Save payment method if user opted in
-      if (saveForFuture && paymentMethod) {
-        if (paymentMethod === "mtn_momo" || paymentMethod === "airtel_money") {
-          if (phoneNumber) {
-            addSavedPaymentMethod({
-              id: crypto.randomUUID(),
-              type: paymentMethod,
-              phoneNumber,
-              isDefault: false,
-            });
-          }
-        } else if (paymentMethod === "card" && cardDetails) {
-          addSavedPaymentMethod({
-            id: crypto.randomUUID(),
-            type: "card",
-            cardLast4: cardDetails.number.slice(-4),
-            cardBrand: "Visa", // Default to Visa - could be determined from card number
-            isDefault: false,
-          });
-        }
-      }
+      setTransaction(displayTransaction);
     }
 
     return () => {
       window.removeEventListener("popstate", preventBack);
-      if (transactionTimeout) {
-        clearTimeout(transactionTimeout);
-      }
     };
-  }, [amount, paymentMethod, phoneNumber, cardDetails, saveForFuture, addBalance, addTransaction, addSavedPaymentMethod, transaction]);
+  }, [amount, paymentMethod, phoneNumber, cardDetails, transaction]);
 
   const handleDone = () => {
     // Remove back navigation prevention before navigating

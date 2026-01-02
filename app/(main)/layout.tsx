@@ -8,6 +8,7 @@ import { SafeArea } from "@/components/common/SafeArea";
 import { useAuthStore } from "@/stores";
 import { useFamilyStore } from "@/stores/familyStore";
 import { getDependents } from "@/lib/services/dependentService";
+import { useWalletInit } from "@/hooks/useWalletInit";
 import { ROUTES } from "@/lib/constants";
 
 // Route configurations for Header
@@ -109,6 +110,9 @@ export default function MainLayout({
       router.push(ROUTES.WELCOME);
     }
   }, [user, router, hasHydrated, pathname]);
+
+  // Initialize wallet (migration + database sync)
+  useWalletInit();
 
   // Fetch and sync dependents when user is authenticated
   useEffect(() => {
