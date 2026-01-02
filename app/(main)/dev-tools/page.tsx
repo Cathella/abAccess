@@ -10,6 +10,7 @@ import {
   seedWalletStore,
   seedPackageStore,
   seedFamilyStore,
+  seedVisitsStore,
 } from "@/lib/testData/seedAll";
 import { usePackageStore } from "@/stores/packageStore";
 import { useAuthStore } from "@/stores";
@@ -45,7 +46,8 @@ export default function DevToolsPage() {
       `👤 User: ${result.user.firstName} ${result.user.lastName}\n` +
       `💰 Wallet: UGX ${result.wallet.balance.toLocaleString()}\n` +
       `📦 Packages: ${result.packages.length}\n` +
-      `👨‍👩‍👧‍👦 Dependents: ${result.dependents.length}`
+      `👨‍👩‍👧‍👦 Dependents: ${result.dependents.length}\n` +
+      `📅 Visits: ${result.visits.total}`
     );
     setTimeout(() => {
       window.location.reload();
@@ -61,7 +63,7 @@ export default function DevToolsPage() {
     }, 1500);
   };
 
-  const handleSeedIndividual = (type: 'wallet' | 'packages' | 'family' | 'auth') => {
+  const handleSeedIndividual = (type: 'wallet' | 'packages' | 'family' | 'auth' | 'visits') => {
     switch (type) {
       case 'wallet':
         seedWalletStore();
@@ -79,6 +81,10 @@ export default function DevToolsPage() {
         seedAuthStore();
         setMessage("✅ Auth data seeded!");
         break;
+      case 'visits':
+        const visitsResult = seedVisitsStore();
+        setMessage(`✅ Visits data seeded!\n📅 ${visitsResult.total} visits loaded`);
+        break;
     }
     setTimeout(() => {
       window.location.reload();
@@ -92,7 +98,8 @@ export default function DevToolsPage() {
       `Auth: ${status.hasAuth ? '✅' : '❌'}\n` +
       `Wallet: ${status.hasWallet ? '✅' : '❌'}\n` +
       `Packages: ${status.hasPackages ? '✅' : '❌'}\n` +
-      `Family: ${status.hasFamily ? '✅' : '❌'}`
+      `Family: ${status.hasFamily ? '✅' : '❌'}\n` +
+      `Visits: ${status.hasVisits ? '✅' : '❌'}`
     );
   };
 
@@ -201,6 +208,13 @@ export default function DevToolsPage() {
             >
               👨‍👩‍👧‍👦 Seed Family Only
             </button>
+
+            <button
+              onClick={() => handleSeedIndividual('visits')}
+              className="w-full h-12 rounded-xl bg-white text-base font-semibold text-neutral-900 border-[1.5px] border-neutral-400 transition-colors hover:bg-neutral-50"
+            >
+              📅 Seed Visits Only
+            </button>
           </div>
         </div>
 
@@ -270,8 +284,18 @@ export default function DevToolsPage() {
                 <strong>👨‍👩‍👧‍👦 Family:</strong>
               </p>
               <ul className="mt-1 ml-4 text-sm text-neutral-700 space-y-1">
-                <li>• 2 dependents (Sarah, 6 years; John Jr., 4 years)</li>
-                <li>• Both with birth certificates</li>
+                <li>• 3 dependents (Ben, 6 years; Sarah, 4 years; Michael, 2 years)</li>
+                <li>• All with birth certificates</li>
+              </ul>
+
+              <p className="text-sm text-neutral-900 leading-relaxed mt-3">
+                <strong>📅 Visits:</strong>
+              </p>
+              <ul className="mt-1 ml-4 text-sm text-neutral-700 space-y-1">
+                <li>• 15 total visit records</li>
+                <li>• 5 upcoming visits (3 confirmed, 2 pending)</li>
+                <li>• 6 completed visits</li>
+                <li>• 4 canceled/no-show visits</li>
               </ul>
 
               <p className="text-xs text-neutral-600 leading-relaxed mt-4 italic">
@@ -308,6 +332,12 @@ export default function DevToolsPage() {
                 className="w-full h-12 rounded-xl bg-white text-base font-semibold text-neutral-900 border-[1.5px] border-neutral-400 transition-colors hover:bg-neutral-50"
               >
                 👨‍👩‍👧‍👦 Family
+              </button>
+              <button
+                onClick={() => router.push("/visits")}
+                className="w-full h-12 rounded-xl bg-white text-base font-semibold text-neutral-900 border-[1.5px] border-neutral-400 transition-colors hover:bg-neutral-50"
+              >
+                📅 Visits
               </button>
             </>
           )}

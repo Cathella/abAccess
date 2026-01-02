@@ -23,7 +23,6 @@ export default function PurchasePinPage() {
   const user = useAuthStore((state) => state.user);
 
   const maxAttempts = 3;
-  const attemptsLeft = maxAttempts - attempts;
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-UG", {

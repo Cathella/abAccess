@@ -4,18 +4,20 @@
  */
 
 import type { Dependent } from '@/types'
+import { MOCK_VISITS } from '@/lib/constants'
 
 /**
  * Mock Dependents Data
+ * These IDs match the MOCK_VISITS data in lib/constants.ts for consistent testing
  */
 export const mockDependents: Dependent[] = [
   {
     id: 'dep-1',
     userId: 'user_1',
-    name: 'Sarah Nakitto',
+    name: 'Ben Were',
     relationship: 'child',
     dateOfBirth: '2018-03-15', // 6 years old
-    gender: 'female',
+    gender: 'male',
     photo: undefined,
     birthCertificateNumber: 'BC-2018-0315',
     createdAt: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString(), // 6 months ago
@@ -23,13 +25,24 @@ export const mockDependents: Dependent[] = [
   {
     id: 'dep-2',
     userId: 'user_1',
-    name: 'John Nakitto Jr.',
+    name: 'Sarah Namugga',
     relationship: 'child',
     dateOfBirth: '2020-07-22', // 4 years old
-    gender: 'male',
+    gender: 'female',
     photo: undefined,
     birthCertificateNumber: 'BC-2020-0722',
     createdAt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString(), // 3 months ago
+  },
+  {
+    id: 'dep-3',
+    userId: 'user_1',
+    name: 'Michael Okello',
+    relationship: 'child',
+    dateOfBirth: '2022-05-10', // 2 years old
+    gender: 'male',
+    photo: undefined,
+    birthCertificateNumber: 'BC-2022-0510',
+    createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(), // 1.5 months ago
   },
 ]
 
@@ -316,6 +329,46 @@ export const seedPackageStore = () => {
 }
 
 /**
+ * Seed Visits Store with mock visit records
+ */
+export const seedVisitsStore = () => {
+  const visitsStorage = {
+    state: {
+      visits: MOCK_VISITS,
+      isLoading: false,
+      activeTab: 'upcoming',
+      selectedMemberId: 'all',
+    },
+    version: 0,
+  }
+
+  localStorage.setItem('visits-storage', JSON.stringify(visitsStorage))
+
+  const upcomingVisits = MOCK_VISITS.filter(v =>
+    ['pending_confirmation', 'confirmed'].includes(v.status)
+  ).length
+  const completedVisits = MOCK_VISITS.filter(v =>
+    ['completed', 'remotely_approved'].includes(v.status)
+  ).length
+  const canceledVisits = MOCK_VISITS.filter(v =>
+    ['canceled', 'no_show'].includes(v.status)
+  ).length
+
+  console.log('✅ Visits data seeded successfully!')
+  console.log(`📅 Total visits: ${MOCK_VISITS.length}`)
+  console.log(`   - Upcoming: ${upcomingVisits}`)
+  console.log(`   - Completed: ${completedVisits}`)
+  console.log(`   - Canceled: ${canceledVisits}`)
+
+  return {
+    total: MOCK_VISITS.length,
+    upcoming: upcomingVisits,
+    completed: completedVisits,
+    canceled: canceledVisits,
+  }
+}
+
+/**
  * Seed Auth Store with user data
  */
 export const seedAuthStore = () => {
@@ -361,6 +414,7 @@ export const clearAllTestData = () => {
   localStorage.removeItem('wallet-storage')
   localStorage.removeItem('package-storage')
   localStorage.removeItem('family-storage')
+  localStorage.removeItem('visits-storage')
 
   console.log('🗑️ All test data cleared')
 }
@@ -375,6 +429,7 @@ export const seedAllTestData = () => {
   const wallet = seedWalletStore()
   const packages = seedPackageStore()
   const dependents = seedFamilyStore()
+  const visits = seedVisitsStore()
 
   console.log('\n✅ All test data seeded successfully!')
   console.log('\n📊 Summary:')
@@ -382,6 +437,7 @@ export const seedAllTestData = () => {
   console.log(`   Wallet Balance: UGX ${wallet.balance.toLocaleString()}`)
   console.log(`   Active Packages: ${packages.filter(p => p.status === 'active').length}`)
   console.log(`   Dependents: ${dependents.length}`)
+  console.log(`   Visits: ${visits.total} (${visits.upcoming} upcoming, ${visits.completed} completed)`)
   console.log('\n🔑 Test PIN: 1234')
   console.log('📱 Test Phone: +256782087786\n')
 
@@ -390,6 +446,7 @@ export const seedAllTestData = () => {
     wallet,
     packages,
     dependents,
+    visits,
   }
 }
 
@@ -401,18 +458,21 @@ export const getTestDataStatus = () => {
   const hasWallet = !!localStorage.getItem('wallet-storage')
   const hasPackages = !!localStorage.getItem('package-storage')
   const hasFamily = !!localStorage.getItem('family-storage')
+  const hasVisits = !!localStorage.getItem('visits-storage')
 
   console.log('📊 Test Data Status:')
   console.log(`   Auth: ${hasAuth ? '✅' : '❌'}`)
   console.log(`   Wallet: ${hasWallet ? '✅' : '❌'}`)
   console.log(`   Packages: ${hasPackages ? '✅' : '❌'}`)
   console.log(`   Family: ${hasFamily ? '✅' : '❌'}`)
+  console.log(`   Visits: ${hasVisits ? '✅' : '❌'}`)
 
   return {
     hasAuth,
     hasWallet,
     hasPackages,
     hasFamily,
-    isComplete: hasAuth && hasWallet && hasPackages && hasFamily,
+    hasVisits,
+    isComplete: hasAuth && hasWallet && hasPackages && hasFamily && hasVisits,
   }
 }

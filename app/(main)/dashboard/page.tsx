@@ -332,7 +332,7 @@ export default function DashboardPage() {
               <p className="text-sm text-neutral-900">
                 {totalVisitsCount} {totalVisitsCount === 1 ? 'visit' : 'visits'} {timeframe.toLowerCase()}
               </p>
-              <Link href="#" className="text-base font-semibold text-secondary-900 underline">
+              <Link href="/visits" className="text-base font-semibold text-secondary-900 underline">
                 View all
               </Link>
             </div>

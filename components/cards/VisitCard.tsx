@@ -3,63 +3,11 @@
 import { ChevronRight } from "lucide-react";
 import type { VisitRecord } from "@/types";
 import { VisitStatusBadge } from "@/components/common/VisitStatusBadge";
+import { formatVisitDate, formatVisitTime } from "@/lib/utils";
 
 interface VisitCardProps {
   visit: VisitRecord;
   onPress?: () => void;
-}
-
-/**
- * Format visit date according to specifications:
- * - Tomorrow: "Tomorrow"
- * - Within 7 days: "Fri, 10 Jan"
- * - Completed: "On: 4 Jan 2025"
- * - Otherwise: "On: 4 Jan 2025"
- */
-function formatVisitDate(dateString: string, isCompleted: boolean): string {
-  const date = new Date(dateString);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  const visitDate = new Date(date);
-  visitDate.setHours(0, 0, 0, 0);
-
-  // For completed visits, always show full date
-  if (isCompleted) {
-    const day = date.getDate();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    return `On: ${day} ${month} ${year}`;
-  }
-
-  // Check if tomorrow
-  if (visitDate.getTime() === tomorrow.getTime()) {
-    return 'Tomorrow';
-  }
-
-  // Check if within 7 days
-  const diffTime = visitDate.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays >= 0 && diffDays <= 7) {
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const dayName = dayNames[date.getDay()];
-    const day = date.getDate();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const month = months[date.getMonth()];
-    return `${dayName}, ${day} ${month}`;
-  }
-
-  // Default format
-  const day = date.getDate();
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-  return `On: ${day} ${month} ${year}`;
 }
 
 export function VisitCard({ visit, onPress }: VisitCardProps) {
@@ -67,8 +15,9 @@ export function VisitCard({ visit, onPress }: VisitCardProps) {
   const isCompleted = ['completed', 'remotely_approved'].includes(visit.status);
   const isCanceled = ['canceled', 'no_show'].includes(visit.status);
 
-  // Format date based on status
-  const formattedDate = formatVisitDate(visit.visitDate, isCompleted || isCanceled);
+  // Format date and time using utility functions
+  const formattedDate = formatVisitDate(visit.visitDate);
+  const formattedTime = formatVisitTime(visit.visitTime);
 
   return (
     <Component
@@ -88,10 +37,10 @@ export function VisitCard({ visit, onPress }: VisitCardProps) {
 
         {/* Name and Facility */}
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-gray-900">
+          <h4 className="font-semibold text-gray-900 truncate">
             {visit.memberName}
           </h4>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 truncate">
             {visit.facilityName} · {formattedDate}
           </p>
         </div>
@@ -114,7 +63,7 @@ export function VisitCard({ visit, onPress }: VisitCardProps) {
             {' '}({visit.packageName})
           </p>
           <p className="text-sm text-gray-500 shrink-0">
-            At: {visit.visitTime}
+            {formattedTime}
           </p>
         </div>
 

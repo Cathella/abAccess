@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useVisitsStore } from "@/stores/visitsStore";
 import { UserHeader } from "@/components/common/UserHeader";
@@ -10,6 +11,7 @@ import { MemberFilterDropdownConnected } from "@/components/common/MemberFilterD
 import { MonthGroupHeader } from "@/components/common/MonthGroupHeader";
 import { VisitsEmptyState } from "@/components/common/VisitsEmptyState";
 import { VisitCard } from "@/components/cards/VisitCard";
+import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/lib/constants";
 
 export default function VisitsPage() {
@@ -87,12 +89,12 @@ export default function VisitsPage() {
             {/* Title + Book a Visit Button Row */}
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-bold text-gray-900">Visits</h1>
-              <button
-                onClick={() => router.push(ROUTES.PACKAGES)}
-                className="rounded-xl bg-[#32C28A] px-4 py-2 font-semibold text-gray-900 transition-colors hover:bg-[#2AAA75] border-[1.5px] border-neutral-900"
+              <Button
+                asChild
+                className="bg-[#32C28A] hover:bg-[#2AA677] text-white rounded-xl px-4 py-2 font-semibold"
               >
-                Book a Visit
-              </button>
+                <Link href="/packages">Book a Visit</Link>
+              </Button>
             </div>
 
             {/* Tab Filter */}
