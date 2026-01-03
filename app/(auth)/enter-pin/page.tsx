@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/common/Header";
 import { SafeArea } from "@/components/common/SafeArea";
@@ -11,8 +11,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/hooks/useAuth";
 import { ROUTES, PIN_LENGTH } from "@/lib/constants";
 
-export default function EnterPinPage() {
+function EnterPinContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +25,9 @@ export default function EnterPinPage() {
     login,
     isLoading,
   } = useAuth();
+
+  // Get redirect parameter
+  const redirect = searchParams.get('redirect');
 
   const maxAttempts = 3;
   const attemptsLeft = maxAttempts - pinAttempts;
@@ -51,9 +55,17 @@ export default function EnterPinPage() {
 
       if (result.success) {
         // Success - useAuth already updated store
+        console.log('[EnterPin] Login successful, will redirect to:', {
+          redirect,
+          targetPath: redirect || ROUTES.DASHBOARD
+        });
+
         // Show loading briefly before redirect
         setTimeout(() => {
-          router.push(ROUTES.DASHBOARD);
+          // Redirect to intended page or dashboard
+          const targetPath = redirect || ROUTES.DASHBOARD;
+          console.log('[EnterPin] Redirecting now to:', targetPath);
+          router.push(targetPath);
         }, 500);
       } else {
         // Failed - useAuth already incremented attempts
@@ -159,5 +171,13 @@ export default function EnterPinPage() {
       {/* Loading Overlay - shown during PIN verification */}
       {isLoading && <LoadingOverlay text="Signing in..." />}
     </>
+  );
+}
+
+export default function EnterPinPage() {
+  return (
+    <Suspense fallback={<LoadingOverlay text="Loading..." />}>
+      <EnterPinContent />
+    </Suspense>
   );
 }

@@ -1,16 +1,19 @@
-import type { Metadata } from "next";
+"use client";
+
+import { Suspense } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { SafeArea } from "@/components/common/SafeArea";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { ROUTES } from "@/lib/constants";
 
-export const metadata: Metadata = {
-  title: "Welcome - ABA Access",
-  description: "Affordable healthcare for your family",
-};
+function WelcomeContent() {
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
 
-export default function WelcomePage() {
+  // Build redirect parameter for buttons
+  const redirectParam = redirect ? `?redirect=${encodeURIComponent(redirect)}` : '';
   return (
     <div className="flex min-h-screen flex-col bg-white">
       {/* Main content - centered */}
@@ -41,13 +44,21 @@ export default function WelcomePage() {
       {/* Action buttons - fixed at bottom */}
       <SafeArea inset="bottom" className="space-y-2 mb-6">
         {/* Create Account Button */}
-        <SecondaryButton href={ROUTES.REGISTER}>
+        <SecondaryButton href={`${ROUTES.REGISTER}${redirectParam}`}>
           Create Account
         </SecondaryButton>
 
         {/* Login Button */}
-        <PrimaryButton href={ROUTES.SIGN_IN}>Login</PrimaryButton>
+        <PrimaryButton href={`${ROUTES.SIGN_IN}${redirectParam}`}>Login</PrimaryButton>
       </SafeArea>
     </div>
+  );
+}
+
+export default function WelcomePage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-white"><p className="text-neutral-600">Loading...</p></div>}>
+      <WelcomeContent />
+    </Suspense>
   );
 }

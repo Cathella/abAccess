@@ -261,22 +261,53 @@ export async function addTransaction(data: {
 
     // If transaction is completed and is top_up or refund, update wallet balance
     if (data.status === 'completed' && (data.type === 'top_up' || data.type === 'refund')) {
-      const { data: wallet } = await supabase
+      console.log('[WalletService] Updating balance for completed top_up/refund', {
+        walletId: data.walletId,
+        amount: data.amount,
+        type: data.type,
+      });
+
+      const { data: wallet, error: walletFetchError } = await supabase
         .from('wallets')
         .select('balance')
         .eq('id', data.walletId)
         .single();
 
-      if (wallet) {
-        const newBalance = Number(wallet.balance) + data.amount;
-        await supabase
+      if (walletFetchError) {
+        console.error('Failed to fetch wallet for balance update:', walletFetchError);
+      } else if (wallet) {
+        const currentBalance = Number(wallet.balance);
+        const newBalance = currentBalance + data.amount;
+        console.log('[WalletService] Balance update:', {
+          currentBalance,
+          addAmount: data.amount,
+          newBalance,
+        });
+
+        const { error: updateError } = await supabase
           .from('wallets')
           .update({
             balance: newBalance,
             updated_at: new Date().toISOString(),
           })
           .eq('id', data.walletId);
+
+        if (updateError) {
+          console.error('Failed to update wallet balance:', updateError);
+          return {
+            success: false,
+            error: `Transaction created but balance update failed: ${updateError.message}`,
+          };
+        } else {
+          console.log('[WalletService] Balance updated successfully');
+        }
       }
+    } else {
+      console.log('[WalletService] Skipping balance update:', {
+        status: data.status,
+        type: data.type,
+        shouldUpdate: data.status === 'completed' && (data.type === 'top_up' || data.type === 'refund'),
+      });
     }
 
     return {
@@ -415,21 +446,31 @@ export async function updateTransactionStatus(
       transaction.status !== 'completed' &&
       (transaction.type === 'topUp' || transaction.type === 'refund')
     ) {
-      const { data: wallet } = await supabase
+      const { data: wallet, error: walletFetchError } = await supabase
         .from('wallets')
         .select('balance')
         .eq('id', transaction.wallet_id)
         .single();
 
-      if (wallet) {
+      if (walletFetchError) {
+        console.error('Failed to fetch wallet for balance update:', walletFetchError);
+      } else if (wallet) {
         const newBalance = Number(wallet.balance) + Number(transaction.amount);
-        await supabase
+        const { error: updateError } = await supabase
           .from('wallets')
           .update({
             balance: newBalance,
             updated_at: new Date().toISOString(),
           })
           .eq('id', transaction.wallet_id);
+
+        if (updateError) {
+          console.error('Failed to update wallet balance:', updateError);
+          return {
+            success: false,
+            error: `Status updated but balance update failed: ${updateError.message}`,
+          };
+        }
       }
     }
 

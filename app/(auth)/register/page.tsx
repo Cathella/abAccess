@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/common/Header";
 import { PhoneInput } from "@/components/forms/PhoneInput";
@@ -14,14 +14,18 @@ import { useRegistrationStore } from "@/stores/registrationStore";
 import { checkUserExists } from "@/lib/supabase/auth";
 import { ROUTES } from "@/lib/constants";
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(false);
 
-  const { setPhone, setCurrentStep } = useRegistrationStore();
+  const { setPhone, setCurrentStep, setRedirectPath } = useRegistrationStore();
+
+  // Get redirect parameter
+  const redirect = searchParams.get('redirect');
 
   // Validate phone number (E.164 format with correct length)
   const isValidPhone = (phone: string): boolean => {
@@ -75,6 +79,10 @@ export default function RegisterPage() {
       // User doesn't exist - continue to next step
       setPhone(phoneNumber);
       setCurrentStep(2);
+      // Save redirect path for after registration completes
+      if (redirect) {
+        setRedirectPath(redirect);
+      }
       router.push(ROUTES.REGISTER_INFO);
     } catch (err) {
       console.error("Exception in handleContinue:", err);
@@ -183,5 +191,13 @@ export default function RegisterPage() {
       {/* Loading Overlay - shown while checking user */}
       {isChecking && <LoadingOverlay text="Checking account..." />}
     </>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<LoadingOverlay text="Loading..." />}>
+      <RegisterContent />
+    </Suspense>
   );
 }

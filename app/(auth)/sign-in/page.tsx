@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/common/Header";
 import { SafeArea } from "@/components/common/SafeArea";
@@ -12,12 +12,16 @@ import { useAuthStore } from "@/stores/authStore";
 import { checkUserExists } from "@/lib/supabase/auth";
 import { ROUTES } from "@/lib/constants";
 
-export default function SignInPage() {
+function SignInContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(false);
   const { setPhoneNumber: setStorePhoneNumber } = useAuthStore();
+
+  // Get redirect parameter
+  const redirect = searchParams.get('redirect');
 
   // Validate phone number
   const isValidPhone = (phone: string): boolean => {
@@ -57,7 +61,9 @@ export default function SignInPage() {
       if (result.exists) {
         // User exists - store phone and go to PIN entry
         setStorePhoneNumber(phoneNumber);
-        router.push(ROUTES.ENTER_PIN);
+        // Pass redirect parameter along
+        const redirectParam = redirect ? `?redirect=${encodeURIComponent(redirect)}` : '';
+        router.push(`${ROUTES.ENTER_PIN}${redirectParam}`);
       } else {
         // User not found - friendly message
         setError("We couldn't find an account with this phone number. Please check the number or create a new account.");
@@ -141,5 +147,13 @@ export default function SignInPage() {
       {/* Loading Overlay - shown while checking user */}
       {isChecking && <LoadingOverlay text="Checking account..." />}
     </>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<LoadingOverlay text="Loading..." />}>
+      <SignInContent />
+    </Suspense>
   );
 }

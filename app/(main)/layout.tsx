@@ -94,11 +94,16 @@ export default function MainLayout({
   // Wait for persisted auth store to hydrate before enforcing redirects
   useEffect(() => {
     if (useAuthStore.persist?.hasHydrated?.()) {
+      console.log('[MainLayout] Auth store already hydrated', { user: !!user });
       setHasHydrated(true);
       return;
     }
 
-    const unsubscribe = useAuthStore.persist?.onFinishHydration?.(() => setHasHydrated(true));
+    console.log('[MainLayout] Waiting for auth store hydration...');
+    const unsubscribe = useAuthStore.persist?.onFinishHydration?.(() => {
+      console.log('[MainLayout] Auth store hydration complete', { user: !!user });
+      setHasHydrated(true);
+    });
     return () => {
       unsubscribe?.();
     };
@@ -106,8 +111,19 @@ export default function MainLayout({
 
   // Check authentication (skip for dev-tools)
   useEffect(() => {
+    console.log('[MainLayout] Auth check:', {
+      pathname,
+      hasHydrated,
+      hasUser: !!user,
+      userId: user?.id,
+      willRedirect: hasHydrated && !user && pathname !== '/dev-tools'
+    });
+
     if (hasHydrated && !user && pathname !== '/dev-tools') {
-      router.push(ROUTES.WELCOME);
+      // Save current path as redirect target
+      const redirectPath = pathname && pathname !== '/' ? pathname : ROUTES.DASHBOARD;
+      console.log('[MainLayout] Redirecting unauthenticated user to welcome with redirect:', redirectPath);
+      router.push(`${ROUTES.WELCOME}?redirect=${encodeURIComponent(redirectPath)}`);
     }
   }, [user, router, hasHydrated, pathname]);
 
