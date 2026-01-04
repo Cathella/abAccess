@@ -11,11 +11,11 @@ const InclusionsList: React.FC<InclusionsListProps> = ({ items }) => {
       {items.map((item, index) => (
         <div key={index} className="flex items-start gap-3">
           <Check
-            className="flex-shrink-0 mt-0.5"
+            className="shrink-0 mt-0.5"
             size={20}
-            style={{ color: '#32C28A' }}
+            style={{ color: 'text-primary-900' }}
           />
-          <span className="text-gray-700">{item}</span>
+          <span className="text-neutral-700">{item}</span>
         </div>
       ))}
     </div>

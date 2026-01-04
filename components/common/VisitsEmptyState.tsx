@@ -30,7 +30,7 @@ export function VisitsEmptyState() {
         {/* Secondary Link */}
         <Link
           href="#"
-          className="mt-4 text-sm font-medium text-[#3A8DFF] hover:underline"
+          className="mt-4 text-sm font-medium text-secondary-900 hover:underline"
         >
           Find a facility
         </Link>

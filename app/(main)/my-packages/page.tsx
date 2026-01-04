@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { usePackageStore } from "@/stores/packageStore";
@@ -16,6 +16,12 @@ export default function MyPackagesPage() {
   const packageFilter = usePackageStore((state) => state.packageFilter);
   const setPackageFilter = usePackageStore((state) => state.setPackageFilter);
   const isLoading = usePackageStore((state) => state.isLoading);
+  const loadUserPackages = usePackageStore((state) => state.loadUserPackages);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    loadUserPackages(user.id, { force: true });
+  }, [loadUserPackages, user?.id]);
 
   const initials = useMemo(() => {
     if (!user) return "U";

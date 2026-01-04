@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ResultScreen } from "@/components/common/ResultScreen";
 import { usePurchaseStore } from "@/stores/purchaseStore";
@@ -8,7 +8,7 @@ import { usePackageStore } from "@/stores/packageStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { useAuthStore } from "@/stores/authStore";
 import { PACKAGE_CATEGORIES } from "@/lib/constants";
-import type { UserPackageType, PackageCategoryType, BrowsePackageCategory } from "@/types";
+import type { PackageCategoryType, BrowsePackageCategory } from "@/types";
 
 // Helper to map BrowsePackageCategory to PackageCategoryType
 const mapCategoryType = (category: BrowsePackageCategory): PackageCategoryType => {
@@ -26,8 +26,10 @@ export default function PurchaseSuccessPage() {
   const router = useRouter();
   const { selectedPackage, paymentMethod, resetPurchase } = usePurchaseStore();
   const addUserPackage = usePackageStore((state) => state.addUserPackage);
+  const loadUserPackages = usePackageStore((state) => state.loadUserPackages);
   const { deductBalance, addTransaction } = useWalletStore();
   const user = useAuthStore((state) => state.user);
+  const hasProcessedRef = useRef(false);
 
   // Get category name
   const categoryName = selectedPackage
@@ -63,6 +65,11 @@ export default function PurchaseSuccessPage() {
 
   // Process purchase on mount
   useEffect(() => {
+    if (hasProcessedRef.current) {
+      return;
+    }
+    hasProcessedRef.current = true;
+
     if (!selectedPackage || !user) {
       router.push("/packages");
       return;
@@ -87,6 +94,7 @@ export default function PurchaseSuccessPage() {
         if (result.success && result.userPackage) {
           // Add to local package store
           addUserPackage(result.userPackage);
+          await loadUserPackages(user.id, { force: true });
 
           // Deduct from wallet if paid with wallet
           if (paymentMethod === "wallet") {
@@ -107,66 +115,17 @@ export default function PurchaseSuccessPage() {
             });
           }
         } else {
-          // If database save fails, fallback to local-only storage
           console.error('Failed to save package to database:', result.error);
-
-          // Create local UserPackage record as fallback
-          const purchaseDate = new Date();
-          const expiryDate = getExpiryDate();
-
-          const userPackage: UserPackageType = {
-            id: `pkg-${Date.now()}`,
-            userId: user.id,
-            packageId: selectedPackage.id,
-            package: {
-              id: selectedPackage.id,
-              name: selectedPackage.name,
-              category: mapCategoryType(selectedPackage.categoryId),
-              description: `${selectedPackage.visits} visits pack`,
-              price: selectedPackage.price,
-              visits: selectedPackage.visits,
-              validityDays: selectedPackage.validityDays,
-              copay: selectedPackage.copay,
-              facilities: selectedPackage.partnerCount,
-            },
-            purchaseDate: purchaseDate.toISOString(),
-            expiryDate: expiryDate.toISOString(),
-            totalVisits: selectedPackage.visits,
-            usedVisits: 0,
-            remainingVisits: selectedPackage.visits,
-            status: "active",
-            usageHistory: [],
-          };
-
-          addUserPackage(userPackage);
-
-          if (paymentMethod === "wallet") {
-            deductBalance(selectedPackage.price);
-            addTransaction({
-              id: `txn-${Date.now()}`,
-              type: "purchase",
-              amount: selectedPackage.price,
-              fee: 0,
-              status: "completed",
-              paymentMethod: "mtn_momo",
-              packageName: selectedPackage.name,
-              packageVisits: selectedPackage.visits,
-              transactionId: `TXN-2025-${String(Math.floor(Math.random() * 10000)).padStart(5, "0")}`,
-              createdAt: new Date().toISOString(),
-            });
-          }
+          router.replace("/packages/purchase/failed");
+          return;
         }
       } catch (error) {
         console.error('Error processing purchase:', error);
+        router.replace("/packages/purchase/failed");
       }
     };
 
     processPurchase();
-
-    // Clear purchase store on cleanup
-    return () => {
-      resetPurchase();
-    };
   }, []);
 
   if (!selectedPackage) {
@@ -182,11 +141,17 @@ export default function PurchaseSuccessPage() {
       subtitle=""
       primaryAction={{
         label: "View my packages",
-        onPress: () => router.push("/my-packages"),
+        onPress: () => {
+          resetPurchase();
+          router.push("/my-packages");
+        },
       }}
       secondaryAction={{
         label: "Done",
-        onPress: () => router.push("/dashboard"),
+        onPress: () => {
+          resetPurchase();
+          router.push("/dashboard");
+        },
       }}
     >
       {/* Package summary card */}

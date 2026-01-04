@@ -28,13 +28,13 @@ const RecipientOption: React.FC<RecipientOptionProps> = ({
       `}
     >
       {/* Radio Button */}
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <div
           className={`
             w-5 h-5 rounded-full border-2 flex items-center justify-center
             transition-all
             ${selected
-              ? 'border-[#3A8DFF] bg-[#3A8DFF]'
+              ? 'border-secondary-900 bg-secondary-900'
               : 'border-gray-300 bg-white'
             }
           `}

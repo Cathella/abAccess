@@ -7,6 +7,62 @@ import type {
   PackageCategoryType,
 } from '@/types'
 
+function mapCategoryToDb(category: PackageCategoryType): string {
+  switch (category) {
+    case 'lab_tests':
+      return 'lab_tests'
+    case 'maternity':
+      return 'maternity'
+    case 'consultations':
+      return 'consultations'
+    case 'dental':
+      return 'dental'
+    case 'optical':
+      return 'optical'
+    case 'pharmacy':
+      return 'pharmacy'
+    default:
+      return category
+  }
+}
+
+function mapCategoryFromDb(category: string): PackageCategoryType {
+  switch (category) {
+    case 'lab_tests':
+      return 'lab_tests'
+    case 'labTests':
+      return 'lab_tests'
+    case 'pharmacy':
+      return 'pharmacy'
+    case 'childWellness':
+      return 'maternity'
+    case 'consultations':
+      return 'consultations'
+    case 'maternity':
+      return 'maternity'
+    case 'dental':
+      return 'dental'
+    case 'optical':
+      return 'optical'
+    default:
+      return 'consultations'
+  }
+}
+
+function mapPackageRowToPackageType(row: any): PackageType {
+  return {
+    id: row.id,
+    name: row.name,
+    category: mapCategoryFromDb(row.category),
+    description: row.description,
+    price: row.price,
+    visits: row.visit_count,
+    validityDays: row.validity_days,
+    copay: row.copay,
+    facilities: Array.isArray(row.facilities) ? row.facilities.length : row.facilities ?? 0,
+  }
+}
+
 /**
  * Get user's packages
  */
@@ -29,15 +85,17 @@ export async function getUserPackages(userId: string): Promise<UserPackageType[]
       id: item.id,
       userId: item.user_id,
       packageId: item.package_id,
-      package: item.package,
+      package: mapPackageRowToPackageType(item.package),
       purchaseDate: item.purchase_date,
       expiryDate: item.expiry_date,
-      completedDate: item.completed_date,
-      totalVisits: item.total_visits,
-      usedVisits: item.used_visits,
-      remainingVisits: item.remaining_visits,
+      completedDate: undefined,
+      totalVisits:
+        item.package?.visit_count ??
+        Number(item.visits_remaining || 0) + Number(item.visits_used || 0),
+      usedVisits: item.visits_used,
+      remainingVisits: item.visits_remaining,
       status: item.status,
-      usageHistory: item.usage_history || [],
+      usageHistory: [],
     }))
   } catch (error) {
     console.error('Error fetching user packages:', error)
@@ -60,17 +118,7 @@ export async function getAvailablePackages(): Promise<PackageType[]> {
     if (error) throw error
 
     // Transform the data to match PackageType interface
-    return (data || []).map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      category: item.category,
-      description: item.description,
-      price: item.price,
-      visits: item.visits,
-      validityDays: item.validity_days,
-      copay: item.copay,
-      facilities: item.facilities,
-    }))
+    return (data || []).map((item: any) => mapPackageRowToPackageType(item))
   } catch (error) {
     console.error('Error fetching available packages:', error)
     return []
@@ -112,11 +160,9 @@ export async function purchasePackage(
         package_id: packageId,
         purchase_date: purchaseDate.toISOString(),
         expiry_date: expiryDate.toISOString(),
-        total_visits: packageData.visits,
-        used_visits: 0,
-        remaining_visits: packageData.visits,
+        visits_remaining: packageData.visit_count,
+        visits_used: 0,
         status: 'active',
-        usage_history: [],
       })
       .select(`
         *,
@@ -130,15 +176,17 @@ export async function purchasePackage(
       id: data.id,
       userId: data.user_id,
       packageId: data.package_id,
-      package: data.package,
+      package: mapPackageRowToPackageType(data.package),
       purchaseDate: data.purchase_date,
       expiryDate: data.expiry_date,
-      completedDate: data.completed_date,
-      totalVisits: data.total_visits,
-      usedVisits: data.used_visits,
-      remainingVisits: data.remaining_visits,
+      completedDate: undefined,
+      totalVisits:
+        data.package?.visit_count ??
+        Number(data.visits_remaining || 0) + Number(data.visits_used || 0),
+      usedVisits: data.visits_used,
+      remainingVisits: data.visits_remaining,
       status: data.status,
-      usageHistory: data.usage_history || [],
+      usageHistory: [],
     }
 
     return {
@@ -179,6 +227,46 @@ export async function purchasePackageWithData(
   try {
     const supabase = createClient()
 
+    // Ensure a packages row exists for FK integrity
+    const categoryValue = mapCategoryToDb(packageData.category)
+
+    const { data: existingPackage, error: packageLookupError } = await supabase
+      .from('packages')
+      .select('id')
+      .eq('name', packageData.name)
+      .eq('category', categoryValue)
+      .eq('price', packageData.price)
+      .eq('visit_count', packageData.visits)
+      .eq('validity_days', packageData.validityDays)
+      .eq('copay', packageData.copay)
+      .maybeSingle()
+
+    if (packageLookupError) throw packageLookupError
+
+    let packageId = existingPackage?.id
+
+    if (!packageId) {
+      const { data: createdPackage, error: createPackageError } = await supabase
+        .from('packages')
+        .insert({
+          name: packageData.name,
+          description: packageData.description || `${packageData.visits} visits pack`,
+          price: packageData.price,
+          visit_count: packageData.visits,
+          validity_days: packageData.validityDays,
+          copay: packageData.copay,
+          category: categoryValue,
+          facilities: [],
+          features: [],
+          is_active: true,
+        })
+        .select('id')
+        .single()
+
+      if (createPackageError) throw createPackageError
+      packageId = createdPackage.id
+    }
+
     // Calculate expiry date
     const purchaseDate = new Date()
     const expiryDate = new Date(purchaseDate)
@@ -189,14 +277,12 @@ export async function purchasePackageWithData(
       .from('user_packages')
       .insert({
         user_id: userId,
-        package_id: packageData.id,
+        package_id: packageId,
         purchase_date: purchaseDate.toISOString(),
         expiry_date: expiryDate.toISOString(),
-        total_visits: packageData.visits,
-        used_visits: 0,
-        remaining_visits: packageData.visits,
+        visits_remaining: packageData.visits,
+        visits_used: 0,
         status: 'active',
-        usage_history: [],
       })
       .select()
       .single()
@@ -220,12 +306,12 @@ export async function purchasePackageWithData(
       },
       purchaseDate: data.purchase_date,
       expiryDate: data.expiry_date,
-      completedDate: data.completed_date,
-      totalVisits: data.total_visits,
-      usedVisits: data.used_visits,
-      remainingVisits: data.remaining_visits,
+      completedDate: undefined,
+      totalVisits: packageData.visits,
+      usedVisits: data.visits_used,
+      remainingVisits: data.visits_remaining,
       status: data.status,
-      usageHistory: data.usage_history || [],
+      usageHistory: [],
     }
 
     return {
@@ -365,26 +451,17 @@ export async function recordPackageUsage(
 
     if (fetchError) throw fetchError
 
-    // Create new usage record
-    const newUsage: PackageUsage = {
-      id: crypto.randomUUID(),
-      userPackageId,
-      ...usage,
-    }
-
     // Update package
-    const newUsedVisits = currentPackage.used_visits + 1
-    const newRemainingVisits = currentPackage.remaining_visits - 1
+    const newUsedVisits = currentPackage.visits_used + 1
+    const newRemainingVisits = currentPackage.visits_remaining - 1
     const newStatus = newRemainingVisits === 0 ? 'completed' : currentPackage.status
 
     const { error: updateError } = await supabase
       .from('user_packages')
       .update({
-        used_visits: newUsedVisits,
-        remaining_visits: newRemainingVisits,
+        visits_used: newUsedVisits,
+        visits_remaining: newRemainingVisits,
         status: newStatus,
-        completed_date: newRemainingVisits === 0 ? new Date().toISOString() : null,
-        usage_history: [...(currentPackage.usage_history || []), newUsage],
       })
       .eq('id', userPackageId)
 

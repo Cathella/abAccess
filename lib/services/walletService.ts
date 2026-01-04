@@ -259,9 +259,12 @@ export async function addTransaction(data: {
       };
     }
 
-    // If transaction is completed and is top_up or refund, update wallet balance
-    if (data.status === 'completed' && (data.type === 'top_up' || data.type === 'refund')) {
-      console.log('[WalletService] Updating balance for completed top_up/refund', {
+    // If transaction is completed and affects balance, update wallet balance
+    if (
+      data.status === 'completed' &&
+      (data.type === 'top_up' || data.type === 'refund' || data.type === 'purchase')
+    ) {
+      console.log('[WalletService] Updating balance for completed transaction', {
         walletId: data.walletId,
         amount: data.amount,
         type: data.type,
@@ -277,12 +280,22 @@ export async function addTransaction(data: {
         console.error('Failed to fetch wallet for balance update:', walletFetchError);
       } else if (wallet) {
         const currentBalance = Number(wallet.balance);
-        const newBalance = currentBalance + data.amount;
+        const newBalance =
+          data.type === 'purchase'
+            ? currentBalance - data.amount
+            : currentBalance + data.amount;
         console.log('[WalletService] Balance update:', {
           currentBalance,
           addAmount: data.amount,
           newBalance,
         });
+
+        if (newBalance < 0) {
+          return {
+            success: false,
+            error: 'Insufficient balance for purchase',
+          };
+        }
 
         const { error: updateError } = await supabase
           .from('wallets')
@@ -306,7 +319,9 @@ export async function addTransaction(data: {
       console.log('[WalletService] Skipping balance update:', {
         status: data.status,
         type: data.type,
-        shouldUpdate: data.status === 'completed' && (data.type === 'top_up' || data.type === 'refund'),
+        shouldUpdate:
+          data.status === 'completed' &&
+          (data.type === 'top_up' || data.type === 'refund' || data.type === 'purchase'),
       });
     }
 
