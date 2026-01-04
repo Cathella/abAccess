@@ -111,21 +111,29 @@ export default function MainLayout({
 
   // Check authentication (skip for dev-tools)
   useEffect(() => {
+    if (!hasHydrated) {
+      console.log('[MainLayout] Waiting for hydration');
+      return;
+    }
+
     console.log('[MainLayout] Auth check:', {
       pathname,
       hasHydrated,
       hasUser: !!user,
-      userId: user?.id,
-      willRedirect: hasHydrated && !user && pathname !== '/dev-tools'
+      userId: user?.id
     });
 
-    if (hasHydrated && !user && pathname !== '/dev-tools') {
-      // Save current path as redirect target
+    // If no user, redirect to sign-in with current path
+    if (!user && pathname !== '/dev-tools') {
       const redirectPath = pathname && pathname !== '/' ? pathname : ROUTES.DASHBOARD;
-      console.log('[MainLayout] Redirecting unauthenticated user to welcome with redirect:', redirectPath);
-      router.push(`${ROUTES.WELCOME}?redirect=${encodeURIComponent(redirectPath)}`);
+      const signInUrl = `${ROUTES.SIGN_IN}?redirect=${encodeURIComponent(redirectPath)}`;
+
+      console.log('[MainLayout] No user detected, redirecting to:', signInUrl);
+
+      // Use Next.js router for navigation
+      router.replace(signInUrl);
     }
-  }, [user, router, hasHydrated, pathname]);
+  }, [hasHydrated, user, pathname, router]);
 
   // Initialize wallet (migration + database sync)
   useWalletInit();
@@ -245,11 +253,18 @@ export default function MainLayout({
 
   // Don't render if not authenticated (except for dev-tools)
   if (!hasHydrated) {
+    console.log('[MainLayout] Waiting for hydration, not rendering');
     return null;
   }
 
   if (!user && pathname !== '/dev-tools') {
-    return null;
+    console.log('[MainLayout] No user and not dev-tools, showing loading or redirecting');
+    // Show a loading screen while redirecting
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <p className="text-neutral-600">Loading...</p>
+      </div>
+    );
   }
 
   return (

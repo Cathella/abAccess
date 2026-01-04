@@ -1,7 +1,7 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/common/Header";
 import { SafeArea } from "@/components/common/SafeArea";
@@ -11,12 +11,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/hooks/useAuth";
 import { ROUTES, PIN_LENGTH } from "@/lib/constants";
 
-function EnterPinContent() {
+export default function EnterPinPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [redirect, setRedirect] = useState<string | null>(null);
 
   const {
     phoneNumber,
@@ -26,8 +26,15 @@ function EnterPinContent() {
     isLoading,
   } = useAuth();
 
-  // Get redirect parameter
-  const redirect = searchParams.get('redirect');
+  // Get redirect parameter on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const redirectParam = params.get('redirect');
+      setRedirect(redirectParam);
+      console.log('[EnterPin] Redirect parameter:', redirectParam);
+    }
+  }, []);
 
   const maxAttempts = 3;
   const attemptsLeft = maxAttempts - pinAttempts;
@@ -89,7 +96,7 @@ function EnterPinContent() {
 
   return (
     <>
-      <div className="flex min-h-screen flex-col bg-white">
+      <div className="flex min-h-screen flex-col bg-white" suppressHydrationWarning>
         {/* Header */}
         <Header title="Sign in" showBack />
 
@@ -171,13 +178,5 @@ function EnterPinContent() {
       {/* Loading Overlay - shown during PIN verification */}
       {isLoading && <LoadingOverlay text="Signing in..." />}
     </>
-  );
-}
-
-export default function EnterPinPage() {
-  return (
-    <Suspense fallback={<LoadingOverlay text="Loading..." />}>
-      <EnterPinContent />
-    </Suspense>
   );
 }
