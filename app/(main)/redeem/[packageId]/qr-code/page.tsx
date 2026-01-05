@@ -36,8 +36,8 @@ export default function QRCodePage() {
             minute: '2-digit',
             hour12: true,
           }),
-          copayPaid: session?.package?.package.copay || 5000,
-          remainingVisits: (session?.package?.remainingVisits || 1) - 1,
+          copayPaid: session?.package?.package?.copay ?? 5000,
+          remainingVisits: (session?.package?.visitsRemaining ?? 1) - 1,
         });
       } else {
         setRedemptionFailed();
@@ -72,7 +72,7 @@ export default function QRCodePage() {
         router.push(`/redeem/${packageId}/failed`);
         break;
     }
-  }, [session?.status, packageId, router]);
+  }, [packageId, router, session]);
 
   // Cleanup timer on unmount (if not navigating to result pages)
   useEffect(() => {

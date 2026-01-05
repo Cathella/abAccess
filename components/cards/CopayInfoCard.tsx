@@ -12,7 +12,7 @@ export default function CopayInfoCard({ amount }: CopayInfoCardProps) {
   }).format(amount);
 
   return (
-    <div className="rounded-2xl bg-[#E8F4F1] p-4">
+    <div className="rounded-4xl bg-primary-100 p-4">
       {/* Row 1: Label + Amount */}
       <div className="flex items-center justify-between">
         <span className="font-semibold text-neutral-900">
@@ -24,7 +24,7 @@ export default function CopayInfoCard({ amount }: CopayInfoCardProps) {
       </div>
 
       {/* Divider */}
-      <div className="my-3 border-b border-gray-200/50" />
+      <div className="my-3 border-b border-primary-900/20" />
 
       {/* Row 2: Payment instruction */}
       <p className="text-sm text-gray-600">

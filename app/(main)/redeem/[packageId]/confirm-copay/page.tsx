@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { Header } from "@/components/common/Header";
+import { PrimaryButton } from "@/components/common/PrimaryButton";
 import CopayInfoCard from "@/components/cards/CopayInfoCard";
 import { useRedemptionStore } from "@/stores/redemptionStore";
-import { getCategoryDisplayName } from "@/lib/packages";
 
 export default function ConfirmCopayPage() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function ConfirmCopayPage() {
     router.push(`/redeem/${packageId}/qr-code`);
   };
 
-  if (!session || !session.package) {
+  if (!session || !session.package || !session.package.package) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p className="text-neutral-600">Loading...</p>
@@ -42,11 +42,12 @@ export default function ConfirmCopayPage() {
   }
 
   const pkg = session.package;
-  const copayAmount = pkg.package.copay;
-  const categoryName = getCategoryDisplayName(pkg.package.category);
-  const packageName = pkg.package.name;
-  const visitsRemaining = pkg.remainingVisits;
-  const totalVisits = pkg.totalVisits;
+  const packageInfo = pkg.package!;
+  const copayAmount = packageInfo.copay;
+  const categoryName = packageInfo.category;
+  const packageName = packageInfo.name;
+  const visitsRemaining = pkg.visitsRemaining;
+  const totalVisits = packageInfo.visitCount;
   const memberName = session.selectedMemberName;
 
   // Format copay for checkbox text
@@ -58,35 +59,35 @@ export default function ConfirmCopayPage() {
   }).format(copayAmount);
 
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-200">
+    <div className="flex min-h-screen flex-col bg-white">
       {/* Header */}
       <Header title="Use package" showBack={true} />
 
       {/* Content */}
       <div className="flex-1 px-6 pt-6 pb-32">
         {/* Title & Subtitle */}
-        <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+        <h1 className="text-xl font-bold text-neutral-900 mb-2">
           Confirm co-pay
         </h1>
-        <p className="text-neutral-600 mb-6">
-          You'll need to pay the co-pay at the facility during your visit.
+        <p className="text-neutral-700 mb-6">
+          You&apos;ll need to pay the co-pay at the facility during your visit.
         </p>
 
         {/* Package Summary Card */}
-        <div className="rounded-2xl border border-neutral-400 bg-white p-4 mb-4">
+        <div className="rounded-4xl border border-neutral-400 bg-white p-4 mb-4">
           {/* Category & Package Name */}
-          <h2 className="text-xl font-bold text-neutral-900 text-center mb-1">
+          <h2 className="text-lg font-bold text-neutral-900 text-center mb-1">
             {categoryName}
           </h2>
-          <p className="text-gray-500 text-center mb-4">
+          <p className="text-neutral-700 text-center mb-4">
             {packageName}
           </p>
 
           {/* Divider */}
-          <div className="mb-4 h-px bg-neutral-400" />
+          <div className="h-px bg-neutral-400" />
 
           {/* Info Rows */}
-          <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+          <div className="bg-neutral-200 p-4 space-y-3">
             {/* Visit For */}
             <div className="flex items-center justify-between">
               <span className="text-neutral-700">Visit for</span>
@@ -115,10 +116,10 @@ export default function ConfirmCopayPage() {
               type="checkbox"
               checked={isChecked}
               onChange={(e) => handleCheckboxChange(e.target.checked)}
-              className="mt-1 h-5 w-5 rounded border-gray-300 text-primary-900 focus:ring-primary-900"
+              className="mt-1 h-5 w-5 rounded border-neutral-400 text-primary-900 focus:ring-primary-900"
             />
             <span className="text-neutral-700">
-              I understand I'll pay {formattedCopay} at the facility
+              I understand I&apos;ll pay {formattedCopay} at the facility
             </span>
           </label>
         </div>
@@ -126,17 +127,9 @@ export default function ConfirmCopayPage() {
 
       {/* Bottom Fixed Button */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-400 px-6 py-4">
-        <button
-          onClick={handleGenerateCode}
-          disabled={!isChecked}
-          className={`w-full rounded-full py-4 text-base font-semibold transition-all ${
-            isChecked
-              ? "bg-primary-900 text-white border-2 border-neutral-900"
-              : "bg-neutral-400 text-neutral-600 cursor-not-allowed"
-          }`}
-        >
+        <PrimaryButton onClick={handleGenerateCode} disabled={!isChecked}>
           Generate code
-        </button>
+        </PrimaryButton>
       </div>
     </div>
   );

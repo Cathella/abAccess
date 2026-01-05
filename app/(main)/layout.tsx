@@ -242,6 +242,15 @@ export default function MainLayout({
         hideHeader: true,
         hideBottomNav: true,
       };
+    } else if (pathname?.startsWith('/redeem/')) {
+      // Redemption flow pages
+      currentConfig = {
+        title: "",
+        showBack: false,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
     } else {
       currentConfig = {
         title: "ABA Access",
