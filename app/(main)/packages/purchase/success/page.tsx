@@ -126,7 +126,7 @@ export default function PurchaseSuccessPage() {
     };
 
     processPurchase();
-  }, []);
+  }, [addTransaction, addUserPackage, deductBalance, loadUserPackages, paymentMethod, router, selectedPackage, user]);
 
   if (!selectedPackage) {
     return null;
@@ -159,7 +159,7 @@ export default function PurchaseSuccessPage() {
         {/* Category and Package name */}
         <div className="text-center space-y-1">
           <h2 className="font-bold text-xl text-neutral-900">{categoryName}</h2>
-          <p className="text-gray-500">{selectedPackage.name}</p>
+          <p className="text-neutral-500">{selectedPackage.name}</p>
         </div>
 
         {/* Divider */}
@@ -169,7 +169,7 @@ export default function PurchaseSuccessPage() {
         <div className="space-y-3">
           {/* Visits available */}
           <div className="flex items-center justify-between">
-            <span className="text-gray-600">Visits available</span>
+            <span className="text-neutral-700">Visits available</span>
             <span className="font-semibold text-neutral-900">
               {selectedPackage.visits}
             </span>
@@ -177,7 +177,7 @@ export default function PurchaseSuccessPage() {
 
           {/* Expires */}
           <div className="flex items-center justify-between">
-            <span className="text-gray-600">Expires</span>
+            <span className="text-neutral-700">Expires</span>
             <span className="font-semibold text-neutral-900">
               {formatDate(expiryDate)}
             </span>
@@ -185,7 +185,7 @@ export default function PurchaseSuccessPage() {
 
           {/* Paid */}
           <div className="flex items-center justify-between">
-            <span className="text-gray-600">Paid</span>
+            <span className="text-neutral-700">Paid</span>
             <span className="font-semibold text-neutral-900">
               {formatCurrency(selectedPackage.price)}
             </span>
@@ -193,7 +193,7 @@ export default function PurchaseSuccessPage() {
 
           {/* Co-pay per visit */}
           <div className="flex items-center justify-between">
-            <span className="text-gray-600">Co-pay per visit</span>
+            <span className="text-neutral-700">Co-pay per visit</span>
             <span className="font-semibold text-neutral-900">
               {formatCurrency(selectedPackage.copay)}
             </span>
