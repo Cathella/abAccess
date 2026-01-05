@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
-import type { Wallet, WalletTransaction, Transaction } from '@/types';
+import type { Wallet, WalletTransaction } from '@/types';
 import type { Database } from '@/types/database';
 import { generateTransactionId } from '@/lib/wallet';
 
@@ -8,6 +8,17 @@ type WalletRow = Database['public']['Tables']['wallets']['Row'];
 type TransactionRow = Database['public']['Tables']['transactions']['Row'];
 type TransactionType = Database['public']['Enums']['transaction_type'];
 type TransactionStatus = Database['public']['Enums']['transaction_status'];
+
+interface TransactionMetadata {
+  fee?: number;
+  paymentMethod?: string;
+  phoneNumber?: string;
+  cardLast4?: string;
+  cardBrand?: string;
+  packageName?: string;
+  packageVisits?: number;
+  [key: string]: unknown;
+}
 
 // Service response type
 interface ServiceResult<T> {
@@ -59,7 +70,14 @@ function mapWalletRowToWallet(row: WalletRow): Wallet {
  * Map database transaction row to WalletTransaction type
  */
 function mapTransactionRowToWalletTransaction(row: TransactionRow): WalletTransaction {
-  const metadata = (row.metadata as any) || {};
+  const metadata = (row.metadata as TransactionMetadata) || {};
+
+  const paymentMethod =
+    metadata.paymentMethod === 'mtn_momo' ||
+    metadata.paymentMethod === 'airtel_money' ||
+    metadata.paymentMethod === 'card'
+      ? metadata.paymentMethod
+      : 'mtn_momo';
 
   return {
     id: row.id,
@@ -67,14 +85,14 @@ function mapTransactionRowToWalletTransaction(row: TransactionRow): WalletTransa
     amount: Number(row.amount),
     fee: metadata.fee || 0,
     status: row.status as 'pending' | 'completed' | 'failed',
-    paymentMethod: metadata.paymentMethod || 'mtn_momo',
+    paymentMethod,
     phoneNumber: metadata.phoneNumber,
     cardLast4: metadata.cardLast4,
     cardBrand: metadata.cardBrand,
     packageName: metadata.packageName,
     packageVisits: metadata.packageVisits,
     transactionId: row.reference || generateTransactionId(),
-    createdAt: row.created_at,
+    createdAt: row.created_at ?? new Date().toISOString(),
   };
 }
 

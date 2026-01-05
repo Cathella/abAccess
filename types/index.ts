@@ -326,6 +326,7 @@ export interface WalletTransaction {
   paymentMethod: PaymentMethodType;
   phoneNumber?: string; // For mobile money
   cardLast4?: string; // For card payments
+  cardBrand?: string; // For card payments
   packageName?: string; // For purchases
   packageVisits?: number; // For purchases
   transactionId: string; // e.g., TXN-2025-00891
