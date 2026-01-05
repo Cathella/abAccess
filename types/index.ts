@@ -451,3 +451,59 @@ export interface VisitFilters {
   tab: VisitTabFilter;
   memberId: string | 'all';  // 'all' for all family members
 }
+
+// Redemption Flow Types
+
+// Redemption status
+export type RedemptionStatus =
+  | 'idle'
+  | 'selecting_member'
+  | 'confirming_copay'
+  | 'code_active'
+  | 'code_expiring'      // < 2 minutes remaining
+  | 'code_expired'
+  | 'code_already_used'
+  | 'processing'
+  | 'success'
+  | 'failed';
+
+// Redemption code data
+export interface RedemptionCode {
+  code: string;           // 6-digit code (e.g., "847291")
+  qrData: string;         // Full data encoded in QR
+  packageId: string;
+  memberId: string;
+  memberName: string;
+  createdAt: string;      // ISO timestamp
+  expiresAt: string;      // ISO timestamp (15 min from creation)
+  usedAt?: string;        // Set when redeemed
+  facilityId?: string;    // Set when redeemed
+  facilityName?: string;
+}
+
+// Redemption session state
+export interface RedemptionSession {
+  packageId: string;
+  package: UserPackage;
+  selectedMemberId: string | null;
+  selectedMemberName: string | null;
+  copayAcknowledged: boolean;
+  activeCode: RedemptionCode | null;
+  status: RedemptionStatus;
+
+  // Result data (after redemption)
+  visitDate?: string;
+  visitTime?: string;
+  facilityName?: string;
+  copayPaid?: number;
+  remainingVisits?: number;
+}
+
+// Family member for selection (includes age calculation)
+export interface FamilyMemberOption {
+  id: string;
+  name: string;
+  isSelf: boolean;
+  age?: number;          // Only for dependents
+  ageLabel?: string;     // e.g., "11 years old" or "Myself"
+}

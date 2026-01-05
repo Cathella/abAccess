@@ -215,7 +215,7 @@ export default function PackageDetailPage() {
       {!isCompleted && !isExpired && (
         <div className="fixed bottom-0 left-0 right-0 bg-white p-4">
           <button
-            onClick={() => router.push(`/redeem?packageId=${pkg.id}`)}
+            onClick={() => router.push(`/redeem/${pkg.id}/select-member`)}
             className="w-full rounded-xl bg-primary-900 h-12 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"
           >
             Use now
