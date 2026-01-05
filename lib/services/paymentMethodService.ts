@@ -57,7 +57,7 @@ function mapPaymentMethodRowToSavedPaymentMethod(
     phoneNumber: type !== 'card' ? row.account_number : undefined,
     cardLast4: type === 'card' ? row.account_number : undefined,
     cardBrand: type === 'card' ? row.provider : undefined,
-    isDefault: row.is_default,
+    isDefault: row.is_default ?? false,
   };
 }
 
