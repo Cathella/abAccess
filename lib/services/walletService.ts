@@ -50,8 +50,8 @@ function mapWalletRowToWallet(row: WalletRow): Wallet {
     id: row.id,
     userId: row.user_id,
     balance: Number(row.balance),
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
+    createdAt: row.created_at ?? new Date().toISOString(),
+    updatedAt: row.updated_at ?? row.created_at ?? new Date().toISOString(),
   };
 }
 
