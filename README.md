@@ -1,156 +1,177 @@
-# ABA Access
+# Supabase CLI
 
-ABA Access is a mobile-first healthcare access platform that makes quality healthcare affordable and accessible. The platform enables users to purchase healthcare bundles, manage their family members, book visits at partner facilities, and track their healthcare journey.
+[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=main)](https://coveralls.io/github/supabase/cli?branch=main) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
+](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
 
-## About AbAccess
+[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
 
-AbAccess is revolutionizing healthcare access by providing bundled healthcare packages that users can purchase and share with their family members. Our platform connects users with a network of partner healthcare facilities, making it easy to book appointments, track visits, and manage healthcare expenses.
+This repository contains all the functionality for Supabase CLI.
 
-## Key Features
+- [x] Running Supabase locally
+- [x] Managing database migrations
+- [x] Creating and deploying Supabase Functions
+- [x] Generating types directly from your database schema
+- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
 
-### 🏥 Healthcare Bundles & Packages
-- Browse and purchase healthcare packages tailored to different needs
-- Track active packages, visits remaining, and expiry dates
-- Share bundles with family members
+## Getting started
 
-### 👨‍👩‍👧‍👦 Family Management
-- Add up to 3 dependents to your account
-- Manage family member profiles (name, date of birth, gender)
-- Share healthcare bundles with dependents
-- Track visits for each family member
-- Edit or remove dependents as needed
+### Install the CLI
 
-### 🏢 Partner Facilities
-- Discover nearby partner healthcare facilities
-- View facility details, services, and availability
-- Book visits at partner locations
+Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
 
-### 📅 Visit Management
-- Book appointments at partner facilities
-- Track visit history for yourself and dependents
-- View upcoming and completed visits
-- Access visit details and package usage
-
-### 💰 Wallet System
-- Top up your wallet balance
-- Track transaction history
-- View spending and package purchases
-
-### 📊 Dashboard & Analytics
-- View your healthcare journey at a glance
-- Track visit trends over time
-- Monitor bundle usage and expiry
-- Quick access to key features
-
-## Tech Stack
-
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: Radix UI
-- **State Management**: Zustand
-- **Database**: Supabase
-- **Authentication**: Supabase Auth
-- **Icons**: Lucide React
-
-## Project Structure
-
-```
-abaccess/
-├── app/                    # Next.js app directory
-│   ├── (auth)/            # Authentication pages
-│   └── (main)/            # Main application pages
-│       ├── dashboard/     # Dashboard & overview
-│       ├── family/        # Family management
-│       ├── packages/      # Healthcare packages
-│       ├── visits/        # Visit booking & history
-│       ├── wallet/        # Wallet & transactions
-│       └── profile/       # User profile
-├── components/            # React components
-│   ├── cards/            # Card components
-│   ├── common/           # Shared components
-│   ├── forms/            # Form components
-│   ├── modals/           # Modal dialogs
-│   └── ui/               # UI primitives
-├── lib/                  # Utilities & services
-│   ├── services/         # API services
-│   ├── supabase/         # Supabase client & queries
-│   └── utils/            # Helper functions
-├── stores/               # Zustand state stores
-└── types/                # TypeScript type definitions
-```
-
-## Getting Started
-
-### Prerequisites
-- Node.js 18+
-- npm/yarn/pnpm/bun
-- Supabase account
-
-### Installation
-
-1. Clone the repository:
 ```bash
-git clone https://github.com/your-org/abaccess.git
-cd abaccess
+npm i supabase --save-dev
 ```
 
-2. Install dependencies:
+When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
+
+```
+NODE_OPTIONS=--no-experimental-fetch yarn add supabase
+```
+
+> **Note**
+For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
+
+<details>
+  <summary><b>macOS</b></summary>
+
+  Available via [Homebrew](https://brew.sh). To install:
+
+  ```sh
+  brew install supabase/tap/supabase
+  ```
+
+  To install the beta release channel:
+  
+  ```sh
+  brew install supabase/tap/supabase-beta
+  brew link --overwrite supabase-beta
+  ```
+  
+  To upgrade:
+
+  ```sh
+  brew upgrade supabase
+  ```
+</details>
+
+<details>
+  <summary><b>Windows</b></summary>
+
+  Available via [Scoop](https://scoop.sh). To install:
+
+  ```powershell
+  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+  scoop install supabase
+  ```
+
+  To upgrade:
+
+  ```powershell
+  scoop update supabase
+  ```
+</details>
+
+<details>
+  <summary><b>Linux</b></summary>
+
+  Available via [Homebrew](https://brew.sh) and Linux packages.
+
+  #### via Homebrew
+
+  To install:
+
+  ```sh
+  brew install supabase/tap/supabase
+  ```
+
+  To upgrade:
+
+  ```sh
+  brew upgrade supabase
+  ```
+
+  #### via Linux packages
+
+  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
+
+  ```sh
+  sudo apk add --allow-untrusted <...>.apk
+  ```
+
+  ```sh
+  sudo dpkg -i <...>.deb
+  ```
+
+  ```sh
+  sudo rpm -i <...>.rpm
+  ```
+
+  ```sh
+  sudo pacman -U <...>.pkg.tar.zst
+  ```
+</details>
+
+<details>
+  <summary><b>Other Platforms</b></summary>
+
+  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
+
+  ```sh
+  go install github.com/supabase/cli@latest
+  ```
+
+  Add a symlink to the binary in `$PATH` for easier access:
+
+  ```sh
+  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
+  ```
+
+  This works on other non-standard Linux distros.
+</details>
+
+<details>
+  <summary><b>Community Maintained Packages</b></summary>
+
+  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
+  To install in your working directory:
+
+  ```bash
+  pkgx install supabase
+  ```
+
+  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
+</details>
+
+### Run the CLI
+
 ```bash
-npm install
+supabase bootstrap
 ```
 
-3. Set up environment variables:
+Or using npx:
+
 ```bash
-cp .env.example .env.local
+npx supabase bootstrap
 ```
 
-Add your Supabase credentials:
+The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
+
+## Docs
+
+Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
+
+## Breaking changes
+
+We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
+
+However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
+
+## Developing
+
+To run from source:
+
+```sh
+# Go >= 1.22
+go run . help
 ```
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-```
-
-4. Run the development server:
-```bash
-npm run dev
-```
-
-5. Open [http://localhost:3000](http://localhost:3000) with your browser.
-
-## Development
-
-### Code Style
-- TypeScript for type safety
-- Component-first architecture
-- Mobile-first responsive design
-- Accessibility-first approach
-
-### State Management
-- Zustand for global state
-- Local state with React hooks
-- Persistent storage with localStorage
-
-### Design System
-- Geist font family
-- Tailwind CSS utility classes
-- Custom color palette (primary, secondary, neutral, error)
-- Consistent spacing and typography scale
-
-## Contributing
-
-We welcome contributions! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is proprietary and confidential.
-
-## Contact
-
-For questions or support, please contact the AbAccess team.
