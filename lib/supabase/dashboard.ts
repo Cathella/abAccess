@@ -2,7 +2,7 @@ import { createClient } from "./client";
 import type { Database } from "@/types/database";
 
 type WalletRow = Database["public"]["Tables"]["wallets"]["Row"];
-type FamilyMemberRow = Database["public"]["Tables"]["family_members"]["Row"];
+type FamilyMemberRow = Database["public"]["Tables"]["dependents"]["Row"];
 type UserPackageRow = Database["public"]["Tables"]["user_packages"]["Row"];
 type FacilityRow = Database["public"]["Tables"]["facilities"]["Row"];
 
@@ -71,7 +71,7 @@ export async function getFamilyMembersCount(
     const supabase = createClient();
 
     const { count, error } = await supabase
-      .from("family_members")
+      .from("dependents")
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId);
 
@@ -83,7 +83,7 @@ export async function getFamilyMembersCount(
   } catch (error) {
     return {
       count: 0,
-      error: error instanceof Error ? error.message : "Failed to fetch family members",
+      error: error instanceof Error ? error.message : "Failed to fetch dependents",
     };
   }
 }
@@ -99,7 +99,7 @@ export async function getFamilyMembers(userId: string): Promise<{
     const supabase = createClient();
 
     const { data, error } = await supabase
-      .from("family_members")
+      .from("dependents")
       .select("*")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
@@ -112,7 +112,7 @@ export async function getFamilyMembers(userId: string): Promise<{
   } catch (error) {
     return {
       members: [],
-      error: error instanceof Error ? error.message : "Failed to fetch family members",
+      error: error instanceof Error ? error.message : "Failed to fetch dependents",
     };
   }
 }

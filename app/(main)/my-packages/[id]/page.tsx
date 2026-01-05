@@ -173,7 +173,7 @@ export default function PackageDetailPage() {
           {pkg.usageHistory.length > 0 ? (
             <UsageHistoryCard packageId={pkg.id} usageHistory={pkg.usageHistory} />
           ) : (
-            <div className="flex flex-col items-center rounded-2xl border border-dashed border-neutral-400 bg-white px-8 py-8">
+            <div className="flex flex-col items-center rounded-2xl border border-dashed border-neutral-400 bg-neutral-200 px-8 py-8">
               {/* Chart Icon */}
               <div className="mb-4 flex h-12 w-12 items-center justify-center">
                 <BarChart3 className="h-12 w-12 text-neutral-600" />
@@ -192,7 +192,7 @@ export default function PackageDetailPage() {
               {/* Book a Visit Button */}
               <button
                 onClick={() => router.push(`/visits/book?packageId=${pkg.id}`)}
-                className="rounded-xl border border-neutral-900 bg-transparent px-5 py-3 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50"
+                className="rounded-xl border-[1.5px] border-neutral-900 bg-primary-100 px-5 h-10 text-base font-semibold text-neutral-900 transition-colors hover:bg-neutral-50"
               >
                 Book a Visit
               </button>

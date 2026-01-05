@@ -155,11 +155,11 @@ export default function PurchaseSuccessPage() {
       }}
     >
       {/* Package summary card */}
-      <div className="bg-white rounded-2xl border border-neutral-400 shadow-sm p-6 space-y-4 mb-6">
+      <div className="bg-white rounded-4xl border border-neutral-400 p-6 space-y-4 mb-6">
         {/* Category and Package name */}
         <div className="text-center space-y-1">
           <h2 className="font-bold text-xl text-neutral-900">{categoryName}</h2>
-          <p className="text-neutral-500">{selectedPackage.name}</p>
+          <p className="text-neutral-700">{selectedPackage.name}</p>
         </div>
 
         {/* Divider */}

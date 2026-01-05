@@ -59,10 +59,8 @@ export default function MyPackagesPage() {
           <div className="flex flex-col min-h-[calc(100vh-80px)] items-center justify-center">
             <div className="flex max-w-75 flex-col items-center text-center">
               {/* Package Icon */}
-              <div className="mb-6 flex h-16 w-16 items-center justify-center">
-                <span role="img" aria-label="package" className="text-[64px] leading-none">
-                  📦
-                </span>
+              <div className="mb-6 flex text-4xl items-center justify-center">
+                📦
               </div>
 
               {/* Title */}

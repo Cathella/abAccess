@@ -10,7 +10,7 @@ import {
 import type { Database } from "@/types/database";
 
 type FacilityRow = Database["public"]["Tables"]["facilities"]["Row"];
-type FamilyMemberRow = Database["public"]["Tables"]["family_members"]["Row"];
+type FamilyMemberRow = Database["public"]["Tables"]["dependents"]["Row"];
 
 interface DashboardData {
   walletBalance: number;
