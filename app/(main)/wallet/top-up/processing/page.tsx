@@ -3,15 +3,19 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useWalletStore } from "@/stores/walletStore";
+import { useAuthStore } from "@/stores/authStore";
+import { calculateProcessingFee } from "@/lib/wallet";
 
 export default function TopUpProcessingPage() {
   const router = useRouter();
+  const user = useAuthStore((state) => state.user);
   const topUpData = useWalletStore((state) => state.topUpData);
+  const processTopUp = useWalletStore((state) => state.processTopUp);
   const paymentMethod = topUpData.paymentMethod;
 
   useEffect(() => {
     // Route protection: Require amount and payment method
-    if (!topUpData.amount || topUpData.amount <= 0 || !paymentMethod) {
+    if (!topUpData.amount || topUpData.amount <= 0 || !paymentMethod || !user?.id) {
       router.replace("/wallet/top-up");
       return;
     }
@@ -27,32 +31,50 @@ export default function TopUpProcessingPage() {
     // Listen for back button
     window.addEventListener("popstate", preventBack);
 
-    // Simulate payment processing (2-3 seconds)
-    const processingTime = 2000 + Math.random() * 1000; // 2-3 seconds
+    // Process payment with actual service call
+    const processPayment = async () => {
+      try {
+        const amount = topUpData.amount ?? 0;
+        if (amount <= 0 || !paymentMethod) {
+          router.replace("/wallet/top-up");
+          return;
+        }
 
-    const timer = setTimeout(() => {
-      const isMobileMoney =
-        paymentMethod === "mtn_momo" || paymentMethod === "airtel_money";
+        const fee = calculateProcessingFee(amount, paymentMethod);
 
-      if (isMobileMoney) {
-        // For mobile money: redirect to pending page
-        router.push("/wallet/top-up/pending");
-      } else {
-        // For card: simulate success/failure (90% success rate for demo)
-        const isSuccess = Math.random() > 0.1;
-        if (isSuccess) {
+        const result = await processTopUp({
+          userId: user.id,
+          amount,
+          paymentMethod: paymentMethod,
+          phoneNumber: topUpData.phoneNumber,
+          cardLast4: topUpData.cardDetails?.number.slice(-4),
+          cardBrand: topUpData.cardDetails?.number.startsWith('4') ? 'Visa' :
+                      topUpData.cardDetails?.number.startsWith('5') ? 'Mastercard' : 'Card',
+          fee: fee,
+          saveForFuture: topUpData.saveForFuture,
+        });
+
+        if (result.success) {
+          // Success - navigate to success page
           router.push("/wallet/top-up/success");
         } else {
+          // Failed - navigate to failed page
           router.push("/wallet/top-up/failed");
         }
+      } catch (error) {
+        console.error('Payment processing error:', error);
+        router.push("/wallet/top-up/failed");
       }
-    }, processingTime);
+    };
+
+    // Add delay for UX (show processing animation)
+    const timer = setTimeout(processPayment, 2000);
 
     return () => {
       clearTimeout(timer);
       window.removeEventListener("popstate", preventBack);
     };
-  }, [paymentMethod, router]);
+  }, [paymentMethod, user?.id, router, processTopUp, topUpData]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">

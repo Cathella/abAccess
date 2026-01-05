@@ -326,6 +326,7 @@ export interface WalletTransaction {
   paymentMethod: PaymentMethodType;
   phoneNumber?: string; // For mobile money
   cardLast4?: string; // For card payments
+  cardBrand?: string; // For card payments
   packageName?: string; // For purchases
   packageVisits?: number; // For purchases
   transactionId: string; // e.g., TXN-2025-00891
@@ -352,4 +353,101 @@ export interface TopUpData {
     name: string;
   };
   saveForFuture: boolean;
+}
+
+// Browse Packages Feature Types
+
+// Package Categories for browsing
+export type BrowsePackageCategory =
+  | 'consultations'
+  | 'lab_tests'
+  | 'maternal_care'
+  | 'child_wellness'
+  | 'pharmacy';
+
+export interface CategoryInfo {
+  id: BrowsePackageCategory;
+  name: string;
+  description: string;
+  emoji: string;
+}
+
+// Available Package (for browsing)
+export interface AvailablePackage {
+  id: string;
+  categoryId: BrowsePackageCategory;
+  name: string;              // e.g., "5 Visits Pack"
+  price: number;             // e.g., 65000
+  visits: number;            // e.g., 5
+  copay: number;             // e.g., 5000
+  validityDays: number;      // e.g., 30
+  totalValue: number;        // e.g., 90000
+  savingsPercent: number;    // e.g., 17
+  partnerCount: number;      // e.g., 24
+  isBestValue?: boolean;
+  inclusions: string[];      // e.g., ["5 GP consultations", "Valid at 24 partner clinics"]
+}
+
+// Purchase flow types
+export type RecipientType = 'myself' | 'child' | 'family';
+
+export interface PurchaseData {
+  package: AvailablePackage | null;
+  recipient: RecipientType;
+  paymentMethod: 'wallet' | 'mobile_money';
+  termsAccepted: boolean;
+}
+
+export type PurchaseStatus = 'idle' | 'processing' | 'success' | 'failed' | 'network_error';
+
+// Visit Feature Types (List View)
+
+// Visit status types
+export type VisitStatusType =
+  | 'pending_confirmation'  // Upcoming - awaiting facility confirmation
+  | 'confirmed'             // Upcoming - confirmed by facility
+  | 'completed'             // Past - visit completed successfully
+  | 'remotely_approved'     // Past - approved without physical visit
+  | 'canceled'              // Cancelled - user or facility cancelled
+  | 'no_show';              // Cancelled - user didn't show up
+
+// Tab filter type
+export type VisitTabFilter = 'upcoming' | 'completed' | 'canceled';
+
+// Visit record
+export interface VisitRecord {
+  id: string;
+
+  // Who
+  memberId: string;          // User ID or dependent ID
+  memberName: string;        // Full name
+  memberInitials: string;    // e.g., "CN", "BW"
+  isSelf: boolean;           // true if primary account holder
+
+  // Where
+  facilityId: string;
+  facilityName: string;      // e.g., "Mukono Family Clinic"
+
+  // What
+  packageId: string;
+  packageCategory: string;   // e.g., "Consultations"
+  packageName: string;       // e.g., "5 visits pack"
+
+  // When
+  visitDate: string;         // ISO date string
+  visitTime: string;         // e.g., "10:00 AM"
+
+  // Status
+  status: VisitStatusType;
+  copayAmount?: number;      // Only for completed visits
+  refundNote?: string;       // e.g., "Visit refunded" or "Visit forfeited"
+
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Filter state
+export interface VisitFilters {
+  tab: VisitTabFilter;
+  memberId: string | 'all';  // 'all' for all family members
 }

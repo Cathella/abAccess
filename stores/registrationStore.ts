@@ -15,12 +15,16 @@ interface RegistrationState {
   // Current step tracking
   currentStep: number
 
+  // Redirect path after successful registration
+  redirectPath: string | null
+
   // Actions
   setPhone: (phone: string) => void
   setName: (firstName: string, lastName: string) => void
   setNin: (nin: string) => void
   setPin: (pin: string) => void
   setCurrentStep: (step: number) => void
+  setRedirectPath: (path: string | null) => void
   createAccount: () => Promise<{ success: boolean; user?: User; session?: Session; error?: string }>
   clearRegistration: () => void
 }
@@ -35,6 +39,7 @@ export const useRegistrationStore = create<RegistrationState>()(
       nin: '',
       pin: '',
       currentStep: 1,
+      redirectPath: null,
 
       // Actions
       setPhone: (phone) => set({ phone }),
@@ -47,6 +52,8 @@ export const useRegistrationStore = create<RegistrationState>()(
       setPin: (pin) => set({ pin }),
 
       setCurrentStep: (step) => set({ currentStep: step }),
+
+      setRedirectPath: (path) => set({ redirectPath: path }),
 
       createAccount: async () => {
         const state = useRegistrationStore.getState()
@@ -88,6 +95,7 @@ export const useRegistrationStore = create<RegistrationState>()(
           nin: '',
           pin: '',
           currentStep: 1,
+          redirectPath: null,
         }),
     }),
     {
@@ -99,6 +107,7 @@ export const useRegistrationStore = create<RegistrationState>()(
         firstName: state.firstName,
         lastName: state.lastName,
         currentStep: state.currentStep,
+        redirectPath: state.redirectPath,
         // Don't persist NIN or PIN for security
       }),
     }

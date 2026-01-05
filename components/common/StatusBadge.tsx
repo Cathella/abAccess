@@ -42,7 +42,7 @@ export function StatusBadge({ status, text }: StatusBadgeProps) {
   const { icon: Icon, bgColor, textColor, defaultText } = config[status];
 
   return (
-    <div className={`flex items-center gap-2 rounded-[20px] ${bgColor} px-4 py-2`}>
+    <div className={`flex items-center gap-2 rounded-4xl ${bgColor} px-4 py-2`}>
       {Icon && <Icon className={`h-4 w-4 ${textColor}`} />}
       <span className={`text-sm font-medium ${textColor}`}>
         {text || defaultText}

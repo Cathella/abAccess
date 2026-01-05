@@ -1,18 +1,32 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { SafeArea } from "@/components/common/SafeArea";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { ROUTES } from "@/lib/constants";
 
-export const metadata: Metadata = {
-  title: "Welcome - ABA Access",
-  description: "Affordable healthcare for your family",
-};
-
 export default function WelcomePage() {
+  const [redirectParam, setRedirectParam] = useState('');
+
+  useEffect(() => {
+    // Get redirect from URL on client side
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      console.log('[Welcome] Current URL:', window.location.href);
+      console.log('[Welcome] Search params:', window.location.search);
+      console.log('[Welcome] Redirect parameter:', redirect);
+      if (redirect) {
+        setRedirectParam(`?redirect=${encodeURIComponent(redirect)}`);
+        console.log('[Welcome] Setting redirect param:', `?redirect=${encodeURIComponent(redirect)}`);
+      }
+    }
+  }, []);
+
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-white" suppressHydrationWarning>
       {/* Main content - centered */}
       <div className="flex flex-1 flex-col items-center justify-center px-10 text-center">
         {/* Logo */}
@@ -41,12 +55,20 @@ export default function WelcomePage() {
       {/* Action buttons - fixed at bottom */}
       <SafeArea inset="bottom" className="space-y-2 mb-6">
         {/* Create Account Button */}
-        <SecondaryButton href={ROUTES.REGISTER}>
+        <SecondaryButton
+          href={`${ROUTES.REGISTER}${redirectParam}`}
+          onClick={() => console.log('[Welcome] Register button clicked, href:', `${ROUTES.REGISTER}${redirectParam}`)}
+        >
           Create Account
         </SecondaryButton>
 
         {/* Login Button */}
-        <PrimaryButton href={ROUTES.SIGN_IN}>Login</PrimaryButton>
+        <PrimaryButton
+          href={`${ROUTES.SIGN_IN}${redirectParam}`}
+          onClick={() => console.log('[Welcome] Login button clicked, href:', `${ROUTES.SIGN_IN}${redirectParam}`)}
+        >
+          Login
+        </PrimaryButton>
       </SafeArea>
     </div>
   );

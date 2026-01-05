@@ -8,6 +8,7 @@ import { SafeArea } from "@/components/common/SafeArea";
 import { useAuthStore } from "@/stores";
 import { useFamilyStore } from "@/stores/familyStore";
 import { getDependents } from "@/lib/services/dependentService";
+import { useWalletInit } from "@/hooks/useWalletInit";
 import { ROUTES } from "@/lib/constants";
 
 // Route configurations for Header
@@ -22,6 +23,8 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
     title: "Packages",
     showBack: false,
     showNotifications: true,
+    hideHeader: true,
+    hideBottomNav: true,
   },
   [ROUTES.MY_PACKAGES]: {
     title: "My Packages",
@@ -91,11 +94,16 @@ export default function MainLayout({
   // Wait for persisted auth store to hydrate before enforcing redirects
   useEffect(() => {
     if (useAuthStore.persist?.hasHydrated?.()) {
+      console.log('[MainLayout] Auth store already hydrated', { user: !!user });
       setHasHydrated(true);
       return;
     }
 
-    const unsubscribe = useAuthStore.persist?.onFinishHydration?.(() => setHasHydrated(true));
+    console.log('[MainLayout] Waiting for auth store hydration...');
+    const unsubscribe = useAuthStore.persist?.onFinishHydration?.(() => {
+      console.log('[MainLayout] Auth store hydration complete', { user: !!user });
+      setHasHydrated(true);
+    });
     return () => {
       unsubscribe?.();
     };
@@ -103,10 +111,32 @@ export default function MainLayout({
 
   // Check authentication (skip for dev-tools)
   useEffect(() => {
-    if (hasHydrated && !user && pathname !== '/dev-tools') {
-      router.push(ROUTES.WELCOME);
+    if (!hasHydrated) {
+      console.log('[MainLayout] Waiting for hydration');
+      return;
     }
-  }, [user, router, hasHydrated, pathname]);
+
+    console.log('[MainLayout] Auth check:', {
+      pathname,
+      hasHydrated,
+      hasUser: !!user,
+      userId: user?.id
+    });
+
+    // If no user, redirect to sign-in with current path
+    if (!user && pathname !== '/dev-tools') {
+      const redirectPath = pathname && pathname !== '/' ? pathname : ROUTES.DASHBOARD;
+      const signInUrl = `${ROUTES.SIGN_IN}?redirect=${encodeURIComponent(redirectPath)}`;
+
+      console.log('[MainLayout] No user detected, redirecting to:', signInUrl);
+
+      // Use Next.js router for navigation
+      router.replace(signInUrl);
+    }
+  }, [hasHydrated, user, pathname, router]);
+
+  // Initialize wallet (migration + database sync)
+  useWalletInit();
 
   // Fetch and sync dependents when user is authenticated
   useEffect(() => {
@@ -185,6 +215,33 @@ export default function MainLayout({
         hideHeader: true,
         hideBottomNav: true,
       };
+    } else if (pathname?.startsWith('/packages/purchase')) {
+      // Hide header and bottom nav for all package purchase flow pages
+      currentConfig = {
+        title: "",
+        showBack: false,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/packages/') && pathname?.match(/^\/packages\/[^/]+\/[^/]+$/)) {
+      // Package detail page (e.g., /packages/consultations/cons-5)
+      currentConfig = {
+        title: "Package Details",
+        showBack: true,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/packages/') && pathname?.match(/^\/packages\/[^/]+$/)) {
+      // Category page (e.g., /packages/consultations)
+      currentConfig = {
+        title: "",
+        showBack: true,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
     } else {
       currentConfig = {
         title: "ABA Access",
@@ -196,11 +253,18 @@ export default function MainLayout({
 
   // Don't render if not authenticated (except for dev-tools)
   if (!hasHydrated) {
+    console.log('[MainLayout] Waiting for hydration, not rendering');
     return null;
   }
 
   if (!user && pathname !== '/dev-tools') {
-    return null;
+    console.log('[MainLayout] No user and not dev-tools, showing loading or redirecting');
+    // Show a loading screen while redirecting
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <p className="text-neutral-600">Loading...</p>
+      </div>
+    );
   }
 
   return (

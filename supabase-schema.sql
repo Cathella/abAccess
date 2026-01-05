@@ -8,7 +8,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TYPE relationship AS ENUM ('child', 'spouse', 'parent', 'sibling', 'other');
 CREATE TYPE gender AS ENUM ('male', 'female', 'other');
 CREATE TYPE package_status AS ENUM ('active', 'expired', 'exhausted');
-CREATE TYPE package_category AS ENUM ('consultations', 'childWellness', 'maternity', 'labTests', 'dental', 'optical');
+CREATE TYPE package_category AS ENUM ('consultations', 'childWellness', 'maternity', 'labTests', 'lab_tests', 'dental', 'optical', 'pharmacy');
 CREATE TYPE visit_status AS ENUM ('pending', 'confirmed', 'completed', 'cancelled', 'noShow');
 CREATE TYPE booking_status AS ENUM ('pending', 'confirmed', 'declined', 'cancelled');
 CREATE TYPE transaction_type AS ENUM ('topUp', 'purchase', 'refund');
@@ -310,6 +310,9 @@ CREATE POLICY "Users can view own wallet" ON wallets
 
 CREATE POLICY "Users can insert own wallet" ON wallets
     FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Users can update own wallet" ON wallets
+    FOR UPDATE USING (true);
 
 -- Transactions policies
 CREATE POLICY "Users can view own transactions" ON transactions

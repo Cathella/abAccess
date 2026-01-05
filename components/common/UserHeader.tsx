@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 
 interface UserHeaderProps {
-  greeting: string;
+  firstName?: string;
   memberId?: string;
   initials?: string;
   onNotificationsClick?: () => void;
@@ -16,13 +17,19 @@ interface UserHeaderProps {
  * Stays pinned to the top and spans full width.
  */
 export function UserHeader({
-  greeting,
+  firstName,
   memberId,
   initials = "U",
   onNotificationsClick,
   onSettingsClick,
   className,
 }: UserHeaderProps) {
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    const timeOfDay = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+    return firstName ? `${timeOfDay}, ${firstName}` : timeOfDay;
+  }, [firstName]);
+
   return (
     <div
       className={cn(

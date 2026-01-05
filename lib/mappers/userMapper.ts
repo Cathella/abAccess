@@ -23,8 +23,8 @@ export function mapDatabaseUserToUser(dbUser: DatabaseUser): User {
     memberId: dbUser.member_id || undefined,
     nin: dbUser.nin || undefined,
     avatar: dbUser.avatar || undefined,
-    createdAt: dbUser.created_at,
-    updatedAt: dbUser.updated_at,
+    createdAt: dbUser.created_at ?? new Date().toISOString(),
+    updatedAt: dbUser.updated_at ?? dbUser.created_at ?? new Date().toISOString(),
   };
 }
 

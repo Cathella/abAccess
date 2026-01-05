@@ -16,6 +16,7 @@ export default function EnterPinPage() {
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [redirect, setRedirect] = useState<string | null>(null);
 
   const {
     phoneNumber,
@@ -24,6 +25,16 @@ export default function EnterPinPage() {
     login,
     isLoading,
   } = useAuth();
+
+  // Get redirect parameter on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const redirectParam = params.get('redirect');
+      setRedirect(redirectParam);
+      console.log('[EnterPin] Redirect parameter:', redirectParam);
+    }
+  }, []);
 
   const maxAttempts = 3;
   const attemptsLeft = maxAttempts - pinAttempts;
@@ -51,9 +62,17 @@ export default function EnterPinPage() {
 
       if (result.success) {
         // Success - useAuth already updated store
+        console.log('[EnterPin] Login successful, will redirect to:', {
+          redirect,
+          targetPath: redirect || ROUTES.DASHBOARD
+        });
+
         // Show loading briefly before redirect
         setTimeout(() => {
-          router.push(ROUTES.DASHBOARD);
+          // Redirect to intended page or dashboard
+          const targetPath = redirect || ROUTES.DASHBOARD;
+          console.log('[EnterPin] Redirecting now to:', targetPath);
+          router.push(targetPath);
         }, 500);
       } else {
         // Failed - useAuth already incremented attempts
@@ -77,7 +96,7 @@ export default function EnterPinPage() {
 
   return (
     <>
-      <div className="flex min-h-screen flex-col bg-white">
+      <div className="flex min-h-screen flex-col bg-white" suppressHydrationWarning>
         {/* Header */}
         <Header title="Sign in" showBack />
 

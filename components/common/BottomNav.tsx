@@ -24,8 +24,16 @@ export function BottomNav() {
   const pathname = usePathname();
   const { isBottomNavVisible, setActiveTab } = useUIStore();
 
-  const activeTabId =
-    tabs.find((tab) => pathname?.startsWith(tab.path))?.id || "home";
+  // Determine active tab based on pathname
+  // Special handling for packages: /packages and /my-packages both highlight the packages tab
+  const getActiveTabId = () => {
+    if (pathname?.startsWith("/packages") || pathname?.startsWith("/my-packages")) {
+      return "packages";
+    }
+    return tabs.find((tab) => pathname?.startsWith(tab.path))?.id || "home";
+  };
+
+  const activeTabId = getActiveTabId();
 
   if (!isBottomNavVisible) return null;
 

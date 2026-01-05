@@ -30,7 +30,7 @@ interface PackageState {
   setPackageFilter: (filter: 'active' | 'completed' | 'expired') => void
   setLoading: (loading: boolean) => void
   recordUsage: (packageId: string, usage: PackageUsage) => void
-  loadUserPackages: (userId: string) => Promise<void>
+  loadUserPackages: (userId: string, options?: { force?: boolean }) => Promise<void>
   loadMockData: () => void
   clearAllData: () => void
 }
@@ -50,9 +50,17 @@ export const usePackageStore = create<PackageState>()(
       setUserPackages: (packages) => set({ userPackages: packages }),
 
       addUserPackage: (pkg) =>
-        set((state) => ({
-          userPackages: [...state.userPackages, pkg],
-        })),
+        set((state) => {
+          const exists = state.userPackages.some((existing) => existing.id === pkg.id)
+          if (exists) {
+            return {
+              userPackages: state.userPackages.map((existing) =>
+                existing.id === pkg.id ? pkg : existing
+              ),
+            }
+          }
+          return { userPackages: [...state.userPackages, pkg] }
+        }),
 
       updateUserPackage: (id, data) =>
         set((state) => ({
@@ -93,11 +101,12 @@ export const usePackageStore = create<PackageState>()(
           }),
         })),
 
-      loadUserPackages: async (userId: string) => {
+      loadUserPackages: async (userId: string, options?: { force?: boolean }) => {
         const { isLoading, hasInitialized } = get()
+        const force = options?.force === true
 
         // Skip if already loading or has data
-        if (isLoading || (hasInitialized && get().userPackages.length > 0)) {
+        if (!force && (isLoading || (hasInitialized && get().userPackages.length > 0))) {
           return
         }
 

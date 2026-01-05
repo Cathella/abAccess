@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/common/Header";
@@ -17,7 +17,18 @@ export default function SignInPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(false);
+  const [redirect, setRedirect] = useState<string | null>(null);
   const { setPhoneNumber: setStorePhoneNumber } = useAuthStore();
+
+  // Get redirect parameter on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const redirectParam = params.get('redirect');
+      setRedirect(redirectParam);
+      console.log('[SignIn] Loaded sign-in page with redirect parameter:', redirectParam);
+    }
+  }, []);
 
   // Validate phone number
   const isValidPhone = (phone: string): boolean => {
@@ -57,7 +68,9 @@ export default function SignInPage() {
       if (result.exists) {
         // User exists - store phone and go to PIN entry
         setStorePhoneNumber(phoneNumber);
-        router.push(ROUTES.ENTER_PIN);
+        // Pass redirect parameter along
+        const redirectParam = redirect ? `?redirect=${encodeURIComponent(redirect)}` : '';
+        router.push(`${ROUTES.ENTER_PIN}${redirectParam}`);
       } else {
         // User not found - friendly message
         setError("We couldn't find an account with this phone number. Please check the number or create a new account.");
@@ -74,7 +87,7 @@ export default function SignInPage() {
 
   return (
     <>
-      <div className="flex min-h-screen flex-col bg-white">
+      <div className="flex min-h-screen flex-col bg-white" suppressHydrationWarning>
         {/* Header */}
         <Header title="Sign in" showBack />
 

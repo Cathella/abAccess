@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { usePackageStore } from "@/stores/packageStore";
@@ -16,14 +16,12 @@ export default function MyPackagesPage() {
   const packageFilter = usePackageStore((state) => state.packageFilter);
   const setPackageFilter = usePackageStore((state) => state.setPackageFilter);
   const isLoading = usePackageStore((state) => state.isLoading);
+  const loadUserPackages = usePackageStore((state) => state.loadUserPackages);
 
-  const greeting = useMemo(() => {
-    if (!user) return "Good morning";
-    const hour = new Date().getHours();
-    if (hour < 12) return `Good morning, ${user.firstName}`;
-    if (hour < 18) return `Good afternoon, ${user.firstName}`;
-    return `Good evening, ${user.firstName}`;
-  }, [user]);
+  useEffect(() => {
+    if (!user?.id) return;
+    loadUserPackages(user.id, { force: true });
+  }, [loadUserPackages, user?.id]);
 
   const initials = useMemo(() => {
     if (!user) return "U";
@@ -48,7 +46,7 @@ export default function MyPackagesPage() {
   return (
     <>
       <UserHeader
-        greeting={greeting}
+        firstName={user.firstName}
         memberId={user.memberId ? `ID: ${user.memberId}` : "ID: N/A"}
         initials={initials}
         onNotificationsClick={() => router.push(ROUTES.NOTIFICATIONS)}

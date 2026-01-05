@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { SafeArea } from "@/components/common/SafeArea";
 import { useAuthStore } from "@/stores/authStore";
+import { useRegistrationStore } from "@/stores/registrationStore";
 import { ROUTES } from "@/lib/constants";
 
 export default function RegisterSuccessPage() {
   const router = useRouter();
   const { user } = useAuthStore();
+  const { redirectPath, clearRegistration } = useRegistrationStore();
 
   useEffect(() => {
     if (!user) {
@@ -21,8 +23,14 @@ export default function RegisterSuccessPage() {
   }, [user, router]);
 
   const handleContinue = () => {
+    // Get target path from redirect or default to dashboard
+    const targetPath = redirectPath || ROUTES.DASHBOARD;
+
+    // Clear registration data
+    clearRegistration();
+
     // Use replace to prevent back navigation to registration flow
-    router.replace(ROUTES.DASHBOARD);
+    router.replace(targetPath);
   };
 
   if (!user) {

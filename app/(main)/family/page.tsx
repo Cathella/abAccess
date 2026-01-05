@@ -23,11 +23,6 @@ export default function FamilyPage() {
   const dependentCount = useFamilyStore(selectDependentCount);
   const maxDependents = selectMaxDependents();
 
-  const greeting = useMemo(() => {
-    if (!user) return "Good morning";
-    return `Good morning, ${user.firstName}`;
-  }, [user]);
-
   const initials = useMemo(() => {
     if (!user) return "U";
     const firstName = user.firstName || "";
@@ -56,7 +51,7 @@ export default function FamilyPage() {
     return (
       <>
         <UserHeader
-          greeting={greeting}
+          firstName={user?.firstName}
           memberId={user?.memberId ? `ID: ${user.memberId}` : "ID: N/A"}
           initials={initials}
           onNotificationsClick={handleNotificationsClick}
@@ -95,7 +90,7 @@ export default function FamilyPage() {
   return (
     <>
       <UserHeader
-        greeting={greeting}
+        firstName={user?.firstName}
         memberId={user?.memberId ? `ID: ${user.memberId}` : "ID: N/A"}
         initials={initials}
         onNotificationsClick={handleNotificationsClick}

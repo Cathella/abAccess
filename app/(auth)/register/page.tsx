@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/common/Header";
@@ -20,8 +20,19 @@ export default function RegisterPage() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(false);
+  const [redirect, setRedirect] = useState<string | null>(null);
 
-  const { setPhone, setCurrentStep } = useRegistrationStore();
+  const { setPhone, setCurrentStep, setRedirectPath } = useRegistrationStore();
+
+  // Get redirect parameter on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const redirectParam = params.get('redirect');
+      setRedirect(redirectParam);
+      console.log('[Register] Redirect parameter:', redirectParam);
+    }
+  }, []);
 
   // Validate phone number (E.164 format with correct length)
   const isValidPhone = (phone: string): boolean => {
@@ -75,6 +86,10 @@ export default function RegisterPage() {
       // User doesn't exist - continue to next step
       setPhone(phoneNumber);
       setCurrentStep(2);
+      // Save redirect path for after registration completes
+      if (redirect) {
+        setRedirectPath(redirect);
+      }
       router.push(ROUTES.REGISTER_INFO);
     } catch (err) {
       console.error("Exception in handleContinue:", err);
@@ -87,7 +102,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <div className="flex min-h-screen flex-col bg-white">
+      <div className="flex min-h-screen flex-col bg-white" suppressHydrationWarning>
         {/* Header */}
         <Header title="Register" showBack />
 
