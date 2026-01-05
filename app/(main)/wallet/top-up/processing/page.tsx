@@ -34,11 +34,17 @@ export default function TopUpProcessingPage() {
     // Process payment with actual service call
     const processPayment = async () => {
       try {
-        const fee = calculateProcessingFee(topUpData.amount, paymentMethod);
+        const amount = topUpData.amount ?? 0;
+        if (amount <= 0 || !paymentMethod) {
+          router.replace("/wallet/top-up");
+          return;
+        }
+
+        const fee = calculateProcessingFee(amount, paymentMethod);
 
         const result = await processTopUp({
           userId: user.id,
-          amount: topUpData.amount,
+          amount,
           paymentMethod: paymentMethod,
           phoneNumber: topUpData.phoneNumber,
           cardLast4: topUpData.cardDetails?.number.slice(-4),
