@@ -30,15 +30,9 @@ export default function PackageHistoryPage() {
     loadVisits(user.id, { force: true });
   }, [loadVisits, user?.id]);
 
-  if (!pkg) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-neutral-600">Loading...</p>
-      </div>
-    );
-  }
-
   const sortedHistory = useMemo(() => {
+    if (!pkg) return [];
+
     const matchingVisits = visits
       .filter((visit) => visit.packageId === pkg.id)
       .map((visit) => ({
@@ -56,6 +50,14 @@ export default function PackageHistoryPage() {
       (a, b) => new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime()
     );
   }, [pkg, visits]);
+
+  if (!pkg) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-neutral-600">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-white">

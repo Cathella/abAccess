@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import Image from "next/image";
 import { SafeArea } from "@/components/common/SafeArea";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
@@ -8,21 +8,14 @@ import { SecondaryButton } from "@/components/common/SecondaryButton";
 import { ROUTES } from "@/lib/constants";
 
 export default function WelcomePage() {
-  const [redirectParam, setRedirectParam] = useState('');
-
-  useEffect(() => {
-    // Get redirect from URL on client side
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get('redirect');
-      console.log('[Welcome] Current URL:', window.location.href);
-      console.log('[Welcome] Search params:', window.location.search);
-      console.log('[Welcome] Redirect parameter:', redirect);
-      if (redirect) {
-        setRedirectParam(`?redirect=${encodeURIComponent(redirect)}`);
-        console.log('[Welcome] Setting redirect param:', `?redirect=${encodeURIComponent(redirect)}`);
-      }
+  const redirectParam = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return '';
     }
+
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get('redirect');
+    return redirect ? `?redirect=${encodeURIComponent(redirect)}` : '';
   }, []);
 
   return (

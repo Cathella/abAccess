@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { BarChart3, Check, XCircle } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
@@ -39,11 +39,11 @@ export default function PackageDetailPage() {
     loadVisits(user.id, { force: true });
   }, [loadVisits, user?.id]);
 
-  const usageHistoryForDisplay = useMemo(() => {
+  const usageHistoryForDisplay = (() => {
     if (!pkg) return [];
     if (pkg.usageHistory.length > 0) return pkg.usageHistory;
 
-    const matchingVisits = visits
+    return visits
       .filter((visit) => visit.packageId === pkg.id)
       .map((visit) => ({
         id: visit.id,
@@ -55,9 +55,7 @@ export default function PackageDetailPage() {
         copayPaid: visit.copayAmount ?? 0,
       }))
       .sort((a, b) => new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime());
-
-    return matchingVisits;
-  }, [pkg, visits]);
+  })();
 
   if (!pkg) {
     return (

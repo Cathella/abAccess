@@ -57,7 +57,7 @@ export default function ProcessingPaymentPage() {
 
       {/* Subtitle */}
       <p className="text-gray-500 text-center">
-        Please don't close the app.
+        Please don&apos;t close the app.
       </p>
     </div>
   );

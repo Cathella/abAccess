@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useWalletStore } from "@/stores/walletStore";
 import { formatCurrency, generateTransactionId, getPaymentMethodName } from "@/lib/wallet";
@@ -12,14 +12,30 @@ export default function TopUpSuccessPage() {
   const topUpData = useWalletStore((state) => state.topUpData);
   const clearTopUpData = useWalletStore((state) => state.clearTopUpData);
 
-  const [transaction, setTransaction] = useState<WalletTransaction | null>(null);
   const preventBackRef = useRef<(() => void) | null>(null);
 
   const amount = topUpData.amount || 0;
   const paymentMethod = topUpData.paymentMethod;
   const phoneNumber = topUpData.phoneNumber;
   const cardDetails = topUpData.cardDetails;
-  const saveForFuture = topUpData.saveForFuture;
+  const transaction = useMemo<WalletTransaction | null>(() => {
+    if (amount <= 0 || !paymentMethod) {
+      return null;
+    }
+
+    return {
+      id: crypto.randomUUID(),
+      type: "top_up",
+      amount,
+      fee: 0,
+      status: "completed",
+      paymentMethod,
+      phoneNumber,
+      cardLast4: cardDetails ? cardDetails.number.slice(-4) : undefined,
+      transactionId: generateTransactionId(),
+      createdAt: new Date().toISOString(),
+    };
+  }, [amount, cardDetails, paymentMethod, phoneNumber]);
 
   // Prevent back navigation
   useEffect(() => {
@@ -32,30 +48,10 @@ export default function TopUpSuccessPage() {
     window.history.pushState(null, "", window.location.href);
     window.addEventListener("popstate", preventBack);
 
-    // The transaction was already created and balance updated by processTopUp in the processing page
-    // Just display the transaction details from the store
-    if (amount > 0 && paymentMethod && !transaction) {
-      // Create a display transaction object for UI
-      const displayTransaction: WalletTransaction = {
-        id: crypto.randomUUID(),
-        type: "top_up",
-        amount,
-        fee: 0,
-        status: "completed",
-        paymentMethod,
-        phoneNumber,
-        cardLast4: cardDetails ? cardDetails.number.slice(-4) : undefined,
-        transactionId: generateTransactionId(),
-        createdAt: new Date().toISOString(),
-      };
-
-      setTransaction(displayTransaction);
-    }
-
     return () => {
       window.removeEventListener("popstate", preventBack);
     };
-  }, [amount, paymentMethod, phoneNumber, cardDetails, transaction]);
+  }, []);
 
   const handleDone = () => {
     // Remove back navigation prevention before navigating

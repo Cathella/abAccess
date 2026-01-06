@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/common/Header";
@@ -17,18 +17,15 @@ export default function SignInPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(false);
-  const [redirect, setRedirect] = useState<string | null>(null);
-  const { setPhoneNumber: setStorePhoneNumber } = useAuthStore();
-
-  // Get redirect parameter on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const redirectParam = params.get('redirect');
-      setRedirect(redirectParam);
-      console.log('[SignIn] Loaded sign-in page with redirect parameter:', redirectParam);
+  const redirect = useMemo(() => {
+    if (typeof window === "undefined") {
+      return null;
     }
+
+    const params = new URLSearchParams(window.location.search);
+    return params.get("redirect");
   }, []);
+  const { setPhoneNumber: setStorePhoneNumber } = useAuthStore();
 
   // Validate phone number
   const isValidPhone = (phone: string): boolean => {

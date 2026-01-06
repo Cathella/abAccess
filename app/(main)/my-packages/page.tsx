@@ -16,7 +16,6 @@ export default function MyPackagesPage() {
   const userPackages = usePackageStore((state) => state.userPackages);
   const packageFilter = usePackageStore((state) => state.packageFilter);
   const setPackageFilter = usePackageStore((state) => state.setPackageFilter);
-  const isLoading = usePackageStore((state) => state.isLoading);
   const loadUserPackages = usePackageStore((state) => state.loadUserPackages);
   const visits = useVisitsStore((state) => state.visits);
   const loadVisits = useVisitsStore((state) => state.loadVisits);

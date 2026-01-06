@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { Header } from "@/components/common/Header";
 import { BottomNav } from "@/components/common/BottomNav";
@@ -85,27 +85,9 @@ export default function MainLayout({
 }>) {
   const router = useRouter();
   const pathname = usePathname();
-  const [hasHydrated, setHasHydrated] = useState(false);
   const { user } = useAuthStore();
+  const hasHydrated = useAuthStore.persist?.hasHydrated?.() ?? true;
   const setDependents = useFamilyStore((state) => state.setDependents);
-
-  // Wait for persisted auth store to hydrate before enforcing redirects
-  useEffect(() => {
-    if (useAuthStore.persist?.hasHydrated?.()) {
-      console.log('[MainLayout] Auth store already hydrated', { user: !!user });
-      setHasHydrated(true);
-      return;
-    }
-
-    console.log('[MainLayout] Waiting for auth store hydration...');
-    const unsubscribe = useAuthStore.persist?.onFinishHydration?.(() => {
-      console.log('[MainLayout] Auth store hydration complete', { user: !!user });
-      setHasHydrated(true);
-    });
-    return () => {
-      unsubscribe?.();
-    };
-  }, []);
 
   // Check authentication (skip for dev-tools)
   useEffect(() => {
