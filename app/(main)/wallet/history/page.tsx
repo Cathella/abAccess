@@ -18,7 +18,7 @@ import {
   formatCurrency,
 } from "@/lib/wallet";
 import { formatDate } from "@/lib/utils/dateUtils";
-import type { WalletTransaction, WalletTransactionType } from "@/types";
+import type { WalletTransaction } from "@/types";
 
 type FilterOption = "all" | "top_up" | "purchase";
 

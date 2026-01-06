@@ -3,7 +3,9 @@
 import { useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { BarChart3, Check, XCircle } from "lucide-react";
+import { useAuthStore } from "@/stores/authStore";
 import { usePackageStore } from "@/stores/packageStore";
+import { useVisitsStore } from "@/stores/visitsStore";
 import { formatPackageDate, getCategoryDisplayName, getPackageDisplayInfo, getVisitsForfeited } from "@/lib/packages";
 import { UsageHistoryCard } from "@/components/packages/UsageHistoryCard";
 
@@ -12,7 +14,10 @@ export default function PackageDetailPage() {
   const params = useParams();
   const packageId = params.id as string;
 
+  const user = useAuthStore((state) => state.user);
   const userPackages = usePackageStore((state) => state.userPackages);
+  const visits = useVisitsStore((state) => state.visits);
+  const loadVisits = useVisitsStore((state) => state.loadVisits);
   const pkg = userPackages.find((p) => p.id === packageId);
 
   // Calculate display info for banners
@@ -28,6 +33,29 @@ export default function PackageDetailPage() {
       router.push("/my-packages");
     }
   }, [pkg, userPackages, router]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    loadVisits(user.id, { force: true });
+  }, [loadVisits, user?.id]);
+
+  const usageHistoryForDisplay = (() => {
+    if (!pkg) return [];
+    if (pkg.usageHistory.length > 0) return pkg.usageHistory;
+
+    return visits
+      .filter((visit) => visit.packageId === pkg.id)
+      .map((visit) => ({
+        id: visit.id,
+        userPackageId: pkg.id,
+        personName: visit.memberName,
+        personInitials: visit.memberInitials,
+        facilityName: visit.facilityName,
+        visitDate: visit.visitDate,
+        copayPaid: visit.copayAmount ?? 0,
+      }))
+      .sort((a, b) => new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime());
+  })();
 
   if (!pkg) {
     return (
@@ -159,7 +187,7 @@ export default function PackageDetailPage() {
             <h3 className="text-lg font-bold text-neutral-900">
               Usage history
             </h3>
-            {pkg.usageHistory.length > 1 && (
+            {usageHistoryForDisplay.length > 1 && (
               <button
                 onClick={() => router.push(`/my-packages/${pkg.id}/history`)}
                 className="text-base font-medium text-secondary-900 underline transition-colors hover:text-secondary-800"
@@ -170,9 +198,9 @@ export default function PackageDetailPage() {
           </div>
 
           {/* Show Usage History or Empty State */}
-          {pkg.usageHistory.length > 0 ? (
-            <UsageHistoryCard packageId={pkg.id} usageHistory={pkg.usageHistory} />
-          ) : (
+          {usageHistoryForDisplay.length > 0 ? (
+            <UsageHistoryCard packageId={pkg.id} usageHistory={usageHistoryForDisplay} />
+          ) : pkg.usedVisits === 0 ? (
             <div className="flex flex-col items-center rounded-2xl border border-dashed border-neutral-400 bg-neutral-200 px-8 py-8">
               {/* Chart Icon */}
               <div className="mb-4 flex h-12 w-12 items-center justify-center">
@@ -197,7 +225,7 @@ export default function PackageDetailPage() {
                 Book a Visit
               </button>
             </div>
-          )}
+          ) : null}
 
           {/* Buy Another Package Link - Show when low visits */}
           {showLowVisits && (
@@ -215,7 +243,7 @@ export default function PackageDetailPage() {
       {!isCompleted && !isExpired && (
         <div className="fixed bottom-0 left-0 right-0 bg-white p-4">
           <button
-            onClick={() => router.push(`/redeem?packageId=${pkg.id}`)}
+            onClick={() => router.push(`/redeem/${pkg.id}/select-member`)}
             className="w-full rounded-xl bg-primary-900 h-12 text-base font-bold text-neutral-900 border-[1.5px] border-neutral-900 transition-colors hover:bg-primary-800"
           >
             Use now

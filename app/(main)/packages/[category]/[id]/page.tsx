@@ -53,7 +53,7 @@ export default function PackageDetailsPage() {
 
   const handleBuyPackage = () => {
     setSelectedPackage(pkg);
-    router.push('/packages/purchase/recipient');
+    router.push('/packages/purchase/confirm');
   };
 
   return (

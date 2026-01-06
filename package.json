@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "gen:types": "supabase gen types typescript --project-id nopyyufhfnkmmjmcbtim --schema public > types/database.ts",
+    "seed:facilities": "tsx scripts/seedFacilities.ts",
     "seed": "tsx scripts/seedDatabase.ts",
     "seed:user": "tsx scripts/seedDatabase.ts"
   },
