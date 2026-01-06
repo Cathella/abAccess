@@ -188,6 +188,22 @@ export default function MainLayout({
         showNotifications: false,
         hideBottomNav: true,
       };
+    } else if (pathname?.startsWith('/visits/') && pathname?.match(/^\/visits\/[^/]+\/receipt$/)) {
+      currentConfig = {
+        title: "Receipt",
+        showBack: true,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/visits/') && pathname?.match(/^\/visits\/[^/]+$/)) {
+      currentConfig = {
+        title: "Visit details",
+        showBack: true,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
     } else if (pathname?.startsWith('/wallet/top-up')) {
       // Hide header and bottom nav for all wallet top-up flow pages
       currentConfig = {

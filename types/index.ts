@@ -423,6 +423,7 @@ export interface VisitRecord {
   // Where
   facilityId: string;
   facilityName: string;      // e.g., "Mukono Family Clinic"
+  facilityAddress?: string;  // e.g., "Plot 45, Mukono Main St"
 
   // What
   packageId: string;

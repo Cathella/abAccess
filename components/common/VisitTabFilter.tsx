@@ -59,7 +59,6 @@ export function VisitTabFilter({ activeTab, onTabChange, counts }: VisitTabFilte
             `}
           >
             {tab.label}
-            {count !== undefined && ` (${count})`}
           </button>
         );
       })}

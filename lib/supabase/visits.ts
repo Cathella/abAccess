@@ -24,7 +24,7 @@ export async function getUserVisits(
       .from("visits")
       .select(`
         *,
-        facility:facilities(name),
+        facility:facilities(name, address),
         user_package:user_packages(
           id,
           user_id,
@@ -48,6 +48,7 @@ export async function getUserVisits(
       isSelf: !visit.dependent_id,
       facilityId: visit.facility_id,
       facilityName: visit.facility?.name || "Unknown Facility",
+      facilityAddress: visit.facility?.address || undefined,
       packageId: visit.user_package_id,
       packageCategory: visit.user_package?.package?.category || "General",
       packageName: visit.user_package?.package?.name || "Unknown Package",
@@ -83,7 +84,7 @@ export async function getVisitsByStatus(
       .from("visits")
       .select(`
         *,
-        facility:facilities(name),
+        facility:facilities(name, address),
         user_package:user_packages(
           id,
           user_id,
@@ -108,6 +109,7 @@ export async function getVisitsByStatus(
       isSelf: !visit.dependent_id,
       facilityId: visit.facility_id,
       facilityName: visit.facility?.name || "Unknown Facility",
+      facilityAddress: visit.facility?.address || undefined,
       packageId: visit.user_package_id,
       packageCategory: visit.user_package?.package?.category || "General",
       packageName: visit.user_package?.package?.name || "Unknown Package",
