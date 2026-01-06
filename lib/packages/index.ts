@@ -246,6 +246,7 @@ export async function purchasePackageWithData(
       .eq('visit_count', packageData.visits)
       .eq('validity_days', packageData.validityDays)
       .eq('copay', packageData.copay)
+      .limit(1)
       .maybeSingle()
 
     if (packageLookupError) throw packageLookupError

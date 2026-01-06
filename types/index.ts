@@ -388,12 +388,8 @@ export interface AvailablePackage {
   inclusions: string[];      // e.g., ["5 GP consultations", "Valid at 24 partner clinics"]
 }
 
-// Purchase flow types
-export type RecipientType = 'myself' | 'child' | 'family';
-
 export interface PurchaseData {
   package: AvailablePackage | null;
-  recipient: RecipientType;
   paymentMethod: 'wallet' | 'mobile_money';
   termsAccepted: boolean;
 }

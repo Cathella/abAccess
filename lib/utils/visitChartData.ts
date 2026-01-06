@@ -11,6 +11,7 @@ interface VisitStat {
 interface ChartData {
   label: string;
   value: number;
+  dateKey: string;
 }
 
 /**
@@ -30,16 +31,18 @@ function getDayAbbreviation(date: Date): string {
  * @returns Array of chart data points for the last 7 days
  */
 export function transformVisitDataToWeeklyChart(
-  visits: VisitStat[]
+  visits: VisitStat[],
+  startDate?: Date
 ): ChartData[] {
-  // Get the last 7 days
   const today = new Date();
   const weekData: ChartData[] = [];
 
-  // Generate last 7 days
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(today.getDate() - i);
+  const baseDate = startDate ? new Date(startDate) : new Date(today);
+
+  // Generate 7 days starting from baseDate
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(baseDate);
+    date.setDate(baseDate.getDate() + i);
     date.setHours(0, 0, 0, 0); // Reset time to midnight
 
     const dateString = date.toISOString().split('T')[0];
@@ -57,6 +60,7 @@ export function transformVisitDataToWeeklyChart(
     weekData.push({
       label: dayLabel,
       value: totalVisits,
+      dateKey: dateString,
     });
   }
 
