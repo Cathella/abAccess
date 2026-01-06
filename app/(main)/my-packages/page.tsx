@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { usePackageStore } from "@/stores/packageStore";
+import { useVisitsStore } from "@/stores/visitsStore";
 import { UserHeader } from "@/components/common/UserHeader";
 import { TabFilter } from "@/components/packages/TabFilter";
 import { PackageCard } from "@/components/packages/PackageCard";
@@ -15,13 +16,19 @@ export default function MyPackagesPage() {
   const userPackages = usePackageStore((state) => state.userPackages);
   const packageFilter = usePackageStore((state) => state.packageFilter);
   const setPackageFilter = usePackageStore((state) => state.setPackageFilter);
-  const isLoading = usePackageStore((state) => state.isLoading);
   const loadUserPackages = usePackageStore((state) => state.loadUserPackages);
+  const visits = useVisitsStore((state) => state.visits);
+  const loadVisits = useVisitsStore((state) => state.loadVisits);
 
   useEffect(() => {
     if (!user?.id) return;
     loadUserPackages(user.id, { force: true });
   }, [loadUserPackages, user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    loadVisits(user.id, { force: true });
+  }, [loadVisits, user?.id]);
 
   const initials = useMemo(() => {
     if (!user) return "U";
@@ -30,10 +37,31 @@ export default function MyPackagesPage() {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "U";
   }, [user]);
 
+  const packagesWithCompletedDates = useMemo(() => {
+    if (visits.length === 0) return userPackages;
+
+    return userPackages.map((pkg) => {
+      if (pkg.status !== "completed" || pkg.completedDate) {
+        return pkg;
+      }
+
+      const latestVisit = visits
+        .filter((visit) => visit.packageId === pkg.id)
+        .sort((a, b) => new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime())[0];
+
+      if (!latestVisit) return pkg;
+
+      return {
+        ...pkg,
+        completedDate: latestVisit.visitDate,
+      };
+    });
+  }, [userPackages, visits]);
+
   // Filter packages based on selected tab
   const filteredPackages = useMemo(() => {
-    return userPackages.filter((pkg) => pkg.status === packageFilter);
-  }, [userPackages, packageFilter]);
+    return packagesWithCompletedDates.filter((pkg) => pkg.status === packageFilter);
+  }, [packagesWithCompletedDates, packageFilter]);
 
   if (!user) {
     return (
@@ -59,10 +87,8 @@ export default function MyPackagesPage() {
           <div className="flex flex-col min-h-[calc(100vh-80px)] items-center justify-center">
             <div className="flex max-w-75 flex-col items-center text-center">
               {/* Package Icon */}
-              <div className="mb-6 flex h-16 w-16 items-center justify-center">
-                <span role="img" aria-label="package" className="text-[64px] leading-none">
-                  📦
-                </span>
+              <div className="mb-6 flex text-4xl items-center justify-center">
+                📦
               </div>
 
               {/* Title */}

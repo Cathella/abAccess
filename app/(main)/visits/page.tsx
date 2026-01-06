@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,6 +27,12 @@ export default function VisitsPage() {
   const getFilteredVisits = useVisitsStore((state) => state.getFilteredVisits);
   const getVisitsByTab = useVisitsStore((state) => state.getVisitsByTab);
   const groupVisitsByMonth = useVisitsStore((state) => state.groupVisitsByMonth);
+  const loadVisits = useVisitsStore((state) => state.loadVisits);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    loadVisits(user.id, { force: true });
+  }, [loadVisits, user?.id]);
 
   // User initials for header
   const initials = useMemo(() => {

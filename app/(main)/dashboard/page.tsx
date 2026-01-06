@@ -4,8 +4,8 @@ import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
-import { useFamilyStore } from "@/stores/familyStore";
-import { ChevronDown, ChevronRight, Heart, Hospital, LogOut, Wallet } from "lucide-react";
+import { useVisitsStore } from "@/stores/visitsStore";
+import { ChevronLeft, ChevronRight, Heart, Hospital, LogOut, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { transformVisitDataToWeeklyChart } from "@/lib/utils/visitChartData";
 import { UserHeader } from "@/components/common/UserHeader";
@@ -29,10 +29,10 @@ export default function DashboardPage() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const { data: dashboardData, loading: dashboardLoading, error: dashboardError, refetch } = useDashboard(user?.id);
-  const dependents = useFamilyStore((state) => state.dependents);
+  const visits = useVisitsStore((state) => state.visits);
+  const loadVisits = useVisitsStore((state) => state.loadVisits);
   const [selectedDependent, setSelectedDependent] = useState<string>("All");
-  const [timeframe, setTimeframe] = useState<"This week" | "This month" | "Last 3 months">("This week");
-  const [showTimeframeDropdown, setShowTimeframeDropdown] = useState(false);
+  const [weekOffset, setWeekOffset] = useState(0);
 
   const initials = useMemo(() => {
     if (!user) return "U";
@@ -56,18 +56,112 @@ export default function DashboardPage() {
     };
   }, [refetch]);
 
-  // Use familyStore data for dependents count
-  const familyMembersCount = dependents.length;
+  useEffect(() => {
+    if (!user?.id) return;
+    loadVisits(user.id, { force: true });
+  }, [loadVisits, user?.id]);
+
+  const dependents = dashboardData.familyMembers;
+  const familyMembersCount = dashboardData.familyMembersCount;
+
+  const chartMembers = useMemo(() => {
+    const members = [{ id: user?.id || "self", name: "Me" }];
+    dependents.forEach((dependent) => {
+      members.push({ id: dependent.id, name: dependent.name });
+    });
+    return members;
+  }, [dependents, user?.id]);
+
+  const weekRange = useMemo(() => {
+    const now = new Date();
+    const startDate = new Date(now);
+    const dayOfWeek = startDate.getDay();
+    const mondayOffset = (dayOfWeek + 6) % 7;
+    startDate.setDate(startDate.getDate() - mondayOffset + weekOffset * 7);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 6);
+    endDate.setHours(23, 59, 59, 999);
+
+    const format = (date: Date) =>
+      date.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+
+    return {
+      startDate,
+      endDate,
+      label: `${format(startDate)} - ${format(endDate)}`,
+    };
+  }, [weekOffset]);
+
+  const filteredVisits = useMemo(() => {
+    const toDateKey = (date: Date) => date.toISOString().split("T")[0];
+    const startKey = toDateKey(weekRange.startDate);
+    const endKey = toDateKey(weekRange.endDate);
+
+    return visits.filter((visit) => {
+      if (selectedDependent !== "All" && visit.memberId !== selectedDependent) {
+        return false;
+      }
+
+      const visitKey = toDateKey(new Date(visit.visitDate));
+      return visitKey >= startKey && visitKey <= endKey;
+    });
+  }, [selectedDependent, visits, weekRange.endDate, weekRange.startDate]);
+
+  const visitStats = useMemo(() => {
+    return filteredVisits.reduce((acc: Record<string, number>, visit) => {
+      const dateKey = new Date(visit.visitDate).toISOString().split("T")[0];
+      acc[dateKey] = (acc[dateKey] || 0) + 1;
+      return acc;
+    }, {});
+  }, [filteredVisits]);
 
   // Transform visit data into weekly chart format
   const weeklyChartData = useMemo(() => {
-    return transformVisitDataToWeeklyChart(dashboardData.visitStats);
-  }, [dashboardData.visitStats]);
+    const stats = Object.entries(visitStats).map(([date, count]) => ({
+      date,
+      count,
+    }));
+
+    return transformVisitDataToWeeklyChart(stats, weekRange.startDate);
+  }, [visitStats, weekRange.startDate]);
 
   // Calculate total visits count
   const totalVisitsCount = useMemo(() => {
     return weeklyChartData.reduce((sum, day) => sum + day.value, 0);
   }, [weeklyChartData]);
+
+  const selectedDependentName = useMemo(() => {
+    if (selectedDependent === "All") return "All";
+    if (selectedDependent === user?.id) {
+      return user?.firstName || "Me";
+    }
+    const dependent = dependents.find((member) => member.id === selectedDependent);
+    return dependent?.name || "Member";
+  }, [dependents, selectedDependent, user?.firstName, user?.id]);
+
+  const maxVisits = 5;
+
+  const chartTicks = [0, 1, 2, 3, 4, 5];
+
+  const highlightIndex = useMemo(() => {
+    if (weeklyChartData.length === 0) return -1;
+
+    if (filteredVisits.length > 0) {
+      const latestVisit = filteredVisits.reduce((latest, current) =>
+        new Date(current.visitDate) > new Date(latest.visitDate) ? current : latest
+      );
+      const latestKey = new Date(latestVisit.visitDate).toISOString().split("T")[0];
+      const index = weeklyChartData.findIndex((point) => point.dateKey === latestKey);
+      if (index >= 0 && weeklyChartData[index].value > 0) {
+        return index;
+      }
+    }
+
+    const maxValue = Math.max(...weeklyChartData.map((point) => point.value));
+    return weeklyChartData.findIndex((point) => point.value === maxValue);
+  }, [filteredVisits, weeklyChartData]);
 
   if (!user || dashboardLoading) {
     return (
@@ -220,10 +314,6 @@ export default function DashboardPage() {
                     // TODO: Implement location request
                     console.log("Enable location requested");
                   }}
-                  onSelectManually={() => {
-                    // TODO: Navigate to area selection
-                    console.log("Select area manually requested");
-                  }}
                 />
               )}
             </div>
@@ -234,60 +324,27 @@ export default function DashboardPage() {
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-neutral-900">Your visit trends</h2>
-            <div className="relative">
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => setShowTimeframeDropdown(!showTimeframeDropdown)}
-                className="flex items-center gap-2 rounded-lg border-[1.5px] border-neutral-400 bg-white px-3 py-2 text-sm text-neutral-900 transition-colors hover:bg-neutral-100"
+                onClick={() => setWeekOffset((prev) => prev - 1)}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-400 bg-white text-neutral-900 transition-colors hover:bg-neutral-100"
+                aria-label="Previous week"
               >
-                {timeframe}
-                <ChevronDown className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4" />
               </button>
-
-              {/* Dropdown Menu */}
-              {showTimeframeDropdown && (
-                <>
-                  {/* Backdrop */}
-                  <div
-                    className="fixed inset-0 z-10"
-                    onClick={() => setShowTimeframeDropdown(false)}
-                  />
-
-                  {/* Menu */}
-                  <div className="absolute right-0 top-full z-20 mt-2 w-48 rounded-xl border border-neutral-400 bg-white py-2 shadow-lg">
-                    {(["This week", "This month", "Last 3 months"] as const).map(
-                      (option) => (
-                        <button
-                          key={option}
-                          onClick={() => {
-                            setTimeframe(option);
-                            setShowTimeframeDropdown(false);
-                          }}
-                          className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-neutral-900 transition-colors hover:bg-neutral-100"
-                        >
-                          {/* Radio button */}
-                          <div
-                            className={`h-5 w-5 rounded-full border-2 ${
-                              timeframe === option
-                                ? "border-secondary-900 bg-secondary-900"
-                                : "border-neutral-400 bg-white"
-                            } flex items-center justify-center`}
-                          >
-                            {timeframe === option && (
-                              <div className="h-2 w-2 rounded-full bg-white" />
-                            )}
-                          </div>
-                          {option}
-                        </button>
-                      )
-                    )}
-                  </div>
-                </>
-              )}
+              <div className="text-sm font-medium text-neutral-700">{weekRange.label}</div>
+              <button
+                onClick={() => setWeekOffset((prev) => prev + 1)}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-400 bg-white text-neutral-900 transition-colors hover:bg-neutral-100"
+                aria-label="Next week"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
 
           <div className={cn(cards.panel, "p-4 space-y-4 bg-neutral-100 rounded-4xl")}>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 pb-3">
               <button
                 onClick={() => setSelectedDependent("All")}
                 className={cn(
@@ -299,12 +356,12 @@ export default function DashboardPage() {
               >
                 All
               </button>
-              {dependents.map((dependent) => {
-                const isActive = selectedDependent === dependent.id;
+              {chartMembers.map((member) => {
+                const isActive = selectedDependent === member.id;
                 return (
                   <button
-                    key={dependent.id}
-                    onClick={() => setSelectedDependent(dependent.id)}
+                    key={member.id}
+                    onClick={() => setSelectedDependent(member.id)}
                     className={cn(
                       "rounded-full px-2 text-sm h-6 flex items-center justify-center",
                       isActive
@@ -312,33 +369,64 @@ export default function DashboardPage() {
                         : "bg-neutral-200 text-neutral-700 font-normal border border-neutral-400"
                     )}
                   >
-                    {dependent.name}
+                    {member.name}
                   </button>
                 );
               })}
             </div>
 
             <div className="flex items-end gap-3">
-              {weeklyChartData.map((visit, idx) => {
-                const maxVisits = 3;
-                const heightPct = Math.min(visit.value, maxVisits) / maxVisits * 100;
-                return (
-                  <div key={`${visit.label}-${idx}`} className="flex flex-1 flex-col items-center gap-2">
-                    <div className="flex h-40 w-full items-end rounded-2xl bg-secondary-100 p-1">
-                      <div
-                        className="w-full rounded-xl bg-secondary-900"
-                        style={{ height: `${heightPct}%` }}
-                      />
-                    </div>
-                    <p className="text-sm font-semibold text-neutral-900">{visit.label}</p>
-                  </div>
-                );
-              })}
+              <div className="relative h-40 w-6 pr-2 text-xs font-medium text-neutral-600">
+                {chartTicks.map((tick) => (
+                  <span
+                    key={`tick-${tick}`}
+                    className="absolute right-0 translate-y-0"
+                    style={{ bottom: `${(tick / maxVisits) * 100}%` }}
+                  >
+                    {tick}
+                  </span>
+                ))}
+              </div>
+
+              <div className="relative flex h-40 w-full flex-col justify-end">
+                <div className="absolute inset-0">
+                  {chartTicks.map((tick) => (
+                    <div
+                      key={`grid-${tick}`}
+                      className="absolute w-full border-b border-dashed border-neutral-300/70"
+                      style={{ bottom: `${(tick / maxVisits) * 100}%` }}
+                    />
+                  ))}
+                </div>
+
+                <div
+                  className="relative z-10 flex items-end gap-3"
+                  style={{ top: 36 }}
+                >
+                  {weeklyChartData.map((visit, idx) => {
+                    const heightPct = (visit.value / maxVisits) * 100;
+                    const isHighlight = idx === highlightIndex && visit.value > 0;
+                    return (
+                      <div key={`${visit.label}-${idx}`} className="flex flex-1 flex-col items-center gap-2">
+                        <div className="flex h-40 w-full items-end">
+                          <div
+                            className={`w-full rounded-2xl ${
+                              isHighlight ? "bg-secondary-900" : "bg-secondary-100"
+                            }`}
+                            style={{ height: `${heightPct}%` }}
+                          />
+                        </div>
+                        <p className="text-sm font-semibold text-neutral-900 mt-2">{visit.label}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mt-14">
               <p className="text-sm text-neutral-900">
-                {totalVisitsCount} {totalVisitsCount === 1 ? 'visit' : 'visits'} {timeframe.toLowerCase()}
+                {selectedDependentName}: {totalVisitsCount} {totalVisitsCount === 1 ? "visit" : "visits"} · {weekRange.label}
               </p>
               <Link href="/visits" className="text-base font-semibold text-secondary-900 underline">
                 View all

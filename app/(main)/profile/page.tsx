@@ -1,12 +1,11 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuthStore } from '@/stores/authStore';
 import { ChevronRight, User, Phone, CreditCard, Lock } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ProfilePage() {
-  const router = useRouter();
   const user = useAuthStore((state) => state.user);
 
   if (!user) {
@@ -17,9 +16,14 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-white px-4 py-6">
       {/* Profile Header */}
       <div className="mb-6 flex items-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary-900">
+        <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary-900 overflow-hidden">
           {user.avatar ? (
-            <img src={user.avatar} alt="Profile" className="h-full w-full rounded-full object-cover" />
+            <Image
+              src={user.avatar}
+              alt="Profile"
+              fill
+              className="rounded-full object-cover"
+            />
           ) : (
             <span className="text-2xl font-bold text-neutral-900">
               {user.firstName.charAt(0)}{user.lastName.charAt(0)}

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { VisitRecord, VisitTabFilter } from '@/types';
-import { MOCK_VISITS } from '@/lib/constants';
+import { getUserVisits } from '@/lib/supabase/visits';
 
 interface VisitsState {
   // Data
@@ -17,6 +17,7 @@ interface VisitsState {
   setLoading: (loading: boolean) => void;
   setActiveTab: (tab: VisitTabFilter) => void;
   setSelectedMemberId: (memberId: string | 'all') => void;
+  loadVisits: (userId: string, options?: { force?: boolean }) => Promise<void>;
 
   // Computed helpers
   getFilteredVisits: () => VisitRecord[];
@@ -27,7 +28,7 @@ interface VisitsState {
 export const useVisitsStore = create<VisitsState>()(
   persist(
     (set, get) => ({
-      visits: MOCK_VISITS,
+      visits: [],
       isLoading: false,
       activeTab: 'upcoming',
       selectedMemberId: 'all',
@@ -36,6 +37,25 @@ export const useVisitsStore = create<VisitsState>()(
       setLoading: (isLoading) => set({ isLoading }),
       setActiveTab: (activeTab) => set({ activeTab }),
       setSelectedMemberId: (selectedMemberId) => set({ selectedMemberId }),
+      loadVisits: async (userId, options) => {
+        const { isLoading } = get();
+        if (isLoading && !options?.force) return;
+
+        set({ isLoading: true });
+
+        try {
+          const result = await getUserVisits(userId);
+          if (result.error) {
+            console.error('Failed to load visits:', result.error);
+            set({ isLoading: false });
+            return;
+          }
+          set({ visits: result.visits, isLoading: false });
+        } catch (error) {
+          console.error('Failed to load visits:', error);
+          set({ isLoading: false });
+        }
+      },
 
       getFilteredVisits: () => {
         const { visits, activeTab, selectedMemberId } = get();

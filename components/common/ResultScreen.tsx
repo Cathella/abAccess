@@ -31,13 +31,13 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         <div className="text-6xl mb-6">{emoji}</div>
 
         {/* Title */}
-        <h1 className="text-2xl font-bold text-neutral-900 mb-2 text-center">
+        <h1 className="text-xl font-bold text-neutral-900 mb-6 text-center">
           {title}
         </h1>
 
         {/* Subtitle */}
         {subtitle && (
-          <p className="text-gray-500 text-center mb-6 max-w-sm">
+          <p className="text-neutral-700 text-center mb-6 max-w-sm">
             {subtitle}
           </p>
         )}
@@ -47,7 +47,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       </div>
 
       {/* Bottom buttons - fixed */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-neutral-400 space-y-3">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white space-y-3">
         {/* Secondary action button (optional) */}
         {secondaryAction && (
           <button

@@ -147,7 +147,7 @@ export default function EditDependentPage() {
         // Show error toast
         alert(result.error || "Failed to save changes");
       }
-    } catch (error) {
+    } catch {
       alert("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);

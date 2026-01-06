@@ -25,7 +25,7 @@ export default function EditProfilePage() {
   }, [user]);
 
   const validate = (): boolean => {
-    const newErrors: any = {};
+    const newErrors: { name?: string; nin?: string } = {};
 
     if (!name.trim()) {
       newErrors.name = 'Name is required';
@@ -57,7 +57,7 @@ export default function EditProfilePage() {
       } else {
         setErrors({ name: result.error || 'Failed to update profile' });
       }
-    } catch (error) {
+    } catch {
       setErrors({ name: 'Network error' });
     } finally {
       setIsLoading(false);

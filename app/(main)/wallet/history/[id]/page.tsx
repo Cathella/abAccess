@@ -7,7 +7,6 @@ import { Header } from "@/components/common/Header";
 import { useWalletStore } from "@/stores/walletStore";
 import { formatCurrency, getPaymentMethodName, formatPhoneNumber } from "@/lib/wallet";
 import { formatDate } from "@/lib/utils/dateUtils";
-import type { WalletTransaction } from "@/types";
 
 interface TransactionDetailPageProps {
   params: Promise<{

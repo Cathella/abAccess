@@ -1,13 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { AvailablePackage, RecipientType, PurchaseStatus } from '@/types';
+import { AvailablePackage, PurchaseStatus } from '@/types';
 
 interface PurchaseState {
   // Selected package
   selectedPackage: AvailablePackage | null;
 
   // Purchase flow data
-  recipient: RecipientType;
   paymentMethod: 'wallet' | 'mobile_money';
   termsAccepted: boolean;
 
@@ -17,7 +16,6 @@ interface PurchaseState {
 
   // Actions
   setSelectedPackage: (pkg: AvailablePackage | null) => void;
-  setRecipient: (recipient: RecipientType) => void;
   setPaymentMethod: (method: 'wallet' | 'mobile_money') => void;
   setTermsAccepted: (accepted: boolean) => void;
   setStatus: (status: PurchaseStatus) => void;
@@ -27,7 +25,6 @@ interface PurchaseState {
 
 const initialState = {
   selectedPackage: null,
-  recipient: 'myself' as RecipientType,
   paymentMethod: 'wallet' as const,
   termsAccepted: false,
   status: 'idle' as PurchaseStatus,
@@ -40,7 +37,6 @@ export const usePurchaseStore = create<PurchaseState>()(
       ...initialState,
 
       setSelectedPackage: (pkg) => set({ selectedPackage: pkg }),
-      setRecipient: (recipient) => set({ recipient }),
       setPaymentMethod: (method) => set({ paymentMethod: method }),
       setTermsAccepted: (accepted) => set({ termsAccepted: accepted }),
       setStatus: (status) => set({ status }),
