@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import type { TimeSlot } from "@/types"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -82,4 +83,73 @@ export function groupBy<T>(
     groups[key].push(item);
     return groups;
   }, {} as Record<string, T[]>);
+}
+
+// ============================================
+// Booking Flow Date Utilities
+// ============================================
+
+/**
+ * Format date for booking display: "Fri, 7 Jan 2026"
+ */
+export function formatBookingDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+/**
+ * Format time slot for display: "Afternoon (12 PM - 4 PM)"
+ */
+export function formatTimeSlot(slot: TimeSlot): string {
+  const options: Record<TimeSlot, string> = {
+    morning: 'Morning (8 AM - 12 PM)',
+    afternoon: 'Afternoon (12 PM - 4 PM)',
+    evening: 'Evening (4 PM - 6 PM)',
+  };
+  return options[slot] || slot;
+}
+
+/**
+ * Get days in month
+ */
+export function getDaysInMonth(year: number, month: number): number {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+/**
+ * Get first day of month (0 = Sunday, 1 = Monday, etc.)
+ */
+export function getFirstDayOfMonth(year: number, month: number): number {
+  return new Date(year, month, 1).getDay();
+}
+
+/**
+ * Check if date is in the past
+ */
+export function isPastDate(dateString: string): boolean {
+  const date = new Date(dateString);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date < today;
+}
+
+/**
+ * Check if date is today
+ */
+export function isTodayDate(dateString: string): boolean {
+  const date = new Date(dateString);
+  const today = new Date();
+  return date.toDateString() === today.toDateString();
+}
+
+/**
+ * Get date string in ISO format (YYYY-MM-DD)
+ */
+export function toISODateString(date: Date): string {
+  return date.toISOString().split('T')[0];
 }

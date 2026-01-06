@@ -6,7 +6,9 @@ import type {
   BrowsePackageCategory,
   VisitTabFilter,
   VisitStatusType,
-  VisitRecord
+  VisitRecord,
+  TimeSlotOption,
+  BookingFacility
 } from "@/types";
 
 export const APP_NAME = "ABA Access";
@@ -643,6 +645,76 @@ export const MOCK_VISITS: VisitRecord[] = [
     refundNote: 'Visit forfeited',
     createdAt: '2025-09-05T10:00:00Z',
     updatedAt: '2025-09-12T15:00:00Z',
+  },
+];
+
+// Booking Flow Constants
+
+export const TIME_SLOT_OPTIONS: TimeSlotOption[] = [
+  { value: 'morning', label: 'Morning', hours: '8 AM - 12 PM' },
+  { value: 'afternoon', label: 'Afternoon', hours: '12 PM - 4 PM' },
+  { value: 'evening', label: 'Evening', hours: '4 PM - 6 PM' },
+];
+
+// Mock facilities data
+export const MOCK_FACILITIES: BookingFacility[] = [
+  {
+    id: 'fac-1',
+    name: 'Mukono Family Clinic',
+    address: 'Plot 45, Mukono Main Street',
+    distance: 1.2,
+    distanceLabel: '1.2 km away',
+    recommendationPercent: 92,
+    patientVisits: 156,
+    imageUrl: '/images/facilities/mukono-clinic.jpg',
+    hours: {
+      weekdays: '8:00 AM - 6:00 PM',
+      saturday: '9:00 AM - 2:00 PM',
+      sunday: 'Closed',
+    },
+    services: ['Consultations', 'Child Wellness', 'Lab Tests', 'Maternal Care'],
+    acceptsBookings: true,
+    isWalkInOnly: false,
+    isOpen: true,
+    closingTime: '8:00 PM',
+  },
+  {
+    id: 'fac-2',
+    name: 'City Medical Centre',
+    address: 'Plot 12, Kampala Road',
+    distance: 2.3,
+    distanceLabel: '2.3 km away',
+    recommendationPercent: 88,
+    patientVisits: 234,
+    hours: {
+      weekdays: '7:00 AM - 9:00 PM',
+      saturday: '8:00 AM - 6:00 PM',
+      sunday: '10:00 AM - 4:00 PM',
+    },
+    services: ['Consultations', 'Lab Tests', 'Pharmacy'],
+    acceptsBookings: true,
+    isWalkInOnly: false,
+    isOpen: true,
+    closingTime: '9:00 PM',
+  },
+  {
+    id: 'fac-3',
+    name: 'Kampala Health Hub',
+    address: 'Plot 78, Ntinda Road',
+    distance: 3.8,
+    distanceLabel: '3.8 km away',
+    recommendationPercent: 95,
+    patientVisits: 312,
+    hours: {
+      weekdays: '8:00 AM - 8:00 PM',
+      saturday: '9:00 AM - 5:00 PM',
+      sunday: 'Closed',
+    },
+    services: ['Consultations', 'Child Wellness', 'Maternal Care'],
+    acceptsBookings: false,
+    isWalkInOnly: true,
+    isOpen: true,
+    closingTime: '8:00 PM',
   },
 ];
 

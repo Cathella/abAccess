@@ -70,6 +70,7 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
     title: "Notifications",
     showBack: true,
     showNotifications: false,
+    hideBottomNav: true,
   },
   "/dev-tools": {
     title: "Dev Tools",
@@ -240,6 +241,15 @@ export default function MainLayout({
       };
     } else if (pathname?.startsWith('/redeem/')) {
       // Redemption flow pages
+      currentConfig = {
+        title: "",
+        showBack: false,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/book/')) {
+      // Booking flow pages
       currentConfig = {
         title: "",
         showBack: false,

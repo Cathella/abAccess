@@ -449,6 +449,95 @@ export interface VisitFilters {
   memberId: string | 'all';  // 'all' for all family members
 }
 
+// Booking Flow Types
+
+// Booking flow status
+export type BookingFlowStatus =
+  | 'idle'
+  | 'selecting_package'
+  | 'selecting_person'
+  | 'selecting_facility'
+  | 'selecting_datetime'
+  | 'confirming'
+  | 'submitting'
+  | 'success'
+  | 'failed';
+
+// Preferred time slot
+export type TimeSlot = 'morning' | 'afternoon' | 'evening';
+
+export interface TimeSlotOption {
+  value: TimeSlot;
+  label: string;
+  hours: string;  // e.g., "8 AM - 12 PM"
+}
+
+// Facility data (for booking flow)
+export interface BookingFacility {
+  id: string;
+  name: string;
+  address: string;
+  distance: number;        // in km
+  distanceLabel: string;   // e.g., "1.2 km away"
+  recommendationPercent: number;  // e.g., 92
+  patientVisits: number;   // e.g., 156
+  imageUrl?: string;
+
+  // Hours
+  hours: {
+    weekdays: string;      // e.g., "8:00 AM - 6:00 PM"
+    saturday: string;      // e.g., "9:00 AM - 2:00 PM"
+    sunday: string;        // e.g., "Closed"
+  };
+
+  // Features
+  services: string[];      // e.g., ["Consultations", "Child Wellness", "Lab Tests"]
+  acceptsBookings: boolean;
+  isWalkInOnly: boolean;
+
+  // Status
+  isOpen: boolean;
+  closingTime?: string;    // e.g., "8:00 PM"
+}
+
+// Booking session data
+export interface BookingSession {
+  // Selected package
+  packageId: string | null;
+  package: UserPackage | null;
+
+  // Selected person
+  memberId: string | null;
+  memberName: string | null;
+
+  // Selected facility
+  facilityId: string | null;
+  facility: BookingFacility | null;
+
+  // Selected date & time
+  selectedDate: string | null;  // ISO date string
+  selectedTimeSlot: TimeSlot | null;
+
+  // Status
+  status: BookingFlowStatus;
+
+  // Result
+  bookingId?: string;
+}
+
+// Booking confirmation data (for success screen)
+export interface BookingConfirmation {
+  bookingId: string;
+  packageCategory: string;
+  packageName: string;
+  patientName: string;
+  facilityName: string;
+  requestedDate: string;
+  preferredTime: string;
+  copayDue: number;
+  remainingAfter: number;
+}
+
 // Redemption Flow Types
 
 // Redemption status

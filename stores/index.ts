@@ -1,5 +1,6 @@
 // Export all stores from a central location
 export { useAuthStore } from './authStore'
+export { useBookingStore } from './bookingStore'
 export { useRegistrationStore } from './registrationStore'
 export { usePackageStore } from './packageStore'
 export { useWalletStore } from './walletStore'
@@ -9,6 +10,7 @@ export { useStore } from './useStore'
 
 // Re-export store types if needed
 export type * from './authStore'
+export type * from './bookingStore'
 export type * from './registrationStore'
 export type * from './packageStore'
 export type * from './walletStore'

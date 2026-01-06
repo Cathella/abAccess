@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { VisitRecord, VisitTabFilter } from '@/types';
+import { VisitRecord, VisitTabFilter, BookingConfirmation, BookingFacility, TimeSlot } from '@/types';
 import { getUserVisits } from '@/lib/supabase/visits';
+import { getInitials, formatTimeSlot } from '@/lib/utils';
 
 interface VisitsState {
   // Data
@@ -18,6 +19,7 @@ interface VisitsState {
   setActiveTab: (tab: VisitTabFilter) => void;
   setSelectedMemberId: (memberId: string | 'all') => void;
   loadVisits: (userId: string, options?: { force?: boolean }) => Promise<void>;
+  addPendingVisit: (booking: BookingConfirmation, facility: BookingFacility, memberId: string, isSelf: boolean, packageId: string) => void;
 
   // Computed helpers
   getFilteredVisits: () => VisitRecord[];
@@ -118,6 +120,31 @@ export const useVisitsStore = create<VisitsState>()(
           groups[monthKey].push(visit);
           return groups;
         }, {} as Record<string, VisitRecord[]>);
+      },
+
+      addPendingVisit: (booking, facility, memberId, isSelf, packageId) => {
+        const { visits } = get();
+
+        const newVisit: VisitRecord = {
+          id: booking.bookingId,
+          memberId: memberId,
+          memberName: booking.patientName,
+          memberInitials: getInitials(booking.patientName),
+          isSelf: isSelf,
+          facilityId: facility.id,
+          facilityName: facility.name,
+          facilityAddress: facility.address,
+          packageId: packageId,
+          packageCategory: booking.packageCategory,
+          packageName: booking.packageName,
+          visitDate: booking.requestedDate,
+          visitTime: formatTimeSlot(booking.preferredTime as TimeSlot),
+          status: 'pending_confirmation',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        set({ visits: [newVisit, ...visits] });
       },
     }),
     {
