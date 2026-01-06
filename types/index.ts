@@ -493,7 +493,6 @@ export interface RedemptionSession {
   // Result data (after redemption)
   visitDate?: string;
   visitTime?: string;
-  facilityName?: string;
   copayPaid?: number;
   remainingVisits?: number;
 }
