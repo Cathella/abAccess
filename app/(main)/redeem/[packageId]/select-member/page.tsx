@@ -127,7 +127,7 @@ export default function SelectMemberPage() {
 
   const handleContinue = () => {
     if (!selectedMemberId) return;
-    router.push(`/redeem/${packageId}/confirm-copay`);
+    router.push(`/redeem/${packageId}/select-facility`);
   };
 
   if (!pkg || !user) {

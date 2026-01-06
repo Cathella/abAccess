@@ -487,6 +487,8 @@ export interface RedemptionSession {
   package: UserPackage;
   selectedMemberId: string | null;
   selectedMemberName: string | null;
+  facilityId?: string | null;
+  facilityName?: string | null;
   copayAcknowledged: boolean;
   activeCode: RedemptionCode | null;
   status: RedemptionStatus;

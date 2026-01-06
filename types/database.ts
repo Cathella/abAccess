@@ -162,6 +162,7 @@ export type Database = {
           name: string
           operating_hours: Json | null
           phone: string
+          photo_url: string | null
           rating: number | null
           rating_count: number | null
           services: string[] | null
@@ -176,6 +177,7 @@ export type Database = {
           name: string
           operating_hours?: Json | null
           phone: string
+          photo_url?: string | null
           rating?: number | null
           rating_count?: number | null
           services?: string[] | null
@@ -190,6 +192,7 @@ export type Database = {
           name?: string
           operating_hours?: Json | null
           phone?: string
+          photo_url?: string | null
           rating?: number | null
           rating_count?: number | null
           services?: string[] | null

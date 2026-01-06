@@ -85,9 +85,7 @@ export default function MainLayout({
 }>) {
   const router = useRouter();
   const pathname = usePathname();
-  const [hasHydrated, setHasHydrated] = useState(
-    useAuthStore.persist?.hasHydrated?.() ?? false
-  );
+  const [hasHydrated, setHasHydrated] = useState(false);
   const { user } = useAuthStore();
   const setDependents = useFamilyStore((state) => state.setDependents);
 

@@ -19,6 +19,7 @@ interface RedemptionState {
   // Actions
   startRedemption: (pkg: UserPackage) => void;
   setSelectedMember: (memberId: string, memberName: string) => void;
+  setSelectedFacility: (facilityId: string, facilityName: string) => void;
   setCopayAcknowledged: (acknowledged: boolean) => void;
   generateCode: () => void;
   setStatus: (status: RedemptionStatus) => void;
@@ -50,6 +51,8 @@ const initialSession: RedemptionSession = {
   package: null as any,
   selectedMemberId: null,
   selectedMemberName: null,
+  facilityId: null,
+  facilityName: null,
   copayAcknowledged: false,
   activeCode: null,
   status: 'idle',
@@ -80,6 +83,19 @@ export const useRedemptionStore = create<RedemptionState>((set, get) => ({
           ...session,
           selectedMemberId: memberId,
           selectedMemberName: memberName,
+        },
+      });
+    }
+  },
+
+  setSelectedFacility: (facilityId, facilityName) => {
+    const { session } = get();
+    if (session) {
+      set({
+        session: {
+          ...session,
+          facilityId,
+          facilityName,
         },
       });
     }

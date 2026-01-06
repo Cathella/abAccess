@@ -157,6 +157,75 @@ export async function getCanceledVisits(
 }
 
 /**
+ * Create a visit record after a successful redemption
+ */
+export async function createVisitForRedemption(data: {
+  userPackageId: string;
+  dependentId?: string | null;
+  facilityId?: string | null;
+  facilityName?: string;
+  visitDate: string;
+  status?: VisitStatusType;
+  copayPaid?: boolean;
+  qrCode: string;
+  providerNotes?: string;
+}): Promise<{ success: boolean; visitId?: string; error?: string }> {
+  try {
+    const supabase = createClient();
+
+    let facilityId = data.facilityId || null;
+
+    if (!facilityId) {
+      if (!data.facilityName) {
+        return { success: false, error: "Facility name is required" };
+      }
+
+      const { data: facilities, error: facilityError } = await supabase
+        .from("facilities")
+        .select("id")
+        .ilike("name", data.facilityName)
+        .limit(1);
+
+      if (facilityError) {
+        return { success: false, error: facilityError.message };
+      }
+
+      facilityId = facilities?.[0]?.id || null;
+    }
+
+    if (!facilityId) {
+      return { success: false, error: "Facility not found" };
+    }
+
+    const { data: visit, error } = await supabase
+      .from("visits")
+      .insert({
+        user_package_id: data.userPackageId,
+        dependent_id: data.dependentId || null,
+        facility_id: facilityId,
+        visit_date: data.visitDate,
+        status: data.status || "completed",
+        copay_paid: data.copayPaid ?? false,
+        qr_code: data.qrCode,
+        provider_notes: data.providerNotes || null,
+      })
+      .select("id")
+      .single();
+
+    if (error) {
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, visitId: visit.id };
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Failed to create visit",
+    };
+  }
+}
+
+/**
  * Get a single visit by ID
  */
 export async function getVisitById(

@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useRedemptionStore } from "@/stores/redemptionStore";
 import { usePackageStore } from "@/stores/packageStore";
+import { recordPackageUsage } from "@/lib/packages";
+import { createVisitForRedemption } from "@/lib/supabase/visits";
 
 export default function RedemptionSuccessPage() {
   const router = useRouter();
   const { session, resetRedemption } = useRedemptionStore();
   const { recordUsage } = usePackageStore();
+  const hasRecordedRef = useRef(false);
 
   useEffect(() => {
     // Redirect if no session
@@ -17,22 +21,76 @@ export default function RedemptionSuccessPage() {
       return;
     }
 
-    // Record the package usage
-    if (session.package && session.selectedMemberId && session.selectedMemberName) {
+    if (hasRecordedRef.current) return;
+    hasRecordedRef.current = true;
+
+    const persistVisit = async () => {
+      if (!session.package || !session.selectedMemberId || !session.selectedMemberName) {
+        return;
+      }
+
+      const visitDate = session.visitDate || new Date().toISOString();
+      const copayPaid = session.copayPaid ?? session.package?.package?.copay ?? 0;
+      const facilityName = session.facilityName || "Partner Facility";
+      const dependentId =
+        session.selectedMemberId === session.package.userId
+          ? null
+          : session.selectedMemberId;
+      const qrCode = session.activeCode?.code || `redeem-${Date.now()}`;
+
+      const visitResult = await createVisitForRedemption({
+        userPackageId: session.package.id,
+        dependentId,
+        facilityId: session.facilityId || null,
+        facilityName,
+        visitDate,
+        status: "completed",
+        copayPaid: copayPaid > 0,
+        qrCode,
+      });
+
+      if (!visitResult.success) {
+        console.error("Failed to persist visit:", visitResult.error);
+        toast.error(visitResult.error || "Failed to save visit. Please try again.");
+        return;
+      }
+
+      const usageResult = await recordPackageUsage(session.package.id, {
+        personName: session.selectedMemberName,
+        personInitials: session.selectedMemberName
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase(),
+        facilityName,
+        visitDate,
+        copayPaid,
+      });
+
+      if (!usageResult.success) {
+        console.error("Failed to update package usage:", usageResult.error);
+        toast.error(
+          usageResult.error || "Failed to update package usage. Please refresh."
+        );
+        return;
+      }
+
       recordUsage(session.package.id, {
         id: `usage-${Date.now()}`,
         userPackageId: session.package.id,
         personName: session.selectedMemberName,
         personInitials: session.selectedMemberName
-          .split(' ')
-          .map(n => n[0])
-          .join('')
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
           .toUpperCase(),
-        facilityName: session.facilityName || "Partner Facility",
-        visitDate: session.visitDate || new Date().toISOString(),
-        copayPaid: session.copayPaid ?? session.package?.package?.copay ?? 0,
+        facilityName,
+        visitDate,
+        copayPaid,
       });
-    }
+    };
+
+    void persistVisit();
   }, [recordUsage, router, session]);
 
   const handleViewPackage = () => {

@@ -90,6 +90,7 @@ CREATE TABLE facilities (
     latitude DECIMAL(10, 8) NOT NULL,
     longitude DECIMAL(11, 8) NOT NULL,
     phone TEXT NOT NULL,
+    photo_url TEXT,
     rating DECIMAL(3, 2) DEFAULT 0,
     rating_count INTEGER DEFAULT 0,
     services TEXT[] DEFAULT '{}',
@@ -97,6 +98,8 @@ CREATE TABLE facilities (
     accepts_booking BOOLEAN DEFAULT FALSE,
     is_partner BOOLEAN DEFAULT FALSE
 );
+
+CREATE UNIQUE INDEX facilities_name_unique ON facilities (name);
 
 -- Visits table
 CREATE TABLE visits (
@@ -279,6 +282,9 @@ CREATE POLICY "Users can view own packages" ON user_packages
 
 CREATE POLICY "Users can insert own packages" ON user_packages
     FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Users can update own packages" ON user_packages
+    FOR UPDATE USING (true);
 
 -- Facilities are public (all users can view)
 CREATE POLICY "Facilities are viewable by everyone" ON facilities

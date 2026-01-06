@@ -29,7 +29,7 @@ export default function QRCodePage() {
 
       if (isSuccess) {
         setRedemptionSuccess({
-          facilityName: "Mukono Family Clinic",
+          facilityName: session?.facilityName || "Mukono Family Clinic",
           visitDate: new Date().toISOString(),
           visitTime: new Date().toLocaleTimeString('en-US', {
             hour: 'numeric',

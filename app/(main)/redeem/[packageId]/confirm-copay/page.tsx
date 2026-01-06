@@ -19,6 +19,8 @@ export default function ConfirmCopayPage() {
     // Redirect if no session or member not selected
     if (!session || !session.selectedMemberId) {
       router.push(`/redeem/${packageId}/select-member`);
+    } else if (!session.facilityName) {
+      router.push(`/redeem/${packageId}/select-facility`);
     }
   }, [session, packageId, router]);
 

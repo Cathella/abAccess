@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { useAuthStore } from "@/stores/authStore";
 import { usePackageStore } from "@/stores/packageStore";
+import { useVisitsStore } from "@/stores/visitsStore";
 import { formatPackageDate, getCategoryDisplayName } from "@/lib/packages";
 
 export default function PackageHistoryPage() {
@@ -10,7 +12,10 @@ export default function PackageHistoryPage() {
   const params = useParams();
   const packageId = params.id as string;
 
+  const user = useAuthStore((state) => state.user);
   const userPackages = usePackageStore((state) => state.userPackages);
+  const visits = useVisitsStore((state) => state.visits);
+  const loadVisits = useVisitsStore((state) => state.loadVisits);
   const pkg = userPackages.find((p) => p.id === packageId);
 
   useEffect(() => {
@@ -20,6 +25,11 @@ export default function PackageHistoryPage() {
     }
   }, [pkg, userPackages, router]);
 
+  useEffect(() => {
+    if (!user?.id) return;
+    loadVisits(user.id, { force: true });
+  }, [loadVisits, user?.id]);
+
   if (!pkg) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -28,10 +38,24 @@ export default function PackageHistoryPage() {
     );
   }
 
-  // Sort usage history by date (newest first)
-  const sortedHistory = [...pkg.usageHistory].sort(
-    (a, b) => new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime()
-  );
+  const sortedHistory = useMemo(() => {
+    const matchingVisits = visits
+      .filter((visit) => visit.packageId === pkg.id)
+      .map((visit) => ({
+        id: visit.id,
+        userPackageId: pkg.id,
+        personName: visit.memberName,
+        personInitials: visit.memberInitials,
+        facilityName: visit.facilityName,
+        visitDate: visit.visitDate,
+        copayPaid: visit.copayAmount ?? 0,
+      }));
+
+    const usageHistory = matchingVisits.length > 0 ? matchingVisits : pkg.usageHistory;
+    return [...usageHistory].sort(
+      (a, b) => new Date(b.visitDate).getTime() - new Date(a.visitDate).getTime()
+    );
+  }, [pkg, visits]);
 
   return (
     <div className="flex min-h-screen flex-col bg-white">

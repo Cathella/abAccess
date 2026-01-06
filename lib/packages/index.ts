@@ -5,6 +5,7 @@ import type {
   PackageUsage,
   PackageDisplayInfo,
   PackageCategoryType,
+  PackageStatusType,
 } from '@/types'
 
 function mapCategoryToDb(category: PackageCategoryType): string {
@@ -63,6 +64,12 @@ function mapPackageRowToPackageType(row: any): PackageType {
   }
 }
 
+function mapStatusFromDb(status: string | null | undefined): PackageStatusType {
+  if (status === 'exhausted') return 'completed'
+  if (status === 'expired') return 'expired'
+  return 'active'
+}
+
 /**
  * Get user's packages
  */
@@ -94,7 +101,7 @@ export async function getUserPackages(userId: string): Promise<UserPackageType[]
         Number(item.visits_remaining || 0) + Number(item.visits_used || 0),
       usedVisits: item.visits_used,
       remainingVisits: item.visits_remaining,
-      status: item.status,
+      status: mapStatusFromDb(item.status),
       usageHistory: [],
     }))
   } catch (error) {
@@ -185,7 +192,7 @@ export async function purchasePackage(
         Number(data.visits_remaining || 0) + Number(data.visits_used || 0),
       usedVisits: data.visits_used,
       remainingVisits: data.visits_remaining,
-      status: data.status,
+      status: mapStatusFromDb(data.status),
       usageHistory: [],
     }
 
@@ -310,7 +317,7 @@ export async function purchasePackageWithData(
       totalVisits: packageData.visits,
       usedVisits: data.visits_used,
       remainingVisits: data.visits_remaining,
-      status: data.status,
+      status: mapStatusFromDb(data.status),
       usageHistory: [],
     }
 
@@ -454,7 +461,7 @@ export async function recordPackageUsage(
     // Update package
     const newUsedVisits = currentPackage.visits_used + 1
     const newRemainingVisits = currentPackage.visits_remaining - 1
-    const newStatus = newRemainingVisits === 0 ? 'completed' : currentPackage.status
+    const newStatus = newRemainingVisits === 0 ? 'exhausted' : currentPackage.status
 
     const { error: updateError } = await supabase
       .from('user_packages')
