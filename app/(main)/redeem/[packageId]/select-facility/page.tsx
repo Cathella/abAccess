@@ -70,7 +70,7 @@ export default function SelectFacilityPage() {
           return;
         }
 
-        const enriched = (data || []).map((facility: FacilityRow, index) => ({
+        const enriched = (data || []).map((facility: FacilityRow, index: number) => ({
           ...facility,
           distanceKm: Number((1.2 + index * 0.3).toFixed(1)),
           recommendedPct: 80 + ((index * 5) % 20),
