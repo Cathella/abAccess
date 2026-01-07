@@ -24,6 +24,12 @@ const cards = {
     "inline-flex items-center justify-center rounded-full border border-neutral-900 bg-primary-100 px-6 py-2 text-base font-semibold text-neutral-900 hover:bg-primary-100/70",
 };
 
+function getLocalDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -95,23 +101,22 @@ export default function DashboardPage() {
   }, [weekOffset]);
 
   const filteredVisits = useMemo(() => {
-    const toDateKey = (date: Date) => date.toISOString().split("T")[0];
-    const startKey = toDateKey(weekRange.startDate);
-    const endKey = toDateKey(weekRange.endDate);
+    const startKey = getLocalDateKey(weekRange.startDate);
+    const endKey = getLocalDateKey(weekRange.endDate);
 
     return visits.filter((visit) => {
       if (selectedDependent !== "All" && visit.memberId !== selectedDependent) {
         return false;
       }
 
-      const visitKey = toDateKey(new Date(visit.visitDate));
+      const visitKey = getLocalDateKey(new Date(visit.visitDate));
       return visitKey >= startKey && visitKey <= endKey;
     });
   }, [selectedDependent, visits, weekRange.endDate, weekRange.startDate]);
 
   const visitStats = useMemo(() => {
     return filteredVisits.reduce((acc: Record<string, number>, visit) => {
-      const dateKey = new Date(visit.visitDate).toISOString().split("T")[0];
+      const dateKey = getLocalDateKey(new Date(visit.visitDate));
       acc[dateKey] = (acc[dateKey] || 0) + 1;
       return acc;
     }, {});
@@ -152,7 +157,7 @@ export default function DashboardPage() {
       const latestVisit = filteredVisits.reduce((latest, current) =>
         new Date(current.visitDate) > new Date(latest.visitDate) ? current : latest
       );
-      const latestKey = new Date(latestVisit.visitDate).toISOString().split("T")[0];
+      const latestKey = getLocalDateKey(new Date(latestVisit.visitDate));
       const index = weeklyChartData.findIndex((point) => point.dateKey === latestKey);
       if (index >= 0 && weeklyChartData[index].value > 0) {
         return index;

@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { Header } from "@/components/common/Header";
 import { PrimaryButton } from "@/components/common/PrimaryButton";
 import { useBookingStore } from "@/stores/bookingStore";
-import { MOCK_FACILITIES } from "@/lib/constants";
+import { createClient } from "@/lib/supabase/client";
+import { mapFacilityRowToBookingFacility } from "@/lib/utils/bookingFacilityMapper";
+import type { Database } from "@/types/database";
+import type { BookingFacility } from "@/types";
 
 export default function FacilityDetailPage() {
   const router = useRouter();
@@ -15,9 +18,8 @@ export default function FacilityDetailPage() {
   const facilityId = params.id as string;
 
   const { session, setSelectedFacility } = useBookingStore();
-
-  // Find facility by ID
-  const facility = MOCK_FACILITIES.find((f) => f.id === facilityId);
+  const [facility, setFacility] = useState<BookingFacility | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Redirect if prerequisites not met
   useEffect(() => {
@@ -25,6 +27,53 @@ export default function FacilityDetailPage() {
       router.push("/book/select-package");
     }
   }, [session.packageId, session.memberId, router]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadFacility = async () => {
+      if (session.facility?.id === facilityId) {
+        setFacility(session.facility);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("facilities")
+          .select("*")
+          .eq("id", facilityId)
+          .maybeSingle();
+
+        if (error || !data) {
+          if (isMounted) {
+            setFacility(null);
+          }
+          return;
+        }
+
+        const mapped = mapFacilityRowToBookingFacility(
+          data as Database["public"]["Tables"]["facilities"]["Row"],
+          0
+        );
+        if (isMounted) {
+          setFacility(mapped);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadFacility();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [facilityId, session.facility]);
 
   const handleGetDirections = () => {
     if (!facility) return;
@@ -45,18 +94,18 @@ export default function FacilityDetailPage() {
     router.push("/book/select-datetime");
   };
 
-  if (!facility) {
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-neutral-600">Facility not found</p>
+        <p className="text-neutral-600">Loading...</p>
       </div>
     );
   }
 
-  if (!session.packageId || !session.memberId) {
+  if (!facility) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-neutral-600">Loading...</p>
+        <p className="text-neutral-600">Facility not found</p>
       </div>
     );
   }

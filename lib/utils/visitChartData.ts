@@ -14,6 +14,13 @@ interface ChartData {
   dateKey: string;
 }
 
+function getLocalDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 /**
  * Get day abbreviation from date
  * Returns M, T, W, T, F, S, S for Mon-Sun
@@ -45,12 +52,12 @@ export function transformVisitDataToWeeklyChart(
     date.setDate(baseDate.getDate() + i);
     date.setHours(0, 0, 0, 0); // Reset time to midnight
 
-    const dateString = date.toISOString().split('T')[0];
+    const dateString = getLocalDateKey(date);
     const dayLabel = getDayAbbreviation(date);
 
     // Find visits for this date
     const visitsForDay = visits.filter(v => {
-      const visitDate = new Date(v.date).toISOString().split('T')[0];
+      const visitDate = getLocalDateKey(new Date(v.date));
       return visitDate === dateString;
     });
 

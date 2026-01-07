@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { Search, ChevronRight, Hospital } from "lucide-react";
 import { Header } from "@/components/common/Header";
 import { useBookingStore } from "@/stores/bookingStore";
-import { MOCK_FACILITIES } from "@/lib/constants";
+import { createClient } from "@/lib/supabase/client";
+import { mapFacilityRowToBookingFacility } from "@/lib/utils/bookingFacilityMapper";
+import type { Database } from "@/types/database";
 import type { BookingFacility } from "@/types";
 
 const CATEGORY_MAP: Record<string, string> = {
@@ -28,6 +30,7 @@ export default function SelectFacilityPage() {
 
   const { session, setSelectedFacility } = useBookingStore();
   const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [facilities, setFacilities] = useState<BookingFacility[]>([]);
 
   useEffect(() => {
@@ -36,7 +39,36 @@ export default function SelectFacilityPage() {
       return;
     }
 
-    setFacilities(MOCK_FACILITIES);
+    const loadFacilities = async () => {
+      setIsLoading(true);
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("facilities")
+          .select("*")
+          .eq("is_partner", true)
+          .order("rating", { ascending: false })
+          .limit(20);
+
+        if (error) {
+          console.error("Failed to fetch facilities:", error.message);
+          setFacilities([]);
+          return;
+        }
+
+        const mapped = (data || []).map((facility, index) =>
+          mapFacilityRowToBookingFacility(
+            facility as Database["public"]["Tables"]["facilities"]["Row"],
+            index
+          )
+        );
+        setFacilities(mapped);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadFacilities();
   }, [router, session.memberId, session.packageId]);
 
   const packageCategory = session.package?.package?.category
@@ -100,7 +132,11 @@ export default function SelectFacilityPage() {
         </div>
 
         <div className="mt-6 space-y-4">
-          {filteredFacilities.length === 0 && (
+          {isLoading && (
+            <div className="text-base text-neutral-700">Loading facilities...</div>
+          )}
+
+          {!isLoading && filteredFacilities.length === 0 && (
             <div className="rounded-2xl border border-neutral-400 bg-neutral-100 p-6 text-center text-base text-neutral-700">
               No facilities found.
             </div>

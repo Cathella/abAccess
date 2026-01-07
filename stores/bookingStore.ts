@@ -7,6 +7,17 @@ import {
   TimeSlot,
   BookingConfirmation
 } from '@/types';
+import { createClient } from '@/lib/supabase/client';
+
+const TIME_SLOT_TO_TIME: Record<TimeSlot, string> = {
+  morning: '09:00:00',
+  afternoon: '14:00:00',
+  evening: '17:00:00',
+};
+
+function createBookingQrCode(): string {
+  return `booking-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
 
 interface BookingState {
   // Session data
@@ -130,26 +141,84 @@ export const useBookingStore = create<BookingState>((set, get) => ({
     const { session } = get();
     set({ session: { ...session, status: 'submitting' } });
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      if (
+        !session.package?.id ||
+        !session.memberId ||
+        !session.facilityId ||
+        !session.selectedDate ||
+        !session.selectedTimeSlot
+      ) {
+        throw new Error('Missing booking details');
+      }
 
-    // Generate mock confirmation
-    const confirmation: BookingConfirmation = {
-      bookingId: `BK-${Date.now()}`,
-      packageCategory: session.package?.package?.category || 'Consultations',
-      packageName: session.package?.package?.name || '5 Visits Pack',
-      patientName: session.memberName || '',
-      facilityName: session.facility?.name || '',
-      requestedDate: session.selectedDate || '',
-      preferredTime: session.selectedTimeSlot || 'afternoon',
-      copayDue: session.package?.package?.copay || 5000,
-      remainingAfter: (session.package?.remainingVisits || 1) - 1,
-    };
+      const supabase = createClient();
+      const requestedTime = TIME_SLOT_TO_TIME[session.selectedTimeSlot];
+      const visitDate = new Date(
+        `${session.selectedDate}T${requestedTime}`
+      ).toISOString();
+      const dependentId =
+        session.package.userId && session.memberId !== session.package.userId
+          ? session.memberId
+          : null;
 
-    set({
-      session: { ...session, status: 'success', bookingId: confirmation.bookingId },
-      confirmation,
-    });
+      const qrCode = createBookingQrCode();
+
+      const { data: visit, error: visitError } = await supabase
+        .from('visits')
+        .insert({
+          user_package_id: session.package.id,
+          dependent_id: dependentId,
+          facility_id: session.facilityId,
+          visit_date: visitDate,
+          status: 'pending',
+          copay_paid: false,
+          qr_code: qrCode,
+          provider_notes: null,
+        })
+        .select('id')
+        .single();
+
+      if (visitError || !visit) {
+        throw new Error(visitError?.message || 'Failed to create visit');
+      }
+
+      const { error: bookingError } = await supabase
+        .from('bookings')
+        .insert({
+          visit_id: visit.id,
+          requested_date: session.selectedDate,
+          requested_time: requestedTime,
+          status: 'pending',
+        });
+
+      if (bookingError) {
+        throw new Error(bookingError.message);
+      }
+
+      const confirmation: BookingConfirmation = {
+        bookingId: visit.id,
+        packageCategory: session.package?.package?.category || 'Consultations',
+        packageName: session.package?.package?.name || '5 Visits Pack',
+        patientName: session.memberName || '',
+        facilityName: session.facility?.name || '',
+        requestedDate: session.selectedDate,
+        preferredTime: session.selectedTimeSlot,
+        copayDue: session.package?.package?.copay || 5000,
+        remainingAfter: (session.package?.remainingVisits || 1) - 1,
+      };
+
+      set({
+        session: { ...session, status: 'success', bookingId: confirmation.bookingId },
+        confirmation,
+      });
+    } catch (error) {
+      console.error('Failed to submit booking:', error);
+      set({
+        session: { ...session, status: 'failed' },
+      });
+      throw error;
+    }
   },
 
   setConfirmation: (confirmation) => {

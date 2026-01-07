@@ -1,6 +1,12 @@
 import { createClient } from "./client";
 import type { VisitRecord, VisitStatusType } from "@/types";
 
+function mapVisitStatus(status?: string | null): VisitStatusType {
+  if (!status) return "pending_confirmation";
+  if (status === "pending") return "pending_confirmation";
+  return status as VisitStatusType;
+}
+
 function formatVisitTime(visitDate: string): string {
   const date = new Date(visitDate);
   return date.toLocaleTimeString("en-US", {
@@ -54,7 +60,7 @@ export async function getUserVisits(
       packageName: visit.user_package?.package?.name || "Unknown Package",
       visitDate: visit.visit_date,
       visitTime: formatVisitTime(visit.visit_date),
-      status: visit.status as VisitStatusType,
+      status: mapVisitStatus(visit.status),
       copayAmount: undefined,
       refundNote: visit.provider_notes || undefined,
       createdAt: visit.created_at ?? visit.visit_date,
@@ -115,7 +121,7 @@ export async function getVisitsByStatus(
       packageName: visit.user_package?.package?.name || "Unknown Package",
       visitDate: visit.visit_date,
       visitTime: formatVisitTime(visit.visit_date),
-      status: visit.status as VisitStatusType,
+      status: mapVisitStatus(visit.status),
       copayAmount: undefined,
       refundNote: visit.provider_notes || undefined,
       createdAt: visit.created_at ?? visit.visit_date,
@@ -272,7 +278,7 @@ export async function getVisitById(
       packageName: data.user_package?.package?.name || "Unknown Package",
       visitDate: data.visit_date,
       visitTime: formatVisitTime(data.visit_date),
-      status: data.status as VisitStatusType,
+      status: mapVisitStatus(data.status),
       copayAmount: undefined,
       refundNote: data.provider_notes || undefined,
       createdAt: data.created_at ?? data.visit_date,
