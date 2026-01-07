@@ -35,17 +35,17 @@ export default function PackageSelectRadio({
   return (
     <button
       onClick={onSelect}
-      className={`w-full flex items-center p-4 text-left transition-colors hover:bg-gray-50 ${
-        !isLast ? 'border-b border-gray-100' : ''
+      className={`w-full flex items-center p-4 text-left transition-colors hover:bg-neutral-50 ${
+        !isLast ? 'border-b border-neutral-400' : ''
       }`}
     >
       {/* Radio Button */}
-      <div className="flex-shrink-0 mr-4">
+      <div className="shrink-0 mr-4">
         <div
           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
             selected
-              ? 'bg-[#3A8DFF] border-[#3A8DFF]'
-              : 'border-gray-300 bg-white'
+              ? 'bg-secondary-900 border-secondary-900'
+              : 'border-neutral-400 bg-white'
           }`}
         >
           {selected && (
@@ -57,15 +57,15 @@ export default function PackageSelectRadio({
       {/* Package Info */}
       <div className="flex-1 min-w-0">
         {/* Row 1: Category name + package name */}
-        <div className="text-gray-900">
+        <div className="text-neutral-900">
           <span className="font-semibold">{categoryName}</span>
           {packageName && (
-            <span className="text-gray-500"> ({packageName})</span>
+            <span className="text-neutral-700"> ({packageName})</span>
           )}
         </div>
 
         {/* Row 2: Remaining visits + Expiry date */}
-        <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+        <div className="flex flex-col gap-1 text-sm text-neutral-700 mt-1">
           <span>Remaining: {remainingVisits} {remainingVisits === 1 ? 'visit' : 'visits'}</span>
           <span>Expires on: {expiryDate}</span>
         </div>

@@ -127,15 +127,15 @@ export default function SelectPackagePage() {
       {/* Content */}
       <div className="flex-1 px-6 pt-6 pb-32">
         {/* Title & Subtitle */}
-        <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+        <h1 className="text-xl font-bold text-neutral-900 mb-2">
           Select a package
         </h1>
-        <p className="text-neutral-600 mb-6">
+        <p className="text-neutral-700 mb-6">
           Choose which package to use for this visit.
         </p>
 
         {/* Package Selection Card */}
-        <div className="rounded-2xl border border-neutral-400 bg-white overflow-hidden mb-6">
+        <div className="rounded-4xl border border-neutral-400 bg-white overflow-hidden mb-6">
           {activePackages.map((pkg, index) => (
             <PackageSelectRadio
               key={pkg.id}

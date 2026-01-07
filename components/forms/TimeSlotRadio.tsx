@@ -12,9 +12,9 @@ export default function TimeSlotRadio({
   onSelectSlot,
 }: TimeSlotRadioProps) {
   return (
-    <div className="rounded-2xl border border-neutral-400 bg-white p-4">
+    <div className="rounded-4xl border border-neutral-400 bg-white p-4">
       {/* Header */}
-      <h3 className="font-semibold text-neutral-900 mb-3">Preferred time</h3>
+      <h3 className="font-bold text-xl text-neutral-900 mb-3">Preferred time</h3>
       <div className="border-b border-neutral-400 mb-4" />
 
       {/* Options List */}
@@ -29,12 +29,12 @@ export default function TimeSlotRadio({
               className="w-full flex items-center text-left transition-colors hover:bg-gray-50 p-2 rounded-lg"
             >
               {/* Radio Button */}
-              <div className="flex-shrink-0 mr-4">
+              <div className="shrink-0 mr-4">
                 <div
                   className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                     isSelected
-                      ? 'bg-[#3A8DFF] border-[#3A8DFF]'
-                      : 'border-gray-300 bg-white'
+                      ? 'bg-secondary-900 border-secondary-900'
+                      : 'border-neutral-400 bg-white'
                   }`}
                 >
                   {isSelected && (

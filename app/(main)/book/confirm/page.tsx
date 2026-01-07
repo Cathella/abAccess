@@ -117,10 +117,10 @@ export default function ConfirmBookingPage() {
       {/* Content */}
       <div className="flex-1 px-6 pt-6 pb-32">
         {/* Title & Subtitle */}
-        <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+        <h1 className="text-xl font-bold text-neutral-900 mb-2">
           Confirm booking
         </h1>
-        <p className="text-neutral-600 mb-6">
+        <p className="text-neutral-700 mb-6">
           Review your booking details before submitting.
         </p>
 

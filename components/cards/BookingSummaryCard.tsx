@@ -27,17 +27,17 @@ export function BookingSummaryCard({
       </div>
 
       {/* Divider */}
-      <div className="border-b border-gray-200 my-4" />
+      <div className="border-b border-neutral-400 mt-4" />
 
       {/* Details Section */}
-      <div className="bg-gray-50 rounded-xl p-4">
+      <div className="bg-neutral-200 p-4 text-sm">
         <div className="space-y-1">
           {details.map((detail, index) => (
             <div key={index} className="flex justify-between py-1">
-              <span className="text-gray-500">
+              <span className="text-neutral-700">
                 {detail.label}
               </span>
-              <span className="text-gray-900 font-medium text-right">
+              <span className="text-neutral-900 font-medium text-right">
                 {detail.value}
               </span>
             </div>

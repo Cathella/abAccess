@@ -70,10 +70,10 @@ export default function SelectDateTimePage() {
       {/* Content */}
       <div className="flex-1 px-6 pt-6 pb-32">
         {/* Title & Subtitle */}
-        <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+        <h1 className="text-xl font-bold text-neutral-900 mb-2">
           Select date & time
         </h1>
-        <p className="text-neutral-600 mb-6">
+        <p className="text-neutral-700 mb-6">
           Choose your preferred appointment time. The facility will confirm availability.
         </p>
 
@@ -97,17 +97,17 @@ export default function SelectDateTimePage() {
 
         {/* Optional: Show facility hours hint */}
         {session.facility && (
-          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-700">
-              <span className="font-medium">Facility hours:</span>
+          <div className="mt-4 py-4 px-6 bg-secondary-100 rounded-4xl text-neutral-900">
+            <p className="text-base">
+              <span className="font-bold">Facility hours:</span>
             </p>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-base mt-1">
               Mon-Fri: {session.facility.hours.weekdays}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-base">
               Sat: {session.facility.hours.saturday}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-base">
               Sun: {session.facility.hours.sunday}
             </p>
           </div>

@@ -1,90 +1,73 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
+import { Search, ChevronRight, Hospital } from "lucide-react";
 import { Header } from "@/components/common/Header";
-import { Input } from "@/components/ui/input";
-import { FacilityCard } from "@/components/cards/FacilityCard";
 import { useBookingStore } from "@/stores/bookingStore";
 import { MOCK_FACILITIES } from "@/lib/constants";
 import type { BookingFacility } from "@/types";
 
+const CATEGORY_MAP: Record<string, string> = {
+  consultations: "Consultations",
+  childWellness: "Child Wellness",
+  maternity: "Maternal Care",
+  labTests: "Lab Tests",
+  dental: "Dental",
+  optical: "Optical",
+};
+
+function getTodayCloseLabel(facility: BookingFacility) {
+  if (!facility.isOpen) return "Closed";
+  if (facility.closingTime) return `Closes ${facility.closingTime}`;
+  return "Open now";
+}
+
 export default function SelectFacilityPage() {
   const router = useRouter();
 
-  const { session, setSelectedFacility, canProceedToDateTime } = useBookingStore();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const { session, setSelectedFacility } = useBookingStore();
+  const [search, setSearch] = useState("");
+  const [facilities, setFacilities] = useState<BookingFacility[]>([]);
 
-  // Redirect if prerequisites not met
   useEffect(() => {
     if (!session.packageId || !session.memberId) {
       router.push("/book/select-package");
+      return;
     }
-  }, [session.packageId, session.memberId, router]);
 
-  // Debounce search input (300ms)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(searchQuery);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Get category name from package
-  const getCategoryName = (categoryEnum: string): string => {
-    const categoryMap: Record<string, string> = {
-      consultations: "Consultations",
-      childWellness: "Child Wellness",
-      maternity: "Maternal Care",
-      labTests: "Lab Tests",
-      dental: "Dental",
-      optical: "Optical",
-    };
-    return categoryMap[categoryEnum] || "";
-  };
+    setFacilities(MOCK_FACILITIES);
+  }, [router, session.memberId, session.packageId]);
 
   const packageCategory = session.package?.package?.category
-    ? getCategoryName(session.package.package.category)
+    ? CATEGORY_MAP[session.package.package.category] || ""
     : "";
 
-  // Filter and sort facilities
-  const filteredFacilities = useMemo<BookingFacility[]>(() => {
-    let facilities = [...MOCK_FACILITIES];
-
-    // Filter by package category - facility must support the service
-    if (packageCategory) {
-      facilities = facilities.filter((facility) =>
-        facility.services.some((service) =>
-          service.toLowerCase().includes(packageCategory.toLowerCase()) ||
-          packageCategory.toLowerCase().includes(service.toLowerCase())
-        )
-      );
-    }
-
-    // Filter by search query (name or address)
-    if (debouncedQuery.trim()) {
-      const query = debouncedQuery.toLowerCase();
-      facilities = facilities.filter(
-        (facility) =>
-          facility.name.toLowerCase().includes(query) ||
-          facility.address.toLowerCase().includes(query)
-      );
-    }
-
-    // Sort by distance (nearest first)
-    facilities.sort((a, b) => a.distance - b.distance);
-
-    return facilities;
-  }, [debouncedQuery, packageCategory]);
+  const filteredFacilities = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return facilities
+      .filter((facility) => {
+        if (!packageCategory) return true;
+        return facility.services.some((service) => {
+          const serviceValue = service.toLowerCase();
+          const categoryValue = packageCategory.toLowerCase();
+          return (
+            serviceValue.includes(categoryValue) ||
+            categoryValue.includes(serviceValue)
+          );
+        });
+      })
+      .filter((facility) => {
+        if (!query) return true;
+        return `${facility.name} ${facility.address}`
+          .toLowerCase()
+          .includes(query);
+      })
+      .sort((a, b) => a.distance - b.distance);
+  }, [facilities, packageCategory, search]);
 
   const handleSelectFacility = (facility: BookingFacility) => {
-    // Save to booking store
     setSelectedFacility(facility);
-
-    // Navigate to facility detail page
     router.push(`/book/facility/${facility.id}`);
   };
 
@@ -98,47 +81,66 @@ export default function SelectFacilityPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
-      {/* Header */}
-      <Header title="Book a visit" showBack={true} />
+      <Header title="Book a visit" showBack />
+      <div className="h-px bg-neutral-400" />
 
-      {/* Content */}
       <div className="flex-1 px-6 pt-6 pb-8">
-        {/* Title */}
-        <h1 className="text-2xl font-bold text-neutral-900 mb-6">
+        <h1 className="text-xl font-bold text-neutral-900 mb-4">
           Select a facility
         </h1>
 
-        {/* Search Input */}
-        <div className="relative mb-6">
-          <Input
-            type="text"
+        <div className="relative">
+          <input
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
             placeholder="Search facilities..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pr-10 rounded-xl border-neutral-400"
+            className="h-12 w-full rounded-xl border border-neutral-400 bg-white px-4 pr-12 text-base text-neutral-900 placeholder:text-neutral-700"
           />
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500" />
         </div>
 
-        {/* Facility List */}
-        {filteredFacilities.length > 0 ? (
-          <div className="space-y-3">
-            {filteredFacilities.map((facility) => (
-              <FacilityCard
-                key={facility.id}
-                facility={facility}
-                onPress={() => handleSelectFacility(facility)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-neutral-600 mb-2">No facilities found</p>
-            <p className="text-sm text-neutral-500">
-              Try adjusting your search
-            </p>
-          </div>
-        )}
+        <div className="mt-6 space-y-4">
+          {filteredFacilities.length === 0 && (
+            <div className="rounded-2xl border border-neutral-400 bg-neutral-100 p-6 text-center text-base text-neutral-700">
+              No facilities found.
+            </div>
+          )}
+
+          {filteredFacilities.map((facility) => (
+            <button
+              key={facility.id}
+              onClick={() => handleSelectFacility(facility)}
+              className="w-full rounded-4xl border border-neutral-400 bg-white p-4 text-left transition-colors hover:bg-neutral-50"
+            >
+              <div className="flex items-start gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-100">
+                  <Hospital className="h-6 w-6 text-neutral-900" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-base font-semibold text-neutral-900">
+                    {facility.name}
+                  </div>
+                  <div className="mt-1 text-sm text-neutral-700">
+                    {facility.distance.toFixed(1)} km away · 👍{" "}
+                    {facility.recommendationPercent}% recommended
+                  </div>
+                </div>
+                <ChevronRight className="mt-2 h-5 w-5 text-neutral-700" />
+              </div>
+
+              <div className="mt-4 h-px w-full bg-neutral-400" />
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                <span className="rounded-full bg-warning-100 px-3 py-1 text-sm font-medium text-neutral-900">
+                  {getTodayCloseLabel(facility)}
+                </span>
+                <span className="rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-neutral-900">
+                  {facility.acceptsBookings ? "Accepts bookings" : "Walk-in only"}
+                </span>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

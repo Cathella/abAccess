@@ -15,7 +15,7 @@ export function BookingInfoCard({
   const iconConfig = {
     info: {
       Icon: Info,
-      color: 'text-blue-500',
+      color: 'text-neutral-900',
     },
     warning: {
       Icon: AlertTriangle,
@@ -30,20 +30,20 @@ export function BookingInfoCard({
   const { Icon, color } = iconConfig[icon];
 
   return (
-    <div className="rounded-2xl bg-[#E3F1FC] p-4">
+    <div className="rounded-2xl bg-secondary-100 p-4">
       {/* Icon + Title Row */}
       <div className="flex items-center gap-2">
         <Icon className={`h-5 w-5 ${color}`} />
-        <h3 className="font-semibold text-neutral-900">
+        <h3 className="font-semibold text-base text-neutral-900">
           {title}
         </h3>
       </div>
 
       {/* Divider */}
-      <div className="border-b border-blue-200/50 my-2" />
+      <div className="border-b border-secondary-900/20 my-2" />
 
       {/* Message */}
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-neutral-900">
         {message}
       </p>
     </div>

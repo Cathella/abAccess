@@ -103,7 +103,7 @@ export default function SelectFacilityPage() {
       <div className="h-px bg-neutral-400" />
 
       <div className="flex-1 px-6 pt-6 pb-8">
-        <h1 className="text-2xl font-bold text-neutral-900 mb-4">
+        <h1 className="text-xl font-bold text-neutral-900 mb-4">
           Select a facility
         </h1>
 
@@ -112,18 +112,18 @@ export default function SelectFacilityPage() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search facilities..."
-            className="h-12 w-full rounded-2xl border border-neutral-300 bg-white px-4 pr-12 text-base text-neutral-900 placeholder:text-neutral-500 focus:border-primary-900 focus:outline-none"
+            className="h-12 w-full rounded-xl border border-neutral-400 bg-white px-4 pr-12 text-base text-neutral-900 placeholder:text-neutral-700"
           />
           <Search className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-500" />
         </div>
 
         <div className="mt-6 space-y-4">
           {isLoading && (
-            <div className="text-sm text-neutral-600">Loading facilities...</div>
+            <div className="text-base text-neutral-700">Loading facilities...</div>
           )}
 
           {!isLoading && filteredFacilities.length === 0 && (
-            <div className="rounded-2xl border border-neutral-300 bg-neutral-100 p-6 text-center text-sm text-neutral-600">
+            <div className="rounded-2xl border border-neutral-400 bg-neutral-100 p-6 text-center text-base text-neutral-700">
               No facilities found.
             </div>
           )}
@@ -132,30 +132,30 @@ export default function SelectFacilityPage() {
             <button
               key={facility.id}
               onClick={() => handleSelectFacility(facility)}
-              className="w-full rounded-3xl border border-neutral-300 bg-white p-4 text-left transition-colors hover:bg-neutral-50"
+              className="w-full rounded-4xl border border-neutral-400 bg-white p-4 text-left transition-colors hover:bg-neutral-50"
             >
               <div className="flex items-start gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-100">
                   <Hospital className="h-6 w-6 text-neutral-900" />
                 </div>
                 <div className="flex-1">
                   <div className="text-base font-semibold text-neutral-900">
                     {facility.name}
                   </div>
-                  <div className="mt-1 text-sm text-neutral-600">
+                  <div className="mt-1 text-sm text-neutral-700">
                     {facility.distanceKm} km away · 👍 {facility.recommendedPct}% recommended
                   </div>
                 </div>
-                <ChevronRight className="mt-2 h-5 w-5 text-neutral-400" />
+                <ChevronRight className="mt-2 h-5 w-5 text-neutral-700" />
               </div>
 
-              <div className="mt-4 h-px w-full bg-neutral-200" />
+              <div className="mt-4 h-px w-full bg-neutral-400" />
 
               <div className="mt-4 flex flex-wrap gap-2">
-                <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-neutral-900">
+                <span className="rounded-full bg-warning-100 px-3 py-1 text-sm font-medium text-neutral-900">
                   {getTodayCloseLabel(facility.operating_hours as any)}
                 </span>
-                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-neutral-900">
+                <span className="rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-neutral-900">
                   {facility.accepts_booking ? "Accepts bookings" : "Walk-in only"}
                 </span>
               </div>

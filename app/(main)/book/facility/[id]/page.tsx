@@ -69,7 +69,7 @@ export default function FacilityDetailPage() {
       {/* Content */}
       <div className="flex-1 pb-32">
         {/* Hero Image */}
-        <div className="w-full h-56 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-b-2xl overflow-hidden">
+        <div className="w-full h-56 bg-linear-to-br from-primary-100 to-secondary-100 overflow-hidden">
           {facility.imageUrl ? (
             <img
               src={facility.imageUrl}
@@ -86,38 +86,38 @@ export default function FacilityDetailPage() {
         {/* Facility Info */}
         <div className="px-6 pt-6">
           {/* Name */}
-          <h1 className="text-xl font-bold text-neutral-900 mb-2">
+          <h1 className="text-base font-bold text-neutral-900 mb-2">
             {facility.name}
           </h1>
 
           {/* Address + Distance */}
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-neutral-700 mb-2">
             {facility.address} · {facility.distanceLabel}
           </p>
 
           {/* Recommendation Row */}
-          <div className="flex items-center mb-6">
-            <span className="text-green-600 font-medium">
+          <div className="flex items-center mb-6 border-t border-neutral-400 pt-2">
+            <span className="text-green-600 text-sm font-medium">
               👍 {facility.recommendationPercent}% recommended
             </span>
-            <span className="text-sm text-gray-500 ml-1">
+            <span className="text-sm text-neutral-700 ml-1">
               · Based on {facility.patientVisits} patient visits
             </span>
           </div>
 
           {/* Hours Card */}
-          <div className="rounded-2xl border border-neutral-400 bg-white p-4 mb-4">
-            <h3 className="font-semibold text-neutral-900 mb-3">Hours</h3>
+          <div className="rounded-4xl border border-neutral-400 bg-white p-4 mb-4">
+            <h3 className="font-bold text-xl text-neutral-900 mb-3">Hours</h3>
             <div className="border-b border-neutral-400 mb-3" />
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-neutral-700">Monday - Friday</span>
-                <span className="text-neutral-900">{facility.hours.weekdays}</span>
+                <span className="text-neutral-900 text-sm font-semibold bg-secondary-100 px-2 py-1 rounded-full">{facility.hours.weekdays}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-neutral-700">Saturday</span>
-                <span className="text-neutral-900">{facility.hours.saturday}</span>
+                <span className="text-neutral-900 text-sm font-semibold bg-secondary-100 px-2 py-1 rounded-full">{facility.hours.saturday}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-neutral-700">Sunday</span>
@@ -129,8 +129,8 @@ export default function FacilityDetailPage() {
           </div>
 
           {/* Services Card */}
-          <div className="rounded-2xl bg-[#E3F1FC] p-4">
-            <h3 className="font-semibold text-neutral-900 mb-3">Services</h3>
+          <div className="rounded-4xl bg-secondary-100 p-4">
+            <h3 className="font-bold text-xl text-neutral-900 mb-3">Services</h3>
             <div className="border-b border-neutral-400 mb-3" />
 
             <div className="space-y-2">

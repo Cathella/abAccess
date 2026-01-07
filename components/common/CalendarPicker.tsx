@@ -119,9 +119,9 @@ export function CalendarPicker({
   }
 
   return (
-    <div className="rounded-2xl border border-neutral-400 bg-white p-4">
+    <div className="rounded-4xl border border-neutral-400 bg-white p-4">
       {/* Header */}
-      <h3 className="font-semibold text-neutral-900 mb-3">Date</h3>
+      <h3 className="font-bold text-xl text-neutral-900 mb-3">Date</h3>
       <div className="border-b border-neutral-400 mb-4" />
 
       {/* Month Navigation */}
@@ -131,8 +131,8 @@ export function CalendarPicker({
           disabled={!canGoPrevious}
           className={`p-1 rounded-lg transition-colors ${
             canGoPrevious
-              ? "hover:bg-gray-100 text-neutral-900"
-              : "text-gray-300 cursor-not-allowed"
+              ? "hover:bg-neutral-200 text-neutral-900"
+              : "text-neutral-400 cursor-not-allowed"
           }`}
         >
           <ChevronLeft className="h-5 w-5" />
@@ -147,8 +147,8 @@ export function CalendarPicker({
           disabled={!canGoNext}
           className={`p-1 rounded-lg transition-colors ${
             canGoNext
-              ? "hover:bg-gray-100 text-neutral-900"
-              : "text-gray-300 cursor-not-allowed"
+              ? "hover:bg-neutral-200 text-neutral-900"
+              : "text-neutral-400 cursor-not-allowed"
           }`}
         >
           <ChevronRight className="h-5 w-5" />
@@ -160,7 +160,7 @@ export function CalendarPicker({
         {dayHeaders.map((day) => (
           <div
             key={day}
-            className="w-10 h-8 flex items-center justify-center text-xs font-medium text-gray-500"
+            className="w-10 h-8 flex items-center justify-center text-xs font-medium text-neutral-700"
           >
             {day}
           </div>
@@ -183,16 +183,16 @@ export function CalendarPicker({
                   onClick={() => handleSelectDate(date)}
                   disabled={!selectable}
                   className={`
-                    w-10 h-10 flex items-center justify-center rounded-lg text-sm font-medium
+                    w-10 h-9 flex items-center justify-center rounded-lg font-medium
                     transition-colors
                     ${
                       selected
-                        ? "bg-[#32C28A] text-white"
+                        ? "bg-primary-900 text-neutral-900"
                         : today && !selected
-                        ? "border border-[#32C28A] text-neutral-900"
+                        ? "border border-primary-900 text-neutral-900"
                         : selectable && inCurrentMonth
-                        ? "text-gray-900 hover:bg-gray-100"
-                        : "text-gray-300"
+                        ? "text-neutral-900 bg-secondary-100"
+                        : "text-neutral-400"
                     }
                     ${!selectable ? "cursor-not-allowed" : "cursor-pointer"}
                   `}
