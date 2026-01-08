@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMemo } from "react";
+import { NotificationBell } from "./NotificationBell";
+import { useNotificationsStore } from "@/stores/notificationsStore";
 
 interface UserHeaderProps {
   firstName?: string;
@@ -24,6 +25,8 @@ export function UserHeader({
   onSettingsClick,
   className,
 }: UserHeaderProps) {
+  const unreadCount = useNotificationsStore((state) => state.unreadCount);
+
   const greeting = useMemo(() => {
     const hour = new Date().getHours();
     const timeOfDay = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
@@ -51,13 +54,7 @@ export function UserHeader({
               )}
             </div>
             <div className="flex items-center gap-2">
-              <button
-                className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200"
-                aria-label="Notifications"
-                onClick={onNotificationsClick}
-              >
-                <Bell className="h-6 w-6 text-neutral-900" />
-              </button>
+              <NotificationBell unreadCount={unreadCount} />
               <button
                 className="flex h-12 w-12 items-center justify-center rounded-full bg-neutral-200"
                 aria-label="Settings"

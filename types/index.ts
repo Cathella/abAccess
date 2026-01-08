@@ -66,14 +66,16 @@ export enum PaymentProvider {
   CARD = "card",
 }
 
-export enum NotificationType {
-  APPROVAL = "approval",
-  BOOKING = "booking",
-  REMINDER = "reminder",
-  PACKAGE = "package",
-  WALLET = "wallet",
-  SYSTEM = "system",
-}
+// Notification types
+export type NotificationType =
+  | 'approval_needed'
+  | 'booking_confirmed'
+  | 'top_up_success'
+  | 'package_expiring'
+  | 'visit_reminder'
+  | 'package_purchased'
+  | 'visit_completed'
+  | 'general';
 
 export enum ApprovalStatus {
   PENDING = "pending",
@@ -286,16 +288,24 @@ export interface PaymentMethod {
   createdAt: string;
 }
 
-// Notification Types
+// Notification data structure
 export interface Notification {
   id: string;
-  userId: string;
   type: NotificationType;
   title: string;
-  body: string;
-  data?: Record<string, any>;
+  message: string;
+  timestamp: string;      // ISO date string
   isRead: boolean;
-  createdAt: string;
+
+  // Optional action data
+  actionType?: 'navigate' | 'approve' | 'dismiss';
+  actionRoute?: string;   // e.g., "/visits/123" or "/redeem/approve/123"
+  actionData?: Record<string, any>;
+
+  // Related entities (optional)
+  relatedId?: string;     // e.g., visit ID, package ID
+  facilityName?: string;
+  memberName?: string;
 }
 
 // Approval Types

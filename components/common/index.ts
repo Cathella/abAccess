@@ -6,3 +6,5 @@ export { MemberFilterDropdown } from "./MemberFilterDropdown";
 export { MemberFilterDropdownConnected } from "./MemberFilterDropdownConnected";
 export { MonthGroupHeader } from "./MonthGroupHeader";
 export { VisitsEmptyState } from "./VisitsEmptyState";
+export { NotificationBell } from "./NotificationBell";
+export { NotificationsEmptyState } from "./NotificationsEmptyState";

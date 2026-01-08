@@ -85,6 +85,56 @@ export function groupBy<T>(
   }, {} as Record<string, T[]>);
 }
 
+/**
+ * Format notification timestamp for display
+ * - < 1 hour: "X minutes ago"
+ * - < 24 hours: "HH:MM AM/PM"
+ * - Yesterday: "Yesterday"
+ * - < 7 days: "X days ago"
+ * - Older: "MMM D"
+ */
+export function formatNotificationTime(timestamp: string): string {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  // Less than 1 hour
+  if (diffMinutes < 60) {
+    if (diffMinutes < 1) return 'Just now';
+    return `${diffMinutes} minute${diffMinutes === 1 ? '' : 's'} ago`;
+  }
+
+  // Less than 24 hours - show time
+  if (diffHours < 24) {
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    }); // "10:34 AM"
+  }
+
+  // Yesterday
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  if (date.toDateString() === yesterday.toDateString()) {
+    return 'Yesterday';
+  }
+
+  // Less than 7 days
+  if (diffDays < 7) {
+    return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+  }
+
+  // Older - show date
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+  }); // "Jan 5"
+}
+
 // ============================================
 // Booking Flow Date Utilities
 // ============================================

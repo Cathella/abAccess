@@ -6,6 +6,7 @@ export { usePackageStore } from './packageStore'
 export { useWalletStore } from './walletStore'
 export { useUIStore } from './uiStore'
 export { useFamilyStore } from './familyStore'
+export { useNotificationsStore } from './notificationsStore'
 export { useStore } from './useStore'
 
 // Re-export store types if needed
@@ -16,3 +17,4 @@ export type * from './packageStore'
 export type * from './walletStore'
 export type * from './uiStore'
 export type * from './familyStore'
+export type * from './notificationsStore'

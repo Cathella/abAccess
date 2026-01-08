@@ -8,11 +8,18 @@ import {
   BookingConfirmation
 } from '@/types';
 import { createClient } from '@/lib/supabase/client';
+import { createNotification } from '@/lib/notifications';
 
 const TIME_SLOT_TO_TIME: Record<TimeSlot, string> = {
   morning: '09:00:00',
   afternoon: '14:00:00',
   evening: '17:00:00',
+};
+
+const TIME_SLOT_LABELS: Record<TimeSlot, string> = {
+  morning: 'Morning (8 AM - 12 PM)',
+  afternoon: 'Afternoon (12 PM - 4 PM)',
+  evening: 'Evening (4 PM - 6 PM)',
 };
 
 function createBookingQrCode(): string {
@@ -212,6 +219,30 @@ export const useBookingStore = create<BookingState>((set, get) => ({
         session: { ...session, status: 'success', bookingId: confirmation.bookingId },
         confirmation,
       });
+
+      // Create notification for successful booking
+      // Import notifications store dynamically to avoid circular dependency
+      const { useNotificationsStore } = await import('./notificationsStore');
+      const addNotification = useNotificationsStore.getState().addNotification;
+
+      // Format date for notification
+      const dateObj = new Date(session.selectedDate);
+      const dateFormatted = dateObj.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+      const timeLabel = TIME_SLOT_LABELS[session.selectedTimeSlot];
+
+      addNotification(
+        createNotification(
+          'booking_confirmed',
+          `Your appointment at ${session.facility?.name} is confirmed for ${dateFormatted} (${timeLabel}).`,
+          {
+            actionRoute: '/visits',
+            facilityName: session.facility?.name
+          }
+        )
+      );
     } catch (error) {
       console.error('Failed to submit booking:', error);
       set({

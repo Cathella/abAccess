@@ -6,6 +6,8 @@ import * as walletService from '@/lib/services/walletService';
 import * as paymentMethodService from '@/lib/services/paymentMethodService';
 import { networkQueue, type QueuedOperation } from '@/lib/utils/networkQueue';
 import { logger } from '@/lib/utils/logger';
+import { createNotification } from '@/lib/notifications';
+import { formatCurrency } from '@/lib/wallet';
 
 interface WalletState {
   // Balance
@@ -485,6 +487,18 @@ export const useWalletStore = create<WalletState>()(
             amount: data.amount,
             transactionId: result.data.transaction.id,
           });
+
+          // Create notification for successful top-up
+          // Import notifications store dynamically to avoid circular dependency
+          const { useNotificationsStore } = await import('./notificationsStore');
+          const addNotification = useNotificationsStore.getState().addNotification;
+
+          addNotification(
+            createNotification(
+              'top_up_success',
+              `UGX ${formatCurrency(data.amount, false)} has been added to your wallet.`
+            )
+          );
 
           return { success: true };
         } catch (error) {

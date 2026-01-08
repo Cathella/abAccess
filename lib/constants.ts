@@ -8,7 +8,9 @@ import type {
   VisitStatusType,
   VisitRecord,
   TimeSlotOption,
-  BookingFacility
+  BookingFacility,
+  NotificationType,
+  Notification
 } from "@/types";
 
 export const APP_NAME = "ABA Access";
@@ -740,3 +742,83 @@ export function calculateAge(dateOfBirth: string): number {
   }
   return age;
 }
+
+// Notification Feature Constants
+
+// Notification type configurations
+export const NOTIFICATION_CONFIG: Record<NotificationType, {
+  defaultTitle: string;
+  icon?: string;
+}> = {
+  approval_needed: {
+    defaultTitle: 'Approval needed',
+  },
+  booking_confirmed: {
+    defaultTitle: 'Booking confirmed',
+  },
+  top_up_success: {
+    defaultTitle: 'Top up successful',
+  },
+  package_expiring: {
+    defaultTitle: 'Package expiring',
+  },
+  visit_reminder: {
+    defaultTitle: 'Visit reminder',
+  },
+  package_purchased: {
+    defaultTitle: 'Package purchased',
+  },
+  visit_completed: {
+    defaultTitle: 'Visit completed',
+  },
+  general: {
+    defaultTitle: 'Notification',
+  },
+};
+
+// Mock notifications data
+export const MOCK_NOTIFICATIONS: Notification[] = [
+  {
+    id: 'notif-1',
+    type: 'approval_needed',
+    title: 'Approval needed',
+    message: 'Mukono Family Clinic wants to use your package for Ben. Tap to review.',
+    timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 min ago
+    isRead: false,
+    actionType: 'approve',
+    actionRoute: '/approve/visit-123',
+    facilityName: 'Mukono Family Clinic',
+    memberName: 'Ben',
+  },
+  {
+    id: 'notif-2',
+    type: 'booking_confirmed',
+    title: 'Booking confirmed',
+    message: 'Your appointment at City Medical Center is confirmed for tomorrow at 2:30 PM.',
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+    isRead: false,
+    actionType: 'navigate',
+    actionRoute: '/visits',
+    facilityName: 'City Medical Center',
+  },
+  {
+    id: 'notif-3',
+    type: 'top_up_success',
+    title: 'Top up successful',
+    message: 'UGX 50,000 has been added to your wallet.',
+    timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
+    isRead: false,
+    actionType: 'navigate',
+    actionRoute: '/wallet/history',
+  },
+  {
+    id: 'notif-4',
+    type: 'package_expiring',
+    title: 'Package expiring soon',
+    message: 'Your Consultations package expires in 3 days. Use it before it expires!',
+    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+    isRead: true,
+    actionType: 'navigate',
+    actionRoute: '/my-packages',
+  },
+];

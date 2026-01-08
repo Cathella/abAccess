@@ -5,3 +5,4 @@ export { ExpiredWarningCard } from "./ExpiredWarningCard";
 export { TotalCopayCard } from "./TotalCopayCard";
 export { UsageHistoryCard } from "./UsageHistoryCard";
 export { VisitCard } from "./VisitCard";
+export { NotificationCard } from "./NotificationCard";
