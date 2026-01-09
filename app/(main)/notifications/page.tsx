@@ -26,9 +26,6 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
-      <Header title="Notifications" showBack={true} />
-
       {notifications.length === 0 ? (
         <NotificationsEmptyState />
       ) : (
@@ -38,7 +35,7 @@ export default function NotificationsPage() {
             <div className="flex justify-end mb-4">
               <button
                 onClick={markAllAsRead}
-                className="text-[#3A8DFF] font-medium text-base"
+                className="text-secondary-900 font-medium text-base"
               >
                 Mark as read
               </button>
