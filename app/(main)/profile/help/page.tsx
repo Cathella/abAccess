@@ -1,0 +1,177 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import {
+  HelpCircle,
+  MessageCircle,
+  AlertTriangle,
+  Info,
+  ChevronRight,
+} from "lucide-react";
+
+interface SupportOption {
+  id: string;
+  icon: "HelpCircle" | "MessageCircle" | "AlertTriangle";
+  iconBg: string;
+  title: string;
+  subtitle: string;
+  action: () => void;
+}
+
+interface PopularArticle {
+  id: string;
+  title: string;
+}
+
+const POPULAR_ARTICLES: PopularArticle[] = [
+  { id: "use-package", title: "How do I use my package at a facility?" },
+  { id: "copay", title: "What is co-pay and why do I pay it?" },
+  { id: "add-children", title: "How do I add children to my account?" },
+  { id: "refund", title: "Can I get a refund for unused visits?" },
+];
+
+const IconComponents = {
+  HelpCircle,
+  MessageCircle,
+  AlertTriangle,
+};
+
+export default function HelpPage() {
+  const router = useRouter();
+
+  const handleFAQs = () => {
+    router.push("/profile/help/faqs");
+  };
+
+  const handleContactUs = () => {
+    // Open email client for MVP
+    if (typeof window !== "undefined") {
+      window.location.href = "mailto:support@abaaccess.com?subject=Support Request";
+    }
+  };
+
+  const handleReportIssue = () => {
+    router.push("/profile/help/report-issue");
+  };
+
+  const handleArticleTap = (articleId: string) => {
+    router.push(`/profile/help/article/${articleId}`);
+  };
+
+  const supportOptions: SupportOption[] = [
+    {
+      id: "faqs",
+      icon: "HelpCircle",
+      iconBg: "bg-primary-100",
+      title: "FAQs",
+      subtitle: "Find answers to common questions",
+      action: handleFAQs,
+    },
+    {
+      id: "contact",
+      icon: "MessageCircle",
+      iconBg: "bg-primary-100",
+      title: "Contact Us",
+      subtitle: "Get in touch with our team",
+      action: handleContactUs,
+    },
+    {
+      id: "report",
+      icon: "AlertTriangle",
+      iconBg: "bg-warning-100",
+      title: "Report an Issue",
+      subtitle: "Let us know what's not working",
+      action: handleReportIssue,
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-neutral-200">
+      <div className="px-4 py-6 space-y-4">
+        {/* Title Section */}
+        <div className="px-1">
+          <h2 className="text-2xl font-bold text-neutral-900">
+            How can we help?
+          </h2>
+        </div>
+
+        {/* Support Options Card */}
+        <div className="bg-white rounded-2xl px-4">
+          {supportOptions.map((option, index) => {
+            const IconComponent = IconComponents[option.icon];
+            const isLast = index === supportOptions.length - 1;
+            const iconColorClass =
+              option.icon === "AlertTriangle"
+                ? "text-warning-900"
+                : "text-primary-900";
+
+            return (
+              <button
+                key={option.id}
+                onClick={option.action}
+                className={`w-full flex items-center gap-3 py-4 text-left ${
+                  !isLast ? "border-b border-neutral-300" : ""
+                }`}
+              >
+                {/* Icon Circle */}
+                <div
+                  className={`w-10 h-10 rounded-full ${option.iconBg} flex items-center justify-center flex-shrink-0`}
+                >
+                  <IconComponent size={20} className={iconColorClass} />
+                </div>
+
+                {/* Text Content */}
+                <div className="flex-1 min-w-0">
+                  <span className="block text-base font-medium text-neutral-900">
+                    {option.title}
+                  </span>
+                  <span className="block text-sm text-neutral-600 mt-0.5">
+                    {option.subtitle}
+                  </span>
+                </div>
+
+                {/* Chevron */}
+                <ChevronRight
+                  size={20}
+                  className="text-neutral-500 flex-shrink-0"
+                />
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Popular Articles Card */}
+        <div
+          className="rounded-2xl p-4"
+          style={{ backgroundColor: "#E3F1FC" }}
+        >
+          <div className="flex items-start gap-3">
+            <Info size={20} className="text-secondary-900 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-base font-medium text-neutral-900 mb-3">
+                Popular articles
+              </p>
+              <div className="space-y-1">
+                {POPULAR_ARTICLES.map((article) => (
+                  <button
+                    key={article.id}
+                    onClick={() => handleArticleTap(article.id)}
+                    className="w-full flex items-center justify-between gap-2 py-2 text-left"
+                  >
+                    <span className="text-sm text-neutral-700">
+                      {article.title}
+                    </span>
+                    <ChevronRight
+                      size={16}
+                      className="text-secondary-900 flex-shrink-0"
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

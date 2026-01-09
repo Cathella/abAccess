@@ -10,7 +10,11 @@ import type {
   TimeSlotOption,
   BookingFacility,
   NotificationType,
-  Notification
+  Notification,
+  LanguageOption,
+  NotificationPreferences,
+  HelpArticle,
+  ProfileMenuItem,
 } from "@/types";
 
 export const APP_NAME = "ABA Access";
@@ -822,3 +826,91 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
     actionRoute: '/my-packages',
   },
 ];
+
+// Profile & Settings Feature Constants
+
+export const LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: 'en', name: 'English', available: true },
+  { code: 'lg', name: 'Luganda', available: false },
+  { code: 'sw', name: 'Swahili', available: false },
+];
+
+export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferences = {
+  appointmentReminders: true,
+  packageUpdates: true,
+  remoteApprovals: true,
+  bookingUpdates: true,
+  promotionsOffers: false,
+};
+
+export const PROFILE_MENU_SECTIONS: {
+  id: string;
+  items: ProfileMenuItem[];
+}[] = [
+  {
+    id: 'settings',
+    items: [
+      { id: 'personal-info', label: 'Personal Information', icon: 'User', route: '/profile/personal-info' },
+      { id: 'security', label: 'Security', icon: 'Lock', route: '/profile/security' },
+      { id: 'notifications', label: 'Notification Preferences', icon: 'Bell', route: '/profile/notifications' },
+      { id: 'language', label: 'Language', icon: 'Globe', route: '/profile/language' },
+    ],
+  },
+  {
+    id: 'support',
+    items: [
+      { id: 'help', label: 'Help & Support', icon: 'HelpCircle', route: '/profile/help' },
+      { id: 'approvals', label: 'Approval History', icon: 'Check', route: '/profile/approvals' },
+    ],
+  },
+  {
+    id: 'account',
+    items: [
+      { id: 'logout', label: 'Logout', icon: 'LogOut', action: 'logout' },
+      { id: 'delete', label: 'Delete Account', icon: 'AlertTriangle', route: '/profile/delete-account' },
+    ],
+  },
+];
+
+export const POPULAR_HELP_ARTICLES: HelpArticle[] = [
+  {
+    id: 'art-1',
+    question: 'How do I use my package at a facility?',
+    answer: 'Show your QR code to the facility receptionist...',
+    category: 'packages',
+  },
+  {
+    id: 'art-2',
+    question: 'What is co-pay and why do I pay it?',
+    answer: 'Co-pay is a small fee you pay at the facility...',
+    category: 'payments',
+  },
+  {
+    id: 'art-3',
+    question: 'How do I add children to my account?',
+    answer: 'Go to Family section and tap Add Dependent...',
+    category: 'account',
+  },
+  {
+    id: 'art-4',
+    question: 'Can I get a refund for unused visits?',
+    answer: 'Refunds are available within 14 days of purchase...',
+    category: 'packages',
+  },
+];
+
+export const SECURITY_TIPS = [
+  'Never share your PIN with anyone',
+  'Avoid simple patterns like 1234 or 0000',
+  'Change your PIN if you suspect it\'s been compromised',
+];
+
+export const DELETE_ACCOUNT_ITEMS = [
+  'Your personal information',
+  'All visit history and receipts',
+  'All dependent (children) records',
+  'Saved payment methods',
+  'Referral history and pending rewards',
+];
+
+export const APP_BUILD = '123';

@@ -21,6 +21,7 @@ interface FamilyState {
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
   clearSelection: () => void
+  reset: () => void
 
   // Getters
   getDependentById: (id: string) => Dependent | undefined
@@ -102,6 +103,14 @@ export const useFamilyStore = create<FamilyState>()(
       clearSelection: () =>
         set((state) => {
           state.selectedDependent = null
+        }),
+
+      reset: () =>
+        set((state) => {
+          state.dependents = []
+          state.selectedDependent = null
+          state.isLoading = false
+          state.error = null
         }),
 
       // Computed getters

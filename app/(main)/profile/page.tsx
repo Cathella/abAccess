@@ -1,114 +1,157 @@
 "use client";
 
-import Image from 'next/image';
-import { useAuthStore } from '@/stores/authStore';
-import { ChevronRight, User, Phone, CreditCard, Lock } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Gift, ChevronRight } from "lucide-react";
+import { useAuthStore } from "@/stores/authStore";
+import ProfileMenuItem from "@/components/common/ProfileMenuItem";
+import { LogoutModal } from "@/components/modals/LogoutModal";
+import {
+  PROFILE_MENU_SECTIONS,
+  APP_VERSION,
+  APP_BUILD,
+} from "@/lib/constants";
 
 export default function ProfilePage() {
+  const router = useRouter();
   const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleMenuItemPress = (item: {
+    id: string;
+    route?: string;
+    action?: "logout" | "delete";
+  }) => {
+    if (item.action === "logout") {
+      setShowLogoutModal(true);
+    } else if (item.route) {
+      router.push(item.route);
+    }
+  };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      logout();
+      router.push("/sign-in");
+    } finally {
+      setIsLoggingOut(false);
+      setShowLogoutModal(false);
+    }
+  };
+
+  const handleInviteFriends = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Join ABA Access",
+          text: "Get affordable healthcare with ABA Access! Use my referral link to sign up and earn free visits.",
+          url: "https://abaaccess.com/invite",
+        });
+      } catch {
+        // User cancelled or share failed silently
+      }
+    }
+  };
+
+  const getInitials = () => {
+    if (!user) return "";
+    return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+  };
 
   if (!user) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-white px-4 py-6">
-      {/* Profile Header */}
-      <div className="mb-6 flex items-center gap-4">
-        <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-primary-900 overflow-hidden">
-          {user.avatar ? (
-            <Image
-              src={user.avatar}
-              alt="Profile"
-              fill
-              className="rounded-full object-cover"
-            />
-          ) : (
-            <span className="text-2xl font-bold text-neutral-900">
-              {user.firstName.charAt(0)}{user.lastName.charAt(0)}
-            </span>
-          )}
-        </div>
-        <div className="flex-1">
-          <h1 className="text-xl font-bold text-neutral-900">
-            {user.firstName} {user.lastName}
-          </h1>
-          <p className="text-sm text-neutral-600">Member ID: {user.memberId}</p>
-        </div>
-      </div>
-
-      {/* Profile Sections */}
-      <div className="space-y-4">
-        {/* Basic Info */}
-        <div className="rounded-xl border border-neutral-400 bg-white p-4">
-          <h2 className="mb-3 text-base font-semibold text-neutral-900">Basic Information</h2>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <User className="h-5 w-5 text-neutral-600" />
-                <span className="text-sm text-neutral-900">Full Name</span>
-              </div>
-              <span className="text-sm font-medium text-neutral-900">
-                {user.firstName} {user.lastName}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-neutral-600" />
-                <span className="text-sm text-neutral-900">Phone</span>
-              </div>
-              <span className="text-sm font-medium text-neutral-900">{user.phone}</span>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <CreditCard className="h-5 w-5 text-neutral-600" />
-                <span className="text-sm text-neutral-900">NIN</span>
-              </div>
-              <span className="text-sm font-medium text-neutral-900">
-                {user.nin || 'Not provided'}
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <Link
-              href="/profile/edit"
-              className="flex h-10 items-center justify-center rounded-xl border-[1.5px] border-neutral-900 bg-primary-100 text-base font-semibold text-neutral-900"
+    <div className="min-h-screen bg-neutral-200">
+      <div className="px-4 py-6 space-y-4">
+        {/* Profile Header Section */}
+        <div className="bg-white rounded-2xl p-6">
+          <div className="flex flex-col items-center">
+            {/* Avatar */}
+            <div
+              className="w-20 h-20 rounded-full flex items-center justify-center mb-3"
+              style={{ backgroundColor: "#E3F1FC" }}
             >
-              Edit Profile
-            </Link>
+              <span className="text-xl font-bold text-neutral-900">
+                {getInitials()}
+              </span>
+            </div>
+
+            {/* Name */}
+            <h2 className="text-lg font-semibold text-neutral-900">
+              {user.firstName} {user.lastName}
+            </h2>
+
+            {/* Member ID */}
+            <p className="text-sm text-neutral-600">
+              ID: {user.memberId || "A-012345"}
+            </p>
           </div>
         </div>
 
-        {/* Security */}
-        <div className="rounded-xl border border-neutral-400 bg-white p-4">
-          <h2 className="mb-3 text-base font-semibold text-neutral-900">Security</h2>
+        {/* Menu Sections */}
+        {PROFILE_MENU_SECTIONS.map((section) => (
+          <div key={section.id} className="bg-white rounded-2xl px-4">
+            {section.items.map((item) => (
+              <ProfileMenuItem
+                key={item.id}
+                icon={item.icon}
+                label={item.label}
+                onPress={() => handleMenuItemPress(item)}
+                variant={
+                  item.action === "delete" || item.id === "delete"
+                    ? "danger"
+                    : "default"
+                }
+              />
+            ))}
+          </div>
+        ))}
 
-          <Link href="/settings/change-pin">
-            <div className="flex items-center justify-between py-2">
-              <div className="flex items-center gap-3">
-                <Lock className="h-5 w-5 text-neutral-600" />
-                <span className="text-sm text-neutral-900">Change PIN</span>
-              </div>
-              <ChevronRight className="h-5 w-5 text-neutral-600" />
-            </div>
-          </Link>
-        </div>
+        {/* Invite Friends Card */}
+        <button
+          onClick={handleInviteFriends}
+          className="w-full bg-white rounded-2xl p-4 flex items-center gap-3 text-left"
+        >
+          {/* Mint Icon Circle */}
+          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+            <Gift size={20} className="text-primary-900" />
+          </div>
 
-        {/* Settings */}
-        <div className="rounded-xl border border-neutral-400 bg-white p-4">
-          <Link href="/settings">
-            <div className="flex items-center justify-between py-2">
-              <span className="text-sm font-medium text-neutral-900">Settings</span>
-              <ChevronRight className="h-5 w-5 text-neutral-600" />
-            </div>
-          </Link>
+          {/* Text */}
+          <div className="flex-1 min-w-0">
+            <span className="block text-base font-medium text-neutral-900">
+              Invite Friends
+            </span>
+            <span className="block text-sm text-neutral-600">
+              Earn free visits!
+            </span>
+          </div>
+
+          {/* Chevron */}
+          <ChevronRight size={20} className="text-neutral-500 flex-shrink-0" />
+        </button>
+
+        {/* Footer */}
+        <div className="pt-4 pb-8">
+          <p className="text-sm text-neutral-500 text-center">
+            App Version {APP_VERSION} (Build {APP_BUILD})
+          </p>
         </div>
       </div>
+
+      {/* Logout Modal */}
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+        isLoading={isLoggingOut}
+      />
     </div>
   );
 }

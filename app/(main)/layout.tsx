@@ -44,8 +44,45 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
   },
   [ROUTES.PROFILE]: {
     title: "Profile",
-    showBack: false,
+    showBack: true,
     showNotifications: true,
+    hideBottomNav: true,
+  },
+  "/profile/personal-info": {
+    title: "Personal Information",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/security": {
+    title: "Security",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/notifications": {
+    title: "Notification Preferences",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/language": {
+    title: "Language",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/help": {
+    title: "Help & Support",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/delete-account": {
+    title: "Delete Account",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
   },
   [ROUTES.FAMILY]: {
     title: "Family Members",

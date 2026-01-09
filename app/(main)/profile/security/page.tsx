@@ -1,0 +1,128 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { Grid3X3, Key, Info } from "lucide-react";
+import ProfileMenuItem from "@/components/common/ProfileMenuItem";
+
+export default function SecurityPage() {
+  const router = useRouter();
+
+  const handleChangePin = () => {
+    router.push("/profile/security/change-pin");
+  };
+
+  const handleForgotPin = () => {
+    router.push("/profile/security/forgot-pin");
+  };
+
+  return (
+    <div className="min-h-screen bg-neutral-200">
+      <div className="px-4 py-6 space-y-4">
+        {/* Title Section */}
+        <div className="px-1">
+          <h2 className="text-2xl font-bold text-neutral-900 mb-2">
+            Keep your account safe
+          </h2>
+          <p className="text-base text-neutral-600">
+            Your PIN protects your wallet and approves transactions. Keep it
+            private.
+          </p>
+        </div>
+
+        {/* Options Card */}
+        <div className="bg-white rounded-2xl px-4">
+          {/* Change PIN */}
+          <button
+            onClick={handleChangePin}
+            className="w-full flex items-center gap-3 py-4 border-b border-neutral-300 text-left"
+          >
+            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+              <Grid3X3 size={20} className="text-primary-900" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="block text-base font-medium text-neutral-900">
+                Change PIN
+              </span>
+              <span className="block text-sm text-neutral-600 mt-0.5">
+                Update your 4-digit security PIN
+              </span>
+            </div>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-neutral-500 flex-shrink-0"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </button>
+
+          {/* Forgot PIN */}
+          <button
+            onClick={handleForgotPin}
+            className="w-full flex items-center gap-3 py-4 text-left"
+          >
+            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+              <Key size={20} className="text-primary-900" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <span className="block text-base font-medium text-neutral-900">
+                Forgot PIN?
+              </span>
+              <span className="block text-sm text-neutral-600 mt-0.5">
+                Reset your PIN using your phone
+              </span>
+            </div>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-neutral-500 flex-shrink-0"
+            >
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Security Tips Card */}
+        <div
+          className="rounded-2xl p-4"
+          style={{ backgroundColor: "#E3F1FC" }}
+        >
+          <div className="flex items-start gap-3">
+            <Info size={20} className="text-secondary-900 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="text-base font-medium text-neutral-900 mb-3">
+                Security tips
+              </p>
+              <ul className="space-y-2 text-sm text-neutral-700">
+                <li className="flex items-start gap-2">
+                  <span className="text-neutral-700 mt-1">•</span>
+                  <span>Never share your PIN with anyone</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-neutral-700 mt-1">•</span>
+                  <span>Avoid simple patterns like 1234 or 0000</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-neutral-700 mt-1">•</span>
+                  <span>Change your PIN if you suspect it&apos;s been compromised</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

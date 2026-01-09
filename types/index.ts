@@ -604,3 +604,41 @@ export interface FamilyMemberOption {
   age?: number;          // Only for dependents
   ageLabel?: string;     // e.g., "11 years old" or "Myself"
 }
+
+// Profile & Settings Types
+
+// Notification preferences
+export interface NotificationPreferences {
+  appointmentReminders: boolean;
+  packageUpdates: boolean;
+  remoteApprovals: boolean;
+  bookingUpdates: boolean;
+  promotionsOffers: boolean;
+}
+
+// Language options
+export type LanguageCode = 'en' | 'lg' | 'sw';
+
+export interface LanguageOption {
+  code: LanguageCode;
+  name: string;
+  available: boolean;
+}
+
+// Help article
+export interface HelpArticle {
+  id: string;
+  question: string;
+  answer: string;
+  category: 'packages' | 'payments' | 'account' | 'visits';
+}
+
+// Profile menu item
+export interface ProfileMenuItem {
+  id: string;
+  label: string;
+  icon: string;      // Lucide icon name
+  route?: string;
+  action?: 'logout' | 'delete';
+  description?: string;
+}

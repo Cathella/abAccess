@@ -73,6 +73,9 @@ interface WalletState {
   // Getters
   getFilteredTransactions: () => WalletTransaction[];
   getDefaultPaymentMethod: () => SavedPaymentMethod | undefined;
+
+  // Reset
+  reset: () => void;
 }
 
 export const useWalletStore = create<WalletState>()(
@@ -548,6 +551,23 @@ export const useWalletStore = create<WalletState>()(
         const { savedPaymentMethods } = get();
         return savedPaymentMethods.find((m) => m.isDefault);
       },
+
+      // Reset store to initial state
+      reset: () =>
+        set((state) => {
+          state.balance = 0;
+          state.transactions = [];
+          state.savedPaymentMethods = [];
+          state.topUpData = {};
+          state.isLoading = false;
+          state.isProcessing = false;
+          state.transactionFilter = 'all';
+          state.walletId = null;
+          state.isSyncing = false;
+          state.lastSyncedAt = null;
+          state.syncError = null;
+          state.pendingOperations = [];
+        }),
     })),
     {
       name: 'wallet-storage',
