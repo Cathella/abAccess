@@ -687,3 +687,45 @@ export interface ProfileMenuItem {
   action?: 'logout' | 'delete';
   description?: string;
 }
+
+// Referral Feature Types
+
+// Referral status
+export type ReferralStatus = 'pending' | 'completed';
+
+// Referral record
+export interface Referral {
+  id: string;
+
+  // Referred friend info
+  friendName: string;
+  friendInitials: string;
+
+  // Status tracking
+  status: ReferralStatus;
+  signupDate: string;          // When they signed up
+  completedDate?: string;      // When they bought first package
+
+  // Reward info (for completed)
+  rewardClaimed: boolean;
+  rewardPackageId?: string;    // Which package received bonus visit
+  rewardPackageCategory?: string;
+
+  // Timestamps
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Bonus visit reward (unclaimed)
+export interface BonusReward {
+  id: string;
+  referralId: string;
+  friendName: string;
+  earnedAt: string;
+  claimed: boolean;
+  claimedAt?: string;
+  packageId?: string;
+}
+
+// Tab filter type
+export type ReferralTabFilter = 'completed' | 'pending';

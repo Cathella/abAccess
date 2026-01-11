@@ -17,6 +17,8 @@ import type {
   ProfileMenuItem,
   ApprovalStatusConfig,
   ApprovalHistoryItem,
+  Referral,
+  BonusReward,
 } from "@/types";
 import { ApprovalStatus } from "@/types";
 
@@ -1050,3 +1052,58 @@ export const MOCK_APPROVAL_HISTORY: ApprovalHistoryItem[] = [
     updatedAt: '2024-12-28T09:45:00Z',
   },
 ];
+
+// Referral Feature Constants
+
+// User's referral code (would come from API)
+export const getUserReferralCode = (userId: string): string => {
+  // In production, this would be fetched from API
+  return `ABA-${userId.slice(-6).toUpperCase()}`;
+};
+
+// Referral share message
+export const REFERRAL_SHARE_MESSAGE = (code: string): string =>
+  `Join ABA Access and get affordable healthcare for your family! Use my referral code ${code} when signing up. Download: https://abaaccess.com/invite/${code}`;
+
+// Mock referral data
+export const MOCK_REFERRALS: Referral[] = [
+  {
+    id: 'ref-1',
+    friendName: 'Grace A.',
+    friendInitials: 'GA',
+    status: 'completed',
+    signupDate: '2025-01-04',
+    completedDate: '2025-01-04',
+    rewardClaimed: true,
+    rewardPackageId: 'pkg-1',
+    rewardPackageCategory: 'Consultations',
+    createdAt: '2025-01-04T10:00:00Z',
+    updatedAt: '2025-01-04T12:00:00Z',
+  },
+  {
+    id: 'ref-2',
+    friendName: 'Peter M',
+    friendInitials: 'PM',
+    status: 'completed',
+    signupDate: '2024-12-28',
+    completedDate: '2024-12-28',
+    rewardClaimed: true,
+    rewardPackageId: 'pkg-1',
+    rewardPackageCategory: 'Consultations',
+    createdAt: '2024-12-28T10:00:00Z',
+    updatedAt: '2024-12-28T14:00:00Z',
+  },
+  {
+    id: 'ref-3',
+    friendName: 'Sarah K',
+    friendInitials: 'SK',
+    status: 'pending',
+    signupDate: '2025-01-05',
+    rewardClaimed: false,
+    createdAt: '2025-01-05T09:00:00Z',
+    updatedAt: '2025-01-05T09:00:00Z',
+  },
+];
+
+// Unclaimed bonus rewards
+export const MOCK_BONUS_REWARDS: BonusReward[] = [];

@@ -31,6 +31,7 @@ interface PackageState {
   setPackageFilter: (filter: 'active' | 'completed' | 'expired') => void
   setLoading: (loading: boolean) => void
   recordUsage: (packageId: string, usage: PackageUsage) => void
+  addBonusVisit: (packageId: string) => void
   loadUserPackages: (userId: string, options?: { force?: boolean }) => Promise<void>
   loadMockData: () => void
   clearAllData: () => void
@@ -102,6 +103,20 @@ export const usePackageStore = create<PackageState>()(
             return pkg
           }),
         })),
+
+      addBonusVisit: (packageId) => {
+        const { userPackages } = get()
+        const updated = userPackages.map((pkg) =>
+          pkg.id === packageId
+            ? {
+                ...pkg,
+                remainingVisits: pkg.remainingVisits + 1,
+                totalVisits: pkg.totalVisits + 1,
+              }
+            : pkg
+        )
+        set({ userPackages: updated })
+      },
 
       loadUserPackages: async (userId: string, options?: { force?: boolean }) => {
         const { isLoading, hasInitialized } = get()
