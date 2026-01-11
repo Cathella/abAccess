@@ -1,3 +1,4 @@
+export { ApprovalCard } from "./ApprovalCard";
 export { MyPackageCard } from "./MyPackageCard";
 export { PackageInfoCard } from "./PackageInfoCard";
 export { CopayReminderCard } from "./CopayReminderCard";

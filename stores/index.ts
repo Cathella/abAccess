@@ -8,6 +8,7 @@ export { useUIStore } from './uiStore'
 export { useFamilyStore } from './familyStore'
 export { useNotificationsStore } from './notificationsStore'
 export { useSettingsStore } from './settingsStore'
+export { useApprovalsStore } from './approvalsStore'
 export { useStore } from './useStore'
 
 // Re-export store types if needed
@@ -20,3 +21,4 @@ export type * from './uiStore'
 export type * from './familyStore'
 export type * from './notificationsStore'
 export type * from './settingsStore'
+export type * from './approvalsStore'

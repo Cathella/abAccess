@@ -15,7 +15,10 @@ import type {
   NotificationPreferences,
   HelpArticle,
   ProfileMenuItem,
+  ApprovalStatusConfig,
+  ApprovalHistoryItem,
 } from "@/types";
+import { ApprovalStatus } from "@/types";
 
 export const APP_NAME = "ABA Access";
 export const APP_VERSION = "1.0.0";
@@ -914,3 +917,136 @@ export const DELETE_ACCOUNT_ITEMS = [
 ];
 
 export const APP_BUILD = '123';
+
+// Approval History Feature Constants
+
+export const APPROVAL_STATUS_CONFIG: Record<ApprovalStatus, ApprovalStatusConfig> = {
+  [ApprovalStatus.APPROVED]: {
+    label: 'Approved',
+    icon: 'Check',
+    bgColor: 'bg-primary-100',
+    textColor: 'text-primary-900',
+    iconColor: 'text-primary-900',
+  },
+  [ApprovalStatus.DECLINED]: {
+    label: 'Declined',
+    icon: 'X',
+    bgColor: 'bg-error-100',
+    textColor: 'text-error-900',
+    iconColor: 'text-error-900',
+  },
+  [ApprovalStatus.EXPIRED]: {
+    label: 'Expired',
+    icon: 'Clock',
+    bgColor: 'bg-warning-100',
+    textColor: 'text-warning-900',
+    iconColor: 'text-warning-900',
+  },
+  [ApprovalStatus.PENDING]: {
+    label: 'Pending',
+    icon: 'Clock',
+    bgColor: 'bg-secondary-100',
+    textColor: 'text-secondary-900',
+    iconColor: 'text-secondary-900',
+  },
+};
+
+export const APPROVAL_TABS = [
+  { key: 'approved', label: 'Approved' },
+  { key: 'declined', label: 'Declined' },
+  { key: 'expired', label: 'Expired' },
+] as const;
+
+// Mock approval history data for MVP
+export const MOCK_APPROVAL_HISTORY: ApprovalHistoryItem[] = [
+  {
+    id: 'apr-1',
+    memberId: 'dep-1',
+    memberName: 'Sarah Nakamya',
+    memberInitials: 'SN',
+    facilityId: 'fac-1',
+    facilityName: 'City Medical Center',
+    packageId: 'pkg-1',
+    packageCategory: 'Child Wellness',
+    packageName: '5 visits pack',
+    requestDate: '2025-01-10',
+    requestTime: '10:34 AM',
+    copay: 5000,
+    status: ApprovalStatus.APPROVED,
+    respondedAt: '2025-01-10T10:35:00Z',
+    createdAt: '2025-01-10T10:30:00Z',
+    updatedAt: '2025-01-10T10:35:00Z',
+  },
+  {
+    id: 'apr-2',
+    memberId: 'dep-2',
+    memberName: 'James Okello',
+    memberInitials: 'JO',
+    facilityId: 'fac-2',
+    facilityName: 'Downtown Clinic',
+    packageId: 'pkg-2',
+    packageCategory: 'Consultations',
+    packageName: '3 visits pack',
+    requestDate: '2025-01-08',
+    requestTime: '2:15 PM',
+    copay: 3000,
+    status: ApprovalStatus.APPROVED,
+    respondedAt: '2025-01-08T14:20:00Z',
+    createdAt: '2025-01-08T14:00:00Z',
+    updatedAt: '2025-01-08T14:20:00Z',
+  },
+  {
+    id: 'apr-3',
+    memberId: 'dep-1',
+    memberName: 'Sarah Nakamya',
+    memberInitials: 'SN',
+    facilityId: 'fac-3',
+    facilityName: 'Health Plus Clinic',
+    packageId: 'pkg-3',
+    packageCategory: 'Lab Tests',
+    packageName: 'Basic panel',
+    requestDate: '2025-01-05',
+    requestTime: '11:00 AM',
+    copay: 10000,
+    status: ApprovalStatus.DECLINED,
+    respondedAt: '2025-01-05T11:30:00Z',
+    createdAt: '2025-01-05T10:55:00Z',
+    updatedAt: '2025-01-05T11:30:00Z',
+  },
+  {
+    id: 'apr-4',
+    memberId: 'dep-2',
+    memberName: 'James Okello',
+    memberInitials: 'JO',
+    facilityId: 'fac-4',
+    facilityName: 'Metro Hospital',
+    packageId: 'pkg-1',
+    packageCategory: 'Child Wellness',
+    packageName: '5 visits pack',
+    requestDate: '2025-01-02',
+    requestTime: '4:00 PM',
+    copay: 5000,
+    status: ApprovalStatus.EXPIRED,
+    expiresAt: '2025-01-02T16:15:00Z',
+    createdAt: '2025-01-02T16:00:00Z',
+    updatedAt: '2025-01-02T16:15:00Z',
+  },
+  {
+    id: 'apr-5',
+    memberId: 'dep-1',
+    memberName: 'Sarah Nakamya',
+    memberInitials: 'SN',
+    facilityId: 'fac-1',
+    facilityName: 'City Medical Center',
+    packageId: 'pkg-4',
+    packageCategory: 'Maternity',
+    packageName: 'Prenatal visits',
+    requestDate: '2024-12-28',
+    requestTime: '9:30 AM',
+    copay: 8000,
+    status: ApprovalStatus.EXPIRED,
+    expiresAt: '2024-12-28T09:45:00Z',
+    createdAt: '2024-12-28T09:30:00Z',
+    updatedAt: '2024-12-28T09:45:00Z',
+  },
+];

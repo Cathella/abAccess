@@ -1,3 +1,6 @@
+export { ApprovalsEmptyState } from "./ApprovalsEmptyState";
+export { ApprovalStatusBadge } from "./ApprovalStatusBadge";
+export { ApprovalTabFilter } from "./ApprovalTabFilter";
 export { StatusBadge } from "./StatusBadge";
 export { VisitBadges } from "./VisitBadges";
 export { VisitStatusBadge } from "./VisitStatusBadge";

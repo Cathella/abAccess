@@ -320,6 +320,51 @@ export interface ApprovalRequest {
   expiresAt: string;
 }
 
+// Extended approval request with display info for UI
+export interface ApprovalHistoryItem {
+  id: string;
+
+  // Member info (who the visit was for)
+  memberId: string;
+  memberName: string;
+  memberInitials: string;
+
+  // Facility info
+  facilityId: string;
+  facilityName: string;
+
+  // Package info
+  packageId: string;
+  packageCategory: string; // e.g., "Consultations"
+  packageName: string; // e.g., "5 visits pack"
+
+  // Request details
+  requestDate: string; // ISO date string
+  requestTime: string; // e.g., "10:34 AM"
+  copay: number;
+
+  // Status
+  status: ApprovalStatus;
+  respondedAt?: string; // When user approved/declined
+  expiresAt?: string; // When pending request expires
+
+  // Timestamps
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Tab filter type for approval history
+export type ApprovalTabFilter = 'approved' | 'declined' | 'expired';
+
+// Status config for displaying approval status
+export interface ApprovalStatusConfig {
+  label: string;
+  icon: string;
+  bgColor: string;
+  textColor: string;
+  iconColor: string;
+}
+
 // Wallet Feature Types
 export type PaymentMethodType = 'mtn_momo' | 'airtel_money' | 'card';
 
