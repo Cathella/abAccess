@@ -19,6 +19,9 @@ import type {
   ApprovalHistoryItem,
   Referral,
   BonusReward,
+  IssueType,
+  ContactMethod,
+  FAQItem,
 } from "@/types";
 import { ApprovalStatus } from "@/types";
 
@@ -1107,3 +1110,112 @@ export const MOCK_REFERRALS: Referral[] = [
 
 // Unclaimed bonus rewards
 export const MOCK_BONUS_REWARDS: BonusReward[] = [];
+
+// Help & Support Feature Constants
+
+// Issue type options for dropdown
+export const ISSUE_TYPE_OPTIONS: { value: IssueType; label: string }[] = [
+  { value: 'payment_problem', label: 'Payment problem' },
+  { value: 'package_issue', label: 'Package issue' },
+  { value: 'facility_problem', label: 'Facility problem' },
+  { value: 'app_not_working', label: 'App not working' },
+  { value: 'account_issue', label: 'Account issue' },
+  { value: 'other', label: 'Other' },
+];
+
+// Contact methods
+export const CONTACT_METHODS: ContactMethod[] = [
+  {
+    id: 'whatsapp',
+    type: 'whatsapp',
+    title: 'WhatsApp',
+    value: '+256800123456',
+    actionLabel: 'Open WhatsApp',
+    responseTime: 'Usually replies within 1 hour',
+    icon: '💬',
+  },
+  {
+    id: 'phone',
+    type: 'phone',
+    title: 'Call us',
+    value: '+256 800 123 456',
+    actionLabel: 'Call now',
+    responseTime: 'Available 24/7',
+    icon: '📞',
+  },
+  {
+    id: 'email',
+    type: 'email',
+    title: 'Email',
+    value: 'support@abaaccess.com',
+    actionLabel: 'Send email',
+    responseTime: "We'll respond within 2 hours",
+    icon: '💌',
+  },
+];
+
+// FAQ data grouped by category
+export const FAQ_DATA: FAQItem[] = [
+  // Packages category
+  {
+    id: 'faq-1',
+    question: 'How do I use my package at a facility?',
+    answer: `1. Go to "Packages" and tap "Use now" on your active package.
+2. Select who the visit is for (you or a child).
+3. Confirm the co-pay amount.
+4. Show the QR code to the receptionist at the facility.
+5. Pay the co-pay in cash or mobile money.`,
+    category: 'packages',
+  },
+  {
+    id: 'faq-2',
+    question: 'What happens if my package expires?',
+    answer: 'If your package expires, any unused visits will be forfeited. We recommend using all your visits before the expiry date. You can check your package expiry date in the "My Packages" section.',
+    category: 'packages',
+  },
+  {
+    id: 'faq-3',
+    question: 'Can I share my package with family?',
+    answer: 'Yes! You can use your package for any family member added to your account. Go to "Family" to add dependents, then select them when using a package at a facility.',
+    category: 'packages',
+  },
+  // Payments category
+  {
+    id: 'faq-4',
+    question: 'What is co-pay?',
+    answer: 'Co-pay is a small fixed amount you pay at the facility when using your package. It helps cover additional costs and ensures you receive quality care. The co-pay amount is shown on your package details.',
+    category: 'payments',
+  },
+  {
+    id: 'faq-6',
+    question: 'Can I get a refund?',
+    answer: "Refunds are available within 14 days of purchase if you haven't used any visits from the package. Contact our support team to request a refund.",
+    category: 'payments',
+  },
+  // Account category
+  {
+    id: 'faq-7',
+    question: 'How do I add children to my account?',
+    answer: 'Go to "Family" from the bottom menu, then tap "Add dependent". Fill in your child\'s details including name and date of birth. Once added, you can use your packages for them.',
+    category: 'account',
+  },
+  {
+    id: 'faq-8',
+    question: 'How do I change my phone number?',
+    answer: 'For security reasons, phone number changes require verification. Go to Profile > Personal Information and tap "Edit" next to your phone number, or contact our support team for assistance.',
+    category: 'account',
+  },
+  {
+    id: 'faq-9',
+    question: 'I forgot my PIN. What do I do?',
+    answer: 'Go to Profile > Security > "Forgot PIN?" and follow the steps to reset your PIN using your registered phone number. You\'ll receive an OTP to verify your identity.',
+    category: 'account',
+  },
+];
+
+// Generate reference number for issue reports
+export const generateReferenceNumber = (): string => {
+  const year = new Date().getFullYear();
+  const random = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+  return `#ISS-${year}-${random}`;
+};

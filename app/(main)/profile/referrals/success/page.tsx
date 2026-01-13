@@ -27,7 +27,7 @@ export default function ReferralSuccessPage() {
     if (selectedPackageId && rewardId) {
       claimBonusVisit(rewardId, selectedPackageId);
     }
-    router.push('/referrals/history');
+    router.push('/profile/referrals/history');
   };
 
   const handleSaveForLater = () => {

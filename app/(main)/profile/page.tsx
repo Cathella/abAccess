@@ -44,17 +44,7 @@ export default function ProfilePage() {
   };
 
   const handleInviteFriends = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "Join ABA Access",
-          text: "Get affordable healthcare with ABA Access! Use my referral link to sign up and earn free visits.",
-          url: "https://abaaccess.com/invite",
-        });
-      } catch {
-        // User cancelled or share failed silently
-      }
-    }
+    router.push("/profile/referrals");
   };
 
   const getInitials = () => {

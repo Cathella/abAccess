@@ -44,10 +44,7 @@ export default function HelpPage() {
   };
 
   const handleContactUs = () => {
-    // Open email client for MVP
-    if (typeof window !== "undefined") {
-      window.location.href = "mailto:support@abaaccess.com?subject=Support Request";
-    }
+    router.push("/profile/help/contact");
   };
 
   const handleReportIssue = () => {

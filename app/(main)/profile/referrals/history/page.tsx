@@ -3,8 +3,7 @@
 import { useReferralsStore } from '@/stores/referralsStore';
 import { ReferralTabFilter } from '@/components/common/ReferralTabFilter';
 import { ReferralCard } from '@/components/cards/ReferralCard';
-import { ChevronLeft, Users } from 'lucide-react';
-import Link from 'next/link';
+import { Users } from 'lucide-react';
 
 export default function ReferralHistoryPage() {
   const { activeTab, setActiveTab, getFilteredReferrals } = useReferralsStore();
@@ -18,14 +17,6 @@ export default function ReferralHistoryPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="flex items-center gap-3 px-4 py-3 border-b">
-        <Link href="/referrals">
-          <ChevronLeft className="w-6 h-6" />
-        </Link>
-        <h1 className="font-semibold">Referral History</h1>
-      </header>
-
       {/* Tab Filter */}
       <div className="px-4 py-4">
         <ReferralTabFilter

@@ -1,14 +1,11 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useReferralsStore } from '@/stores/referralsStore';
 import { RewardCard } from '@/components/cards/RewardCard';
 import { REFERRAL_SHARE_MESSAGE } from '@/lib/constants';
-import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function InviteFriendsPage() {
-  const router = useRouter();
   const { referralCode } = useReferralsStore();
 
   const handleShare = async () => {
@@ -34,14 +31,6 @@ export default function InviteFriendsPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
-      <header className="flex items-center gap-3 px-4 py-3 border-b">
-        <Link href="/profile">
-          <ChevronLeft className="w-6 h-6" />
-        </Link>
-        <h1 className="font-semibold">Invite Friends</h1>
-      </header>
-
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Centered Content */}
@@ -67,7 +56,7 @@ export default function InviteFriendsPage() {
         {/* Bottom Buttons */}
         <div className="px-4 pb-8 space-y-3">
           <Link
-            href="/referrals/history"
+            href="/profile/referrals/history"
             className="block text-center font-semibold text-gray-900"
           >
             View referral history

@@ -729,3 +729,47 @@ export interface BonusReward {
 
 // Tab filter type
 export type ReferralTabFilter = 'completed' | 'pending';
+
+// Help & Support Types
+
+// FAQ categories for grouping
+export type FAQCategory = 'packages' | 'payments' | 'account';
+
+// FAQ item structure
+export interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+  category: FAQCategory;
+}
+
+// Issue report types
+export type IssueType =
+  | 'payment_problem'
+  | 'package_issue'
+  | 'facility_problem'
+  | 'app_not_working'
+  | 'account_issue'
+  | 'other';
+
+// Issue report submission
+export interface IssueReport {
+  id: string;
+  type: IssueType;
+  description: string;
+  userId: string;
+  status: 'pending' | 'in_progress' | 'resolved';
+  referenceNumber: string;
+  createdAt: string;
+}
+
+// Contact method
+export interface ContactMethod {
+  id: string;
+  type: 'whatsapp' | 'phone' | 'email';
+  title: string;
+  value: string;
+  actionLabel: string;
+  responseTime: string;
+  icon: string; // emoji or icon name
+}
