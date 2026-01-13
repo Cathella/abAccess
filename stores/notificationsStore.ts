@@ -1,7 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Notification } from '@/types';
-import { MOCK_NOTIFICATIONS } from '@/lib/constants';
+import {
+  fetchNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+} from '@/lib/supabase/notifications';
 
 interface NotificationsState {
   // Data
@@ -12,10 +16,11 @@ interface NotificationsState {
   unreadCount: number;
 
   // Actions
+  loadNotifications: (userId: string) => Promise<void>;
   setNotifications: (notifications: Notification[]) => void;
   addNotification: (notification: Notification) => void;
-  markAsRead: (notificationId: string) => void;
-  markAllAsRead: () => void;
+  markAsRead: (notificationId: string) => Promise<void>;
+  markAllAsRead: (userId: string) => Promise<void>;
   removeNotification: (notificationId: string) => void;
   clearAll: () => void;
 
@@ -27,9 +32,24 @@ interface NotificationsState {
 export const useNotificationsStore = create<NotificationsState>()(
   persist(
     (set, get) => ({
-      notifications: MOCK_NOTIFICATIONS,
+      notifications: [],
       isLoading: false,
-      unreadCount: MOCK_NOTIFICATIONS.filter(n => !n.isRead).length,
+      unreadCount: 0,
+
+      loadNotifications: async (userId) => {
+        set({ isLoading: true });
+        const { notifications, error } = await fetchNotifications(userId);
+        if (!error) {
+          set({
+            notifications,
+            unreadCount: notifications.filter((n) => !n.isRead).length,
+            isLoading: false,
+          });
+          return;
+        }
+
+        set({ isLoading: false });
+      },
 
       setNotifications: (notifications) => {
         set({
@@ -47,7 +67,7 @@ export const useNotificationsStore = create<NotificationsState>()(
         });
       },
 
-      markAsRead: (notificationId) => {
+      markAsRead: async (notificationId) => {
         const { notifications } = get();
         const updated = notifications.map(n =>
           n.id === notificationId ? { ...n, isRead: true } : n
@@ -56,15 +76,17 @@ export const useNotificationsStore = create<NotificationsState>()(
           notifications: updated,
           unreadCount: updated.filter(n => !n.isRead).length,
         });
+        await markNotificationRead(notificationId);
       },
 
-      markAllAsRead: () => {
+      markAllAsRead: async (userId) => {
         const { notifications } = get();
         const updated = notifications.map(n => ({ ...n, isRead: true }));
         set({
           notifications: updated,
           unreadCount: 0,
         });
+        await markAllNotificationsRead(userId);
       },
       removeNotification: (notificationId) => {
         const { notifications } = get();

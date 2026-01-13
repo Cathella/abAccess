@@ -1,18 +1,26 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 import { useNotificationsStore } from '@/stores/notificationsStore';
 import { NotificationCard } from '@/components/cards/NotificationCard';
 import { NotificationsEmptyState } from '@/components/common/NotificationsEmptyState';
-import { Header } from '@/components/common/Header';
 import type { Notification } from '@/types';
 
 export default function NotificationsPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const notifications = useNotificationsStore((state) => state.notifications);
   const markAsRead = useNotificationsStore((state) => state.markAsRead);
   const markAllAsRead = useNotificationsStore((state) => state.markAllAsRead);
   const hasUnread = useNotificationsStore((state) => state.hasUnread);
+  const loadNotifications = useNotificationsStore((state) => state.loadNotifications);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    loadNotifications(user.id);
+  }, [loadNotifications, user?.id]);
 
   const handleNotificationPress = (notification: Notification) => {
     // Mark as read
@@ -34,7 +42,10 @@ export default function NotificationsPage() {
           {hasUnread() && (
             <div className="flex justify-end mb-4">
               <button
-                onClick={markAllAsRead}
+                onClick={() => {
+                  if (!user?.id) return;
+                  markAllAsRead(user.id);
+                }}
                 className="text-secondary-900 font-medium text-base"
               >
                 Mark as read

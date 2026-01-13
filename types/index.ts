@@ -763,6 +763,60 @@ export interface IssueReport {
   createdAt: string;
 }
 
+// Remote approval types
+export type PendingApprovalStatus =
+  | 'pending'
+  | 'approved'
+  | 'declined'
+  | 'expired'
+  | 'cancelled';
+
+export interface PendingApprovalRequest {
+  id: string;
+
+  // Member info
+  memberId: string;
+  memberName: string;
+  memberAge?: number;
+  memberInitials: string;
+
+  // Facility info
+  facilityId: string;
+  facilityName: string;
+
+  // Package info
+  packageId: string;
+  packageCategory: string;
+  packageName: string;
+
+  // Visit details
+  copay: number;
+  remainingBefore: number;
+  remainingAfter: number;
+  totalVisits: number;
+
+  // Timing
+  requestedAt: string;
+  expiresAt: string;
+
+  // Status
+  status: PendingApprovalStatus;
+}
+
+export type DeclineReason =
+  | 'not_arranged'
+  | 'wrong_child'
+  | 'wrong_facility'
+  | 'not_recognized'
+  | 'other';
+
+export interface SuspiciousActivityReport {
+  requestId: string;
+  description: string;
+  freezeAccount: boolean;
+  submittedAt: string;
+}
+
 // Contact method
 export interface ContactMethod {
   id: string;

@@ -20,6 +20,8 @@ import type {
   Referral,
   BonusReward,
   IssueType,
+  DeclineReason,
+  PendingApprovalRequest,
   ContactMethod,
   FAQItem,
 } from "@/types";
@@ -1121,6 +1123,59 @@ export const ISSUE_TYPE_OPTIONS: { value: IssueType; label: string }[] = [
   { value: 'app_not_working', label: 'App not working' },
   { value: 'account_issue', label: 'Account issue' },
   { value: 'other', label: 'Other' },
+];
+
+// Decline reason options
+export const DECLINE_REASON_OPTIONS: { value: DeclineReason; label: string }[] = [
+  { value: 'not_arranged', label: "I didn't arrange this visit" },
+  { value: 'wrong_child', label: 'Wrong child selected' },
+  { value: 'wrong_facility', label: 'Wrong facility' },
+  { value: 'not_recognized', label: "I don't recognize this request" },
+  { value: 'other', label: 'Other reason' },
+];
+
+// Approval request expiry duration (in minutes)
+export const APPROVAL_EXPIRY_MINUTES = 10;
+
+// Mock pending approval requests
+export const MOCK_PENDING_APPROVALS: PendingApprovalRequest[] = [
+  {
+    id: 'apr-req-1',
+    memberId: 'mem-2',
+    memberName: 'Ben Nakitto',
+    memberAge: 8,
+    memberInitials: 'BN',
+    facilityId: 'fac-1',
+    facilityName: 'Mukono Family Clinic',
+    packageId: 'pkg-1',
+    packageCategory: 'Consultations',
+    packageName: '5 Visits Pack',
+    copay: 5000,
+    remainingBefore: 3,
+    remainingAfter: 2,
+    totalVisits: 5,
+    requestedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+    status: 'pending',
+  },
+  {
+    id: 'apr-req-2',
+    memberId: 'mem-1',
+    memberName: 'Sarah Nakitto',
+    memberInitials: 'SN',
+    facilityId: 'fac-2',
+    facilityName: 'City Medical Centre',
+    packageId: 'pkg-1',
+    packageCategory: 'Consultations',
+    packageName: '5 Visits Pack',
+    copay: 5000,
+    remainingBefore: 3,
+    remainingAfter: 2,
+    totalVisits: 5,
+    requestedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+    status: 'pending',
+  },
 ];
 
 // Contact methods

@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useVisitsStore } from "@/stores/visitsStore";
+import { usePendingApprovalsStore } from "@/stores/pendingApprovalsStore";
 import { ChevronLeft, ChevronRight, Heart, Hospital, LogOut, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { transformVisitDataToWeeklyChart } from "@/lib/utils/visitChartData";
 import { UserHeader } from "@/components/common/UserHeader";
 import { PartnersEmptyState } from "@/components/common/PartnersEmptyState";
 import { WalletCard } from "@/components/cards/WalletCard";
+import { ApprovalBanner } from "@/components/cards/ApprovalBanner";
 import { DependentsCard } from "@/components/cards/DependentsCard";
 import { PackagesCard } from "@/components/cards/PackagesCard";
 import Link from "next/link";
@@ -37,6 +39,7 @@ export default function DashboardPage() {
   const { data: dashboardData, loading: dashboardLoading, error: dashboardError, refetch } = useDashboard(user?.id);
   const visits = useVisitsStore((state) => state.visits);
   const loadVisits = useVisitsStore((state) => state.loadVisits);
+  const { pendingRequests, getPendingCount, loadPendingRequests } = usePendingApprovalsStore();
   const [selectedDependent, setSelectedDependent] = useState<string>("All");
   const [weekOffset, setWeekOffset] = useState(0);
 
@@ -66,6 +69,11 @@ export default function DashboardPage() {
     if (!user?.id) return;
     loadVisits(user.id, { force: true });
   }, [loadVisits, user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    loadPendingRequests(user.id);
+  }, [loadPendingRequests, user?.id]);
 
   const dependents = dashboardData.familyMembers;
   const familyMembersCount = dashboardData.familyMembersCount;
@@ -180,6 +188,17 @@ export default function DashboardPage() {
     console.error("Dashboard error:", dashboardError);
   }
 
+  const pendingCount = getPendingCount();
+  const pendingList = pendingRequests.filter((request) => request.status === "pending");
+
+  const handleBannerTap = () => {
+    if (pendingCount === 1 && pendingList[0]) {
+      router.push(`/approvals/${pendingList[0].id}`);
+    } else {
+      router.push("/approvals");
+    }
+  };
+
   return (
     <>
       <UserHeader
@@ -191,6 +210,14 @@ export default function DashboardPage() {
       />
 
       <div className="space-y-8 px-4 pt-24 pb-8 sm:px-6">
+        {pendingCount > 0 && (
+          <ApprovalBanner
+            pendingCount={pendingCount}
+            singleRequest={pendingCount === 1 ? pendingList[0] : undefined}
+            onTap={handleBannerTap}
+          />
+        )}
+
         {/* Wallet */}
         {dashboardData.transactionCount === 0 ? (
           // Empty wallet state - no transactions yet

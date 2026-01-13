@@ -103,6 +103,67 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
     hideHeader: true,
     hideBottomNav: true,
   },
+  "/approvals/[id]/approving": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/success": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/decline": {
+    title: "Decline visit",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/declined": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/report": {
+    title: "Report activity",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/reported": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/expired": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/error": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/cancelled": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
   "/profile/help/faqs": {
     title: "FAQs",
     showBack: true,
@@ -174,6 +235,18 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
   },
   [ROUTES.NOTIFICATIONS]: {
     title: "Notifications",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/approvals": {
+    title: "Pending approvals",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]": {
+    title: "Approve visit",
     showBack: true,
     showNotifications: false,
     hideBottomNav: true,
@@ -354,6 +427,45 @@ export default function MainLayout({
         hideHeader: true,
         hideBottomNav: true,
       };
+    } else if (pathname?.startsWith('/approvals/')) {
+      if (
+        pathname?.includes("/approving") ||
+        pathname?.includes("/success") ||
+        pathname?.includes("/declined") ||
+        pathname?.includes("/reported") ||
+        pathname?.includes("/expired") ||
+        pathname?.includes("/error") ||
+        pathname?.includes("/cancelled")
+      ) {
+        currentConfig = {
+          title: "",
+          showBack: false,
+          showNotifications: false,
+          hideHeader: true,
+          hideBottomNav: true,
+        };
+      } else if (pathname?.includes("/decline")) {
+        currentConfig = {
+          title: "Decline visit",
+          showBack: true,
+          showNotifications: false,
+          hideBottomNav: true,
+        };
+      } else if (pathname?.includes("/report")) {
+        currentConfig = {
+          title: "Report activity",
+          showBack: true,
+          showNotifications: false,
+          hideBottomNav: true,
+        };
+      } else {
+        currentConfig = {
+          title: "Approve visit",
+          showBack: true,
+          showNotifications: false,
+          hideBottomNav: true,
+        };
+      }
     } else if (pathname?.startsWith('/book/')) {
       // Booking flow pages
       currentConfig = {
