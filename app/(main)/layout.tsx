@@ -103,6 +103,31 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
     hideHeader: true,
     hideBottomNav: true,
   },
+  "/profile/help/faqs": {
+    title: "FAQs",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/help/contact": {
+    title: "Contact Us",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/help/report-issue": {
+    title: "Report an Issue",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/help/report-issue/success": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
   "/profile/delete-account": {
     title: "Delete Account",
     showBack: true,

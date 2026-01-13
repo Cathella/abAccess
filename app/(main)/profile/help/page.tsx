@@ -20,14 +20,14 @@ interface SupportOption {
 
 interface PopularArticle {
   id: string;
-  title: string;
+  question: string;
 }
 
 const POPULAR_ARTICLES: PopularArticle[] = [
-  { id: "use-package", title: "How do I use my package at a facility?" },
-  { id: "copay", title: "What is co-pay and why do I pay it?" },
-  { id: "add-children", title: "How do I add children to my account?" },
-  { id: "refund", title: "Can I get a refund for unused visits?" },
+  { id: "faq-1", question: "How do I use my package at a facility?" },
+  { id: "faq-4", question: "What is co-pay and why do I pay it?" },
+  { id: "faq-7", question: "How do I add children to my account?" },
+  { id: "faq-6", question: "Can I get a refund for unused visits?" },
 ];
 
 const IconComponents = {
@@ -51,8 +51,8 @@ export default function HelpPage() {
     router.push("/profile/help/report-issue");
   };
 
-  const handleArticleTap = (articleId: string) => {
-    router.push(`/profile/help/article/${articleId}`);
+  const handleArticleTap = (faqId: string) => {
+    router.push(`/profile/help/faqs?expand=${faqId}`);
   };
 
   const supportOptions: SupportOption[] = [
@@ -156,7 +156,7 @@ export default function HelpPage() {
                     className="w-full flex items-center justify-between gap-2 py-2 text-left"
                   >
                     <span className="text-sm text-neutral-700">
-                      {article.title}
+                      {article.question}
                     </span>
                     <ChevronRight
                       size={16}
