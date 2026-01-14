@@ -16,14 +16,14 @@ export default function SecurityPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-200">
+    <div className="min-h-screen bg-white">
       <div className="px-4 py-6 space-y-4">
         {/* Title Section */}
         <div className="px-1">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-2">
+          <h2 className="text-xl font-bold text-neutral-900 mb-2">
             Keep your account safe
           </h2>
-          <p className="text-base text-neutral-600">
+          <p className="text-base text-neutral-700">
             Your PIN protects your wallet and approves transactions. Keep it
             private.
           </p>
@@ -34,16 +34,16 @@ export default function SecurityPage() {
           {/* Change PIN */}
           <button
             onClick={handleChangePin}
-            className="w-full flex items-center gap-3 py-4 border-b border-neutral-300 text-left"
+            className="w-full flex items-center gap-3 py-4 border-b border-neutral-400 text-left"
           >
-            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
-              <Grid3X3 size={20} className="text-primary-900" />
+            <div className="w-10 h-10 rounded-full bg-secondary-100 flex items-center justify-center shrink-0">
+              <Grid3X3 size={20} className="text-neutral-900" />
             </div>
             <div className="flex-1 min-w-0">
               <span className="block text-base font-medium text-neutral-900">
                 Change PIN
               </span>
-              <span className="block text-sm text-neutral-600 mt-0.5">
+              <span className="block text-sm text-neutral-700 mt-0.5">
                 Update your 4-digit security PIN
               </span>
             </div>
@@ -56,7 +56,7 @@ export default function SecurityPage() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="text-neutral-500 flex-shrink-0"
+              className="text-neutral-500 shrink-0"
             >
               <path d="m9 18 6-6-6-6" />
             </svg>
@@ -67,7 +67,7 @@ export default function SecurityPage() {
             onClick={handleForgotPin}
             className="w-full flex items-center gap-3 py-4 text-left"
           >
-            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
               <Key size={20} className="text-primary-900" />
             </div>
             <div className="flex-1 min-w-0">

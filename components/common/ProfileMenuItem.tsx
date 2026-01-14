@@ -27,7 +27,7 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({
   return (
     <button
       onClick={onPress}
-      className="w-full flex items-center gap-3 py-4 border-b border-neutral-300 last:border-b-0 text-left"
+      className="w-full flex items-center gap-3 py-4 border-b border-neutral-400 last:border-b-0 text-left"
     >
       {/* Icon */}
       <div className={iconColorClass}>
@@ -48,7 +48,7 @@ const ProfileMenuItem: React.FC<ProfileMenuItemProps> = ({
 
       {/* Chevron */}
       {showChevron && (
-        <ChevronRight size={20} className="text-neutral-500 flex-shrink-0" />
+        <ChevronRight size={20} className="text-neutral-700 shrink-0" />
       )}
     </button>
   );

@@ -18,7 +18,7 @@ export default function ToggleRow({
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-4 py-4 border-b border-neutral-300 last:border-b-0",
+        "flex items-start justify-between gap-4 py-4 border-b border-neutral-300 last:border-b-0",
         disabled && "opacity-50"
       )}
     >
@@ -42,7 +42,7 @@ export default function ToggleRow({
         aria-label={label}
         onClick={() => onToggle(!enabled)}
         className={cn(
-          "relative w-12 h-7 rounded-full transition-colors duration-200 flex-shrink-0",
+          "relative w-12 h-7 rounded-full transition-colors duration-200 flex-shrink-0 mt-1",
           enabled ? "bg-secondary-900" : "bg-neutral-500",
           disabled && "cursor-not-allowed"
         )}

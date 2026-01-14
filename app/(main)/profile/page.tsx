@@ -57,7 +57,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-200">
+    <div className="min-h-screen bg-white">
       <div className="px-4 py-6 space-y-4">
         {/* Profile Header Section */}
         <div className="bg-white rounded-2xl p-6">
@@ -78,7 +78,7 @@ export default function ProfilePage() {
             </h2>
 
             {/* Member ID */}
-            <p className="text-sm text-neutral-600">
+            <p className="text-sm text-neutral-700">
               ID: {user.memberId || "A-012345"}
             </p>
           </div>
@@ -86,7 +86,7 @@ export default function ProfilePage() {
 
         {/* Menu Sections */}
         {PROFILE_MENU_SECTIONS.map((section) => (
-          <div key={section.id} className="bg-white rounded-2xl px-4">
+          <div key={section.id} className="bg-white rounded-4xl px-6 py-2 border border-neutral-400">
             {section.items.map((item) => (
               <ProfileMenuItem
                 key={item.id}
@@ -106,7 +106,7 @@ export default function ProfilePage() {
         {/* Invite Friends Card */}
         <button
           onClick={handleInviteFriends}
-          className="w-full bg-white rounded-2xl p-4 flex items-center gap-3 text-left"
+          className="w-full bg-white rounded-4xl p-4 flex items-center gap-3 text-left border border-neutral-400"
         >
           {/* Mint Icon Circle */}
           <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
@@ -118,18 +118,18 @@ export default function ProfilePage() {
             <span className="block text-base font-medium text-neutral-900">
               Invite Friends
             </span>
-            <span className="block text-sm text-neutral-600">
+            <span className="block text-sm text-neutral-700">
               Earn free visits!
             </span>
           </div>
 
           {/* Chevron */}
-          <ChevronRight size={20} className="text-neutral-500 flex-shrink-0" />
+          <ChevronRight size={20} className="text-neutral-700 shrink-0" />
         </button>
 
         {/* Footer */}
         <div className="pt-4 pb-8">
-          <p className="text-sm text-neutral-500 text-center">
+          <p className="text-sm text-neutral-700 text-center">
             App Version {APP_VERSION} (Build {APP_BUILD})
           </p>
         </div>
