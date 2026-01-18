@@ -1,50 +1,49 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { usePendingApprovalsStore } from "@/stores/pendingApprovalsStore";
 import { Loader2 } from "lucide-react";
 
-interface ApprovingPageProps {
-  params: { id: string };
-}
-
-export default function ApprovingPage({ params }: ApprovingPageProps) {
+export default function ApprovingPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const approvalId = params.id;
   const { approveRequest } = usePendingApprovalsStore();
 
   useEffect(() => {
+    if (!approvalId) return;
     const processApproval = async () => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        await approveRequest(params.id);
-        router.replace(`/approvals/${params.id}/success`);
+        await approveRequest(approvalId);
+        router.replace(`/approvals/${approvalId}/success`);
       } catch (error) {
         if (error instanceof Error && error.message === "PACKAGE_EXPIRED") {
-          router.replace(`/approvals/${params.id}/cancelled`);
+          router.replace(`/approvals/${approvalId}/cancelled`);
           return;
         }
         if (error instanceof Error && error.message.startsWith("REQUEST_")) {
           const status = error.message.replace("REQUEST_", "").toLowerCase();
           if (status === "approved") {
-            router.replace(`/approvals/${params.id}/success`);
+            router.replace(`/approvals/${approvalId}/success`);
             return;
           }
           if (status === "declined") {
-            router.replace(`/approvals/${params.id}/declined`);
+            router.replace(`/approvals/${approvalId}/declined`);
             return;
           }
           if (status === "expired") {
-            router.replace(`/approvals/${params.id}/expired`);
+            router.replace(`/approvals/${approvalId}/expired`);
             return;
           }
         }
-        router.replace(`/approvals/${params.id}/error`);
+        router.replace(`/approvals/${approvalId}/error`);
       }
     };
 
     processApproval();
-  }, [params.id, approveRequest, router]);
+  }, [approvalId, approveRequest, router]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center">
