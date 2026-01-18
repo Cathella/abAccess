@@ -25,7 +25,7 @@ export default function PendingApprovalsPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="px-4 py-4">
-        <p className="text-gray-600 mb-4">
+        <p className="text-neutral-700 mb-4">
           Review and respond to these requests before they expire.
         </p>
 

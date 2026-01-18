@@ -160,7 +160,7 @@ export default function HelpPage() {
                     </span>
                     <ChevronRight
                       size={16}
-                      className="text-secondary-900 flex-shrink-0"
+                      className="text-secondary-900 shrink-0"
                     />
                   </button>
                 ))}

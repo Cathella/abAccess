@@ -66,7 +66,7 @@ export default function CategoryPackagesPage() {
         </div>
 
         {/* Info Card */}
-        <InfoCard title="What's co-pay?" variant="info">
+        <InfoCard title="What&apos;s co-pay?" variant="info">
           <p>
             A small fee you pay at the facility during each visit.
           </p>

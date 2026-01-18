@@ -134,7 +134,7 @@ export function AddDependentForm() {
           <TextInput
             id="name"
             label="Full name"
-            placeholder="Enter child's name"
+            placeholder="Enter child&apos;s name"
             value={formData.name}
             onChange={(value) => {
               setFormData({ ...formData, name: value });

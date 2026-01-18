@@ -37,7 +37,7 @@ export default function PurchaseFailedPage() {
     <ResultScreen
       emoji="😫"
       title="Payment failed"
-      subtitle="We couldn't process your payment. Please check your balance and try again."
+      subtitle="We couldn&apos;t process your payment. Please check your balance and try again."
       primaryAction={{
         label: "Try again",
         onPress: handleTryAgain,

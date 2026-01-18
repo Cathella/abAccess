@@ -90,7 +90,7 @@ export default function ApprovalPinPage({ params }: ApprovalPinPageProps) {
         </h2>
         <p className="text-gray-600 mb-8">
           Confirm your identity to approve{" "}
-          {request.memberName.split(" ")[0]}'s visit at{" "}
+          {request.memberName.split(" ")[0]}&apos;s visit at{" "}
           {request.facilityName}.
         </p>
 

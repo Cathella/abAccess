@@ -12,7 +12,7 @@ export function NotificationsEmptyState() {
       </h2>
 
       <p className="text-base text-gray-500 text-center mt-2 max-w-xs">
-        You'll see updates about your packages, bookings, and approvals here.
+        You&apos;ll see updates about your packages, bookings, and approvals here.
       </p>
     </div>
   );

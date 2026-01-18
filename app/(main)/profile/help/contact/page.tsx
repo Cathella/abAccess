@@ -15,12 +15,12 @@ export default function ContactUsPage() {
         );
         break;
       case "phone":
-        window.location.href = `tel:${value}`;
+        window.location.assign(`tel:${value}`);
         break;
       case "email":
-        window.location.href = `mailto:${value}?subject=${encodeURIComponent(
-          "Support Request"
-        )}`;
+        window.location.assign(
+          `mailto:${value}?subject=${encodeURIComponent("Support Request")}`
+        );
         break;
     }
   };
@@ -30,7 +30,7 @@ export default function ContactUsPage() {
       <div className="px-4 py-6">
         <h2 className="text-xl font-bold text-neutral-900 mb-2">Get in touch</h2>
         <p className="text-neutral-700 mb-6">
-          We're here to help. Choose how you'd like to reach us.
+          We&apos;re here to help. Choose how you&apos;d like to reach us.
         </p>
 
         <div className="space-y-4">

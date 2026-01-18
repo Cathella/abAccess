@@ -46,7 +46,7 @@ export default function ApprovalSuccessPage({ params }: ApprovalSuccessPageProps
 
       <h1 className="text-xl font-bold text-gray-900 mb-2">Visit approved!</h1>
       <p className="text-gray-500 text-center mb-6">
-        {request.memberName.split(" ")[0]}'s visit at {request.facilityName} has
+        {request.memberName.split(" ")[0]}&apos;s visit at {request.facilityName} has
         been approved.
       </p>
 

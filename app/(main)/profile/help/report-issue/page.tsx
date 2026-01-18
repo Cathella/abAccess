@@ -74,7 +74,7 @@ export default function ReportIssuePage() {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Tell us what happened..."
-              className="w-full h-32 px-4 py-3 border border-neutral-400 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-[#32C28A]"
+              className="w-full h-32 px-4 py-3 border border-neutral-400 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary-900"
             />
             {errors.description && (
               <p className="text-sm text-red-500 mt-1">{errors.description}</p>
