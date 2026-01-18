@@ -1,21 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { usePendingApprovalsStore } from "@/stores/pendingApprovalsStore";
 import { ApprovalDetailCard } from "@/components/cards/ApprovalDetailCard";
 import { useCountdown } from "@/hooks/useCountdown";
 import { useAuth } from "@/hooks/useAuth";
 
-interface ApprovalErrorPageProps {
-  params: { id: string };
-}
-
-export default function ApprovalErrorPage({ params }: ApprovalErrorPageProps) {
+export default function ApprovalErrorPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const approvalId = params.id;
   const { user } = useAuth();
   const { getRequestById, loadPendingRequests } = usePendingApprovalsStore();
-  const request = getRequestById(params.id);
+  const request = approvalId ? getRequestById(approvalId) : undefined;
 
   const { formattedTime, isExpired } = useCountdown(
     request?.expiresAt || new Date().toISOString()
@@ -28,12 +26,12 @@ export default function ApprovalErrorPage({ params }: ApprovalErrorPageProps) {
   }, [loadPendingRequests, request, user?.id]);
 
   useEffect(() => {
-    if (request && isExpired) {
-      router.replace(`/approvals/${params.id}/expired`);
+    if (request && isExpired && approvalId) {
+      router.replace(`/approvals/${approvalId}/expired`);
     }
-  }, [isExpired, params.id, request, router]);
+  }, [approvalId, isExpired, request, router]);
 
-  if (!request) {
+  if (!approvalId || !request) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <p className="text-gray-500">Request not found</p>
@@ -63,7 +61,7 @@ export default function ApprovalErrorPage({ params }: ApprovalErrorPageProps) {
 
       <div className="w-full max-w-sm space-y-3">
         <button
-          onClick={() => router.push(`/approvals/${params.id}`)}
+          onClick={() => router.push(`/approvals/${approvalId}`)}
           className="w-full py-3 text-center font-semibold text-gray-900"
           type="button"
         >
@@ -71,8 +69,8 @@ export default function ApprovalErrorPage({ params }: ApprovalErrorPageProps) {
         </button>
 
         <button
-          onClick={() => router.push(`/approvals/${params.id}/approving`)}
-          className="w-full py-3 bg-[#32C28A] border border-gray-900 rounded-xl font-semibold text-white"
+          onClick={() => router.push(`/approvals/${approvalId}/approving`)}
+          className="w-full py-3 bg-primary-900 border border-gray-900 rounded-xl font-semibold text-white"
           type="button"
         >
           Try again
