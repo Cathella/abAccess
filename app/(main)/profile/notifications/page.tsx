@@ -50,21 +50,21 @@ export default function NotificationsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-neutral-200">
+    <div className="min-h-screen bg-white">
       <div className="px-4 py-6 space-y-4">
         {/* Title Section */}
         <div className="px-1">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-2">
+          <h2 className="text-xl font-bold text-neutral-900 mb-2">
             Choose what notifications you receive
           </h2>
-          <p className="text-base text-neutral-600">
+          <p className="text-base text-neutral-700">
             Stay informed about your appointments, packages, and account
             activity.
           </p>
         </div>
 
         {/* Toggles Card */}
-        <div className="bg-white rounded-2xl px-4">
+        <div className="bg-white rounded-4xl px-4 border border-neutral-400">
           {NOTIFICATION_OPTIONS.map((option) => (
             <ToggleRow
               key={option.key}
@@ -82,7 +82,7 @@ export default function NotificationsPage() {
           style={{ backgroundColor: "#E3F1FC" }}
         >
           <div className="flex items-start gap-3">
-            <Info size={20} className="text-secondary-900 flex-shrink-0 mt-0.5" />
+            <Info size={24} className="text-neutral-900 shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-base font-medium text-neutral-900 mb-1">
                 Some notifications can&apos;t be turned off

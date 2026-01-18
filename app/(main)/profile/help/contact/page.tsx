@@ -28,8 +28,8 @@ export default function ContactUsPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="px-4 py-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Get in touch</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-xl font-bold text-neutral-900 mb-2">Get in touch</h2>
+        <p className="text-neutral-700 mb-6">
           We're here to help. Choose how you'd like to reach us.
         </p>
 

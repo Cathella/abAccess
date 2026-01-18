@@ -9,14 +9,14 @@ interface ContactMethodCardProps {
 }
 
 const iconBgColors: Record<ContactMethod["type"], string> = {
-  whatsapp: "bg-purple-100",
-  phone: "bg-pink-100",
-  email: "bg-pink-100",
+  whatsapp: "bg-secondary-100",
+  phone: "bg-secondary-100",
+  email: "bg-secondary-100",
 };
 
 export function ContactMethodCard({ method, onAction }: ContactMethodCardProps) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4">
+    <div className="bg-white rounded-4xl border border-neutral-400 p-4">
       <div className="flex items-center gap-3">
         <div
           className={cn(
@@ -27,8 +27,8 @@ export function ContactMethodCard({ method, onAction }: ContactMethodCardProps) 
           <span className="text-2xl">{method.icon}</span>
         </div>
         <div>
-          <h3 className="font-semibold text-gray-900">{method.title}</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className="text-base mb-1 font-semibold text-neutral-900">{method.title}</h3>
+          <p className="text-sm text-neutral-700">
             {method.type === "whatsapp"
               ? "Chat with us on WhatsApp"
               : method.value}
@@ -38,13 +38,13 @@ export function ContactMethodCard({ method, onAction }: ContactMethodCardProps) 
 
       <button
         onClick={onAction}
-        className="w-full mt-3 py-3 bg-[#E8F4F1] border border-gray-300 rounded-xl font-semibold text-gray-900"
+        className="w-full mt-3 h-10 bg-primary-100 border-[1.5px] border-neutral-900 rounded-xl font-semibold text-neutral-900"
         type="button"
       >
         {method.actionLabel}
       </button>
 
-      <p className="text-sm text-gray-400 text-center mt-2">
+      <p className="text-sm text-neutral-600 text-center mt-2">
         {method.responseTime}
       </p>
     </div>

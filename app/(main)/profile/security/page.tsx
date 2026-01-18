@@ -30,13 +30,13 @@ export default function SecurityPage() {
         </div>
 
         {/* Options Card */}
-        <div className="bg-white rounded-2xl px-4">
+        <div className="bg-white rounded-4xl px-4 border border-neutral-400">
           {/* Change PIN */}
           <button
             onClick={handleChangePin}
             className="w-full flex items-center gap-3 py-4 border-b border-neutral-400 text-left"
           >
-            <div className="w-10 h-10 rounded-full bg-secondary-100 flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 rounded-full bg-secondary-100 flex items-center justify-center shrink-0">
               <Grid3X3 size={20} className="text-neutral-900" />
             </div>
             <div className="flex-1 min-w-0">
@@ -56,7 +56,7 @@ export default function SecurityPage() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="text-neutral-500 shrink-0"
+              className="text-neutral-700 shrink-0"
             >
               <path d="m9 18 6-6-6-6" />
             </svg>
@@ -67,14 +67,14 @@ export default function SecurityPage() {
             onClick={handleForgotPin}
             className="w-full flex items-center gap-3 py-4 text-left"
           >
-            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
-              <Key size={20} className="text-primary-900" />
+            <div className="w-12 h-12 rounded-full bg-secondary-100 flex items-center justify-center shrink-0">
+              <Key size={20} className="text-neutral-900" />
             </div>
             <div className="flex-1 min-w-0">
               <span className="block text-base font-medium text-neutral-900">
                 Forgot PIN?
               </span>
-              <span className="block text-sm text-neutral-600 mt-0.5">
+              <span className="block text-sm text-neutral-700 mt-0.5">
                 Reset your PIN using your phone
               </span>
             </div>
@@ -87,7 +87,7 @@ export default function SecurityPage() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="text-neutral-500 flex-shrink-0"
+              className="text-neutral-700 shrink-0"
             >
               <path d="m9 18 6-6-6-6" />
             </svg>
@@ -96,16 +96,16 @@ export default function SecurityPage() {
 
         {/* Security Tips Card */}
         <div
-          className="rounded-2xl p-4"
+          className="rounded-4xl p-4"
           style={{ backgroundColor: "#E3F1FC" }}
         >
           <div className="flex items-start gap-3">
-            <Info size={20} className="text-secondary-900 flex-shrink-0 mt-0.5" />
+            <Info size={24} className="text-neutral-900 shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-base font-medium text-neutral-900 mb-3">
                 Security tips
               </p>
-              <ul className="space-y-2 text-sm text-neutral-700">
+              <ul className="space-y-2 text-sm text-neutral-900">
                 <li className="flex items-start gap-2">
                   <span className="text-neutral-700 mt-1">•</span>
                   <span>Never share your PIN with anyone</span>

@@ -47,16 +47,16 @@ export default function ReportIssuePage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="flex-1 px-4 py-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-xl font-bold text-neutral-900 mb-2">
           What went wrong?
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-neutral-700 mb-6">
           Tell us what happened and we&apos;ll look into it.
         </p>
 
         <div className="space-y-6">
           <div>
-            <label className="block font-medium text-gray-900 mb-2">
+            <label className="block font-medium text-neutral-900 mb-2">
               Issue type
             </label>
             <IssueTypeSelect
@@ -67,14 +67,14 @@ export default function ReportIssuePage() {
           </div>
 
           <div>
-            <label className="block font-medium text-gray-900 mb-2">
+            <label className="block font-medium text-neutral-900 mb-2">
               Describe the issue
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Tell us what happened..."
-              className="w-full h-32 px-4 py-3 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-[#32C28A]"
+              className="w-full h-32 px-4 py-3 border border-neutral-400 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-[#32C28A]"
             />
             {errors.description && (
               <p className="text-sm text-red-500 mt-1">{errors.description}</p>
@@ -87,7 +87,7 @@ export default function ReportIssuePage() {
         <button
           onClick={handleSubmit}
           disabled={!isValid || isSubmitting}
-          className="w-full py-3 bg-[#FEE2E2] border border-gray-900 rounded-xl font-semibold text-gray-900 disabled:opacity-50"
+          className="w-full h-12 bg-[#FEE2E2] border-[1.5px] border-neutral-900 rounded-xl font-semibold text-neutral-900 disabled:opacity-50"
         >
           {isSubmitting ? "Submitting..." : "Submit report"}
         </button>

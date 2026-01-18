@@ -59,7 +59,7 @@ export default function FAQsPage() {
             placeholder="Search questions..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-3 pr-10 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#32C28A]"
+            className="w-full px-4 h-12 pr-10 border border-neutral-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-900"
           />
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         </div>
@@ -68,7 +68,7 @@ export default function FAQsPage() {
           faqs.length > 0 ? (
             <div
               key={category}
-              className="bg-white rounded-2xl border border-gray-100"
+              className="bg-white rounded-4xl border border-neutral-400 px-4 py-2"
             >
               {faqs.map((faq) => (
                 <FAQAccordion
@@ -85,7 +85,7 @@ export default function FAQsPage() {
 
         {filteredFAQs.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">
+            <p className="text-neutral-700">
               No questions found for "{searchQuery}"
             </p>
           </div>

@@ -10,7 +10,7 @@ export function NotificationBell({ unreadCount }: NotificationBellProps) {
   return (
     <Link href="/notifications" className="relative">
       <div className="w-12 h-12 bg-[#E3F1FC] rounded-full flex items-center justify-center">
-        <Bell className="w-6 h-6 text-amber-500 fill-amber-500" />
+        <Bell className="w-6 h-6 text-neutral-900" />
       </div>
 
       {unreadCount > 0 && (

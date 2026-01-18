@@ -26,7 +26,7 @@ export function FAQAccordion({
   };
 
   return (
-    <div className="border-b border-gray-100">
+    <div className="border-b border-neutral-400">
       <button
         onClick={onToggle}
         className={cn("w-full flex items-center justify-between py-4")}
@@ -35,23 +35,23 @@ export function FAQAccordion({
           {faq.question}
         </span>
         {isExpanded ? (
-          <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
+          <ChevronDown className="w-5 h-5 text-neutral-600 shrink-0" />
         ) : (
-          <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+          <ChevronRight className="w-5 h-5 text-neutral-700 shrink-0" />
         )}
       </button>
 
       {isExpanded && (
         <div className="pb-4">
-          <div className="bg-[#E3F1FC] rounded-xl p-4">
-            <p className="text-sm text-gray-700 whitespace-pre-line">
+          <div className="bg-secondary-100 rounded-xl p-4">
+            <p className="text-sm text-neutral-900 whitespace-pre-line">
               {faq.answer}
             </p>
           </div>
 
           {!feedbackGiven && (
             <div className="flex items-center justify-center gap-4 mt-4">
-              <span className="text-sm text-gray-500">Was this helpful?</span>
+              <span className="text-base text-neutral-600">Was this helpful?</span>
               <button
                 onClick={() => handleFeedback(true)}
                 className="text-2xl hover:scale-110 transition-transform"

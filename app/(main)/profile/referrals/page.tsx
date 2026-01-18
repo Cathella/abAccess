@@ -42,7 +42,7 @@ export default function InviteFriendsPage() {
           <h2 className="text-xl font-bold text-center mb-2">Earn free visits!</h2>
 
           {/* Subtitle */}
-          <p className="text-gray-500 text-center">
+          <p className="text-neutral-700 text-center">
             Invite friends to AbaAccess. When they join and buy their first
             package, you both get rewarded.
           </p>
@@ -64,7 +64,7 @@ export default function InviteFriendsPage() {
 
           <button
             onClick={handleShare}
-            className="w-full py-3 bg-[#32C28A] text-white font-semibold rounded-xl"
+            className="w-full h-12 bg-primary-900 text-neutral-900 border-[1.5px] border-neutral-900 font-semibold rounded-xl"
           >
             Share invite link
           </button>

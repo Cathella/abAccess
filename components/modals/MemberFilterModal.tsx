@@ -84,9 +84,9 @@ export function MemberFilterModal({
                 >
                   {/* Radio circle */}
                   <div
-                    className={`w-5 h-5 rounded-full border-2 flex-shrink-0 transition-colors ${
+                    className={`w-5 h-5 rounded-full border-2 shrink-0 transition-colors ${
                       isSelected
-                        ? 'bg-[#3A8DFF] border-[#3A8DFF]'
+                        ? 'bg-secondary-900 border-secondary-900'
                         : 'border-gray-300'
                     }`}
                   >

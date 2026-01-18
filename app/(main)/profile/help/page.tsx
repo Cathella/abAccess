@@ -59,7 +59,7 @@ export default function HelpPage() {
     {
       id: "faqs",
       icon: "HelpCircle",
-      iconBg: "bg-primary-100",
+      iconBg: "bg-secondary-100",
       title: "FAQs",
       subtitle: "Find answers to common questions",
       action: handleFAQs,
@@ -67,7 +67,7 @@ export default function HelpPage() {
     {
       id: "contact",
       icon: "MessageCircle",
-      iconBg: "bg-primary-100",
+      iconBg: "bg-secondary-100",
       title: "Contact Us",
       subtitle: "Get in touch with our team",
       action: handleContactUs,
@@ -75,7 +75,7 @@ export default function HelpPage() {
     {
       id: "report",
       icon: "AlertTriangle",
-      iconBg: "bg-warning-100",
+      iconBg: "bg-secondary-100",
       title: "Report an Issue",
       subtitle: "Let us know what's not working",
       action: handleReportIssue,
@@ -83,36 +83,36 @@ export default function HelpPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-200">
+    <div className="min-h-screen bg-white">
       <div className="px-4 py-6 space-y-4">
         {/* Title Section */}
         <div className="px-1">
-          <h2 className="text-2xl font-bold text-neutral-900">
+          <h2 className="text-xl font-bold text-neutral-900">
             How can we help?
           </h2>
         </div>
 
         {/* Support Options Card */}
-        <div className="bg-white rounded-2xl px-4">
+        <div className="rounded-4xl px-4 border border-neutral-400">
           {supportOptions.map((option, index) => {
             const IconComponent = IconComponents[option.icon];
             const isLast = index === supportOptions.length - 1;
             const iconColorClass =
               option.icon === "AlertTriangle"
-                ? "text-warning-900"
-                : "text-primary-900";
+                ? "text-neutral-900"
+                : "text-neutral-900";
 
             return (
               <button
                 key={option.id}
                 onClick={option.action}
                 className={`w-full flex items-center gap-3 py-4 text-left ${
-                  !isLast ? "border-b border-neutral-300" : ""
+                  !isLast ? "border-b border-neutral-400" : ""
                 }`}
               >
                 {/* Icon Circle */}
                 <div
-                  className={`w-10 h-10 rounded-full ${option.iconBg} flex items-center justify-center flex-shrink-0`}
+                  className={`w-12 h-12 rounded-full ${option.iconBg} flex items-center justify-center shrink-0`}
                 >
                   <IconComponent size={20} className={iconColorClass} />
                 </div>
@@ -122,7 +122,7 @@ export default function HelpPage() {
                   <span className="block text-base font-medium text-neutral-900">
                     {option.title}
                   </span>
-                  <span className="block text-sm text-neutral-600 mt-0.5">
+                  <span className="block text-sm text-neutral-700 mt-0.5">
                     {option.subtitle}
                   </span>
                 </div>
@@ -130,7 +130,7 @@ export default function HelpPage() {
                 {/* Chevron */}
                 <ChevronRight
                   size={20}
-                  className="text-neutral-500 flex-shrink-0"
+                  className="text-neutral-700 shrink-0"
                 />
               </button>
             );
@@ -139,11 +139,11 @@ export default function HelpPage() {
 
         {/* Popular Articles Card */}
         <div
-          className="rounded-2xl p-4"
+          className="rounded-4xl p-4"
           style={{ backgroundColor: "#E3F1FC" }}
         >
           <div className="flex items-start gap-3">
-            <Info size={20} className="text-secondary-900 flex-shrink-0 mt-0.5" />
+            <Info size={24} className="text-neutral-900 shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-base font-medium text-neutral-900 mb-3">
                 Popular articles
