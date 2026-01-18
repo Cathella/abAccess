@@ -29,7 +29,7 @@ export default function ReportIssueSuccessPage() {
       <div className="w-full max-w-sm mt-8">
         <button
           onClick={handleDone}
-          className="w-full py-3 bg-[#32C28A] border border-gray-900 rounded-xl font-semibold text-white"
+          className="w-full py-3 bg-primary-900 border border-gray-900 rounded-xl font-semibold text-white"
           type="button"
         >
           Done

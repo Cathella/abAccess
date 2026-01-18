@@ -4,8 +4,7 @@ import { useApprovalsStore } from '@/stores/approvalsStore';
 import { ApprovalTabFilter } from '@/components/common/ApprovalTabFilter';
 import { ApprovalCard } from '@/components/cards/ApprovalCard';
 import { ApprovalsEmptyState } from '@/components/common/ApprovalsEmptyState';
-import { ChevronLeft, Calendar } from 'lucide-react';
-import Link from 'next/link';
+import { Calendar } from 'lucide-react';
 
 export default function ApprovalHistoryPage() {
   const { activeTab, setActiveTab, getApprovalsByMonth } = useApprovalsStore();
@@ -15,14 +14,6 @@ export default function ApprovalHistoryPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="flex items-center gap-3 px-4 py-3 border-b">
-        <Link href="/profile">
-          <ChevronLeft className="w-6 h-6" />
-        </Link>
-        <h1 className="font-semibold">Approval History</h1>
-      </header>
-
       {/* Tab Filter */}
       <div className="px-4 py-4">
         <ApprovalTabFilter

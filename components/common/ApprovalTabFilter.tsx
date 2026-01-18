@@ -33,7 +33,7 @@ const TAB_CONFIGS: TabConfig[] = [
 
 export function ApprovalTabFilter({ activeTab, onTabChange }: ApprovalTabFilterProps) {
   return (
-    <div className="flex gap-1 bg-neutral-300 rounded-xl p-1">
+    <div className="flex gap-1 bg-neutral-200 rounded-xl p-1">
       {TAB_CONFIGS.map((tab) => {
         const isActive = activeTab === tab.key;
 

@@ -84,7 +84,7 @@ export default function DeleteAccountPage() {
             <ul className="space-y-2.5">
               {DELETED_ITEMS.map((item, index) => (
                 <li key={index} className="flex items-start gap-2">
-                  <X size={18} className="text-error-900 flex-shrink-0 mt-0.5" />
+                  <X size={18} className="text-error-900 shrink-0 mt-0.5" />
                   <span className="text-sm text-neutral-700">{item}</span>
                 </li>
               ))}
@@ -98,7 +98,7 @@ export default function DeleteAccountPage() {
           style={{ backgroundColor: "#E3F1FC" }}
         >
           <div className="flex items-start gap-3">
-            <Info size={20} className="text-secondary-900 flex-shrink-0 mt-0.5" />
+            <Info size={20} className="text-secondary-900 shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-base font-semibold text-neutral-900 mb-1">
                 Download your data first?

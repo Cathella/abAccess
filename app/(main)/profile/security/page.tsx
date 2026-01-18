@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { Grid3X3, Key, Info } from "lucide-react";
-import ProfileMenuItem from "@/components/common/ProfileMenuItem";
 
 export default function SecurityPage() {
   const router = useRouter();

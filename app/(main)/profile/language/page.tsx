@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Check, Info, ChevronRight } from "lucide-react";
 import { useSettingsStore } from "@/stores/settingsStore";
 import { LANGUAGE_OPTIONS } from "@/lib/constants";
@@ -8,7 +7,6 @@ import { cn } from "@/lib/utils";
 import type { LanguageCode } from "@/types";
 
 export default function LanguagePage() {
-  const router = useRouter();
   const language = useSettingsStore((state) => state.language);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
 

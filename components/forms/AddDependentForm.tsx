@@ -113,7 +113,7 @@ export function AddDependentForm() {
         // Show error toast
         alert(result.error || "Failed to add dependent");
       }
-    } catch (error) {
+    } catch {
       alert("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useVisitsStore } from "@/stores/visitsStore";
 import { useBookingStore } from "@/stores/bookingStore";

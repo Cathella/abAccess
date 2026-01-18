@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Info } from "lucide-react";
 import { useSettingsStore } from "@/stores/settingsStore";
 import ToggleRow from "@/components/common/ToggleRow";
@@ -41,7 +40,6 @@ const NOTIFICATION_OPTIONS: NotificationOption[] = [
 ];
 
 export default function NotificationsPage() {
-  const router = useRouter();
   const notificationPreferences = useSettingsStore(
     (state) => state.notificationPreferences
   );

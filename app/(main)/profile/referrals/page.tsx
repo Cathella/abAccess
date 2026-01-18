@@ -18,7 +18,7 @@ export default function InviteFriendsPage() {
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-      } catch (err) {
+      } catch {
         // User cancelled or error
         console.log('Share cancelled');
       }

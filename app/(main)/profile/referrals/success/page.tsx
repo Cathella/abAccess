@@ -49,7 +49,7 @@ export default function ReferralSuccessPage() {
 
       {/* Claim Card */}
       <div className="w-full max-w-sm bg-white rounded-2xl border border-gray-100 p-4 mb-8">
-        <h2 className="text-center font-bold text-[#32C28A] mb-1">
+        <h2 className="text-center font-bold text-primary-900 mb-1">
           You earned +1 bonus visit!
         </h2>
         <p className="text-center text-gray-500 text-sm mb-4">
@@ -67,12 +67,12 @@ export default function ReferralSuccessPage() {
                 className={cn(
                   'w-5 h-5 rounded-full border-2 flex items-center justify-center',
                   selectedPackageId === pkg.id
-                    ? 'border-[#3A8DFF]'
+                    ? 'border-secondary-900'
                     : 'border-gray-300'
                 )}
               >
                 {selectedPackageId === pkg.id && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#3A8DFF]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-secondary-900" />
                 )}
               </div>
               <span className="text-gray-900">
@@ -95,7 +95,7 @@ export default function ReferralSuccessPage() {
         <button
           onClick={handleAddBonus}
           disabled={!selectedPackageId}
-          className="w-full py-3 bg-[#32C28A] text-white font-semibold rounded-xl disabled:opacity-50"
+          className="w-full py-3 bg-primary-900 text-white font-semibold rounded-xl disabled:opacity-50"
         >
           Add bonus visit
         </button>

@@ -49,7 +49,7 @@ export function PendingRequestCard({ request, onTap }: PendingRequestCardProps) 
         >
           {isExpired ? "Expired" : `Expires in ${formattedTime}`}
         </span>
-        <ChevronRight className="w-5 h-5 text-gray-400 flex-shrink-0" />
+        <ChevronRight className="w-5 h-5 text-gray-400 shrink-0" />
       </div>
     </button>
   );

@@ -109,7 +109,7 @@ export default function ProfilePage() {
           className="w-full bg-white rounded-4xl p-4 flex items-center gap-3 text-left border border-neutral-400"
         >
           {/* Mint Icon Circle */}
-          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
             <Gift size={20} className="text-primary-900" />
           </div>
 

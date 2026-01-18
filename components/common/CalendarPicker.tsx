@@ -12,8 +12,6 @@ import {
   addMonths,
   subMonths,
   isSameDay,
-  isBefore,
-  isAfter,
   parseISO,
   isToday,
   getDay,
@@ -35,9 +33,15 @@ export function CalendarPicker({
   maxDate,
   disableSundays = false,
 }: CalendarPickerProps) {
-  const today = new Date();
-  const defaultMinDate = minDate ? parseISO(minDate) : today;
-  const defaultMaxDate = maxDate ? parseISO(maxDate) : addDays(today, 30);
+  const today = useMemo(() => new Date(), []);
+  const defaultMinDateTs = useMemo(
+    () => (minDate ? parseISO(minDate).getTime() : today.getTime()),
+    [minDate, today]
+  );
+  const defaultMaxDateTs = useMemo(
+    () => (maxDate ? parseISO(maxDate).getTime() : addDays(today, 30).getTime()),
+    [maxDate, today]
+  );
 
   const [currentMonth, setCurrentMonth] = useState(
     selectedDate ? parseISO(selectedDate) : today
@@ -58,11 +62,12 @@ export function CalendarPicker({
 
   // Check if date is selectable
   const isDateSelectable = (date: Date): boolean => {
+    const dateTs = date.getTime();
     // Check if date is before min date
-    if (isBefore(date, defaultMinDate)) return false;
+    if (dateTs < defaultMinDateTs) return false;
 
     // Check if date is after max date
-    if (isAfter(date, defaultMaxDate)) return false;
+    if (dateTs > defaultMaxDateTs) return false;
 
     // Check if Sunday and Sundays are disabled
     if (disableSundays && getDay(date) === 0) return false;
@@ -103,14 +108,14 @@ export function CalendarPicker({
   const canGoPrevious = useMemo(() => {
     const prevMonth = subMonths(currentMonth, 1);
     const prevMonthEnd = endOfMonth(prevMonth);
-    return !isBefore(prevMonthEnd, defaultMinDate);
-  }, [currentMonth, defaultMinDate]);
+    return prevMonthEnd.getTime() >= defaultMinDateTs;
+  }, [currentMonth, defaultMinDateTs]);
 
   const canGoNext = useMemo(() => {
     const nextMonth = addMonths(currentMonth, 1);
     const nextMonthStart = startOfMonth(nextMonth);
-    return !isAfter(nextMonthStart, defaultMaxDate);
-  }, [currentMonth, defaultMaxDate]);
+    return nextMonthStart.getTime() <= defaultMaxDateTs;
+  }, [currentMonth, defaultMaxDateTs]);
 
   // Group days into weeks (7 days per row)
   const weeks: Date[][] = [];

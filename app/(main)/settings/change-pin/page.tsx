@@ -37,7 +37,7 @@ export default function ChangePinPage() {
         setError('Incorrect PIN');
         setCurrentPin('');
       }
-    } catch (err) {
+    } catch {
       setError('Network error');
       setCurrentPin('');
     } finally {
@@ -77,7 +77,7 @@ export default function ChangePinPage() {
         setNewPin('');
         setConfirmPin('');
       }
-    } catch (err) {
+    } catch {
       setError('Network error');
       setStep('current');
       setCurrentPin('');

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { FAQ_DATA } from "@/lib/constants";
 import { FAQAccordion } from "@/components/common/FAQAccordion";
@@ -11,12 +11,6 @@ export default function FAQsPage() {
   const expandParam = searchParams.get("expand");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(expandParam);
-
-  useEffect(() => {
-    if (expandParam) {
-      setExpandedId(expandParam);
-    }
-  }, [expandParam]);
 
   const filteredFAQs = useMemo(() => {
     if (!searchQuery.trim()) return FAQ_DATA;
@@ -86,7 +80,7 @@ export default function FAQsPage() {
         {filteredFAQs.length === 0 && (
           <div className="text-center py-12">
             <p className="text-neutral-700">
-              No questions found for "{searchQuery}"
+              No questions found for &quot;{searchQuery}&quot;
             </p>
           </div>
         )}

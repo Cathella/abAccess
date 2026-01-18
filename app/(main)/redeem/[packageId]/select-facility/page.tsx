@@ -153,7 +153,12 @@ export default function SelectFacilityPage() {
 
               <div className="mt-4 flex flex-wrap gap-2">
                 <span className="rounded-full bg-warning-100 px-3 py-1 text-sm font-medium text-neutral-900">
-                  {getTodayCloseLabel(facility.operating_hours as any)}
+                  {getTodayCloseLabel(
+                    facility.operating_hours as Record<
+                      string,
+                      { open?: string; close?: string }
+                    >
+                  )}
                 </span>
                 <span className="rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-neutral-900">
                   {facility.accepts_booking ? "Accepts bookings" : "Walk-in only"}

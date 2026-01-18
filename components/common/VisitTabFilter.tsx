@@ -41,7 +41,6 @@ export function VisitTabFilter({ activeTab, onTabChange, counts }: VisitTabFilte
     <div className="flex gap-1 bg-neutral-200 rounded-xl p-1">
       {TAB_CONFIGS.map((tab) => {
         const isActive = activeTab === tab.value;
-        const count = counts?.[tab.value];
 
         return (
           <button

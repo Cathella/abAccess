@@ -3,12 +3,13 @@ import Link from 'next/link';
 
 interface NotificationBellProps {
   unreadCount: number;
+  onClick?: () => void;
 }
 
-export function NotificationBell({ unreadCount }: NotificationBellProps) {
+export function NotificationBell({ unreadCount, onClick }: NotificationBellProps) {
   const displayCount = unreadCount > 9 ? '9+' : unreadCount.toString();
   return (
-    <Link href="/notifications" className="relative">
+    <Link href="/notifications" className="relative" onClick={onClick}>
       <div className="w-12 h-12 bg-[#E3F1FC] rounded-full flex items-center justify-center">
         <Bell className="w-6 h-6 text-neutral-900" />
       </div>

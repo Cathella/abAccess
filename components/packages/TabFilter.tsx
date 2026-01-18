@@ -5,14 +5,9 @@ import { PackageStatusType } from "@/types";
 interface TabFilterProps {
   activeTab: PackageStatusType;
   onTabChange: (tab: PackageStatusType) => void;
-  counts?: {
-    active: number;
-    completed: number;
-    expired: number;
-  };
 }
 
-export function TabFilter({ activeTab, onTabChange, counts }: TabFilterProps) {
+export function TabFilter({ activeTab, onTabChange }: TabFilterProps) {
   const tabs: { value: PackageStatusType; label: string }[] = [
     { value: "active", label: "Active" },
     { value: "completed", label: "Used" },

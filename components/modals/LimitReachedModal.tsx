@@ -22,7 +22,7 @@ export function LimitReachedModal({ isOpen, onClose }: LimitReachedModalProps) {
         <DialogOverlay className="bg-black/50" />
 
         {/* Modal Content */}
-        <DialogContent className="max-w-[400px] rounded-2xl border-0 p-0 gap-0 [&>button]:hidden">
+        <DialogContent className="max-w-100 rounded-2xl border-0 p-0 gap-0 [&>button]:hidden">
           <div className="flex flex-col items-center px-6 py-8 text-center">
             {/* Emoji */}
             <div className="mb-6 text-[64px] leading-none" role="img" aria-label="rolling eyes">

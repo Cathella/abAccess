@@ -75,12 +75,12 @@ export function IssueTypeSelect({
                 className={cn(
                   "w-5 h-5 rounded-full border-2 flex items-center justify-center",
                   value === option.value
-                    ? "border-[#3A8DFF]"
+                    ? "border-secondary-900"
                     : "border-gray-300"
                 )}
               >
                 {value === option.value && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#3A8DFF]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-secondary-900" />
                 )}
               </div>
               <span className="text-base text-gray-900">{option.label}</span>

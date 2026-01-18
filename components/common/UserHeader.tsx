@@ -54,7 +54,10 @@ export function UserHeader({
               )}
             </div>
             <div className="flex items-center gap-2">
-              <NotificationBell unreadCount={unreadCount} />
+              <NotificationBell
+                unreadCount={unreadCount}
+                onClick={onNotificationsClick}
+              />
               <button
                 className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary-100"
                 aria-label="Settings"

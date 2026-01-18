@@ -29,7 +29,7 @@ export function ApprovalCard({ approval, onPress }: ApprovalCardProps) {
   return (
     <Component
       onClick={onPress}
-      className={`w-full rounded-2xl border border-neutral-400 bg-white p-4 ${
+      className={`w-full rounded-4xl border border-neutral-400 bg-white p-4 ${
         onPress ? "text-left transition-colors hover:bg-neutral-50 cursor-pointer" : ""
       }`}
     >
@@ -37,7 +37,7 @@ export function ApprovalCard({ approval, onPress }: ApprovalCardProps) {
       <div className="flex items-center gap-3">
         {/* Avatar */}
         <div
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
           style={{ backgroundColor: '#E3F1FC' }}
         >
           <span className="text-sm font-bold text-neutral-900">
@@ -82,7 +82,7 @@ export function ApprovalCard({ approval, onPress }: ApprovalCardProps) {
         </div>
 
         {onPress && (
-          <ChevronRight className="h-5 w-5 shrink-0 text-neutral-700" />
+          <ChevronRight className="h-5 w-5 shrink-0 text-neutral-600" />
         )}
       </div>
     </Component>
