@@ -1,47 +1,65 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { usePendingApprovalsStore } from "@/stores/pendingApprovalsStore";
 import { DECLINE_REASON_OPTIONS } from "@/lib/constants";
 import { DeclineReason } from "@/types";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 
-interface DeclineReasonPageProps {
-  params: { id: string };
-}
-
-export default function DeclineReasonPage({ params }: DeclineReasonPageProps) {
+export default function DeclineReasonPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const approvalId = params.id;
   const { user } = useAuth();
   const { declineRequest, getRequestById, loadPendingRequests, isLoading } =
     usePendingApprovalsStore();
-  const request = getRequestById(params.id);
+  const request = approvalId ? getRequestById(approvalId) : undefined;
 
   const [selectedReason, setSelectedReason] = useState<DeclineReason | null>(null);
   const [otherReason, setOtherReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleDecline = async () => {
-    if (!selectedReason) return;
+    if (!selectedReason || !approvalId) return;
 
     setIsSubmitting(true);
     try {
       await declineRequest(
-        params.id,
+        approvalId,
         selectedReason,
         selectedReason === "other" ? otherReason : undefined
       );
-      router.replace(`/approvals/${params.id}/declined`);
+      router.replace(`/approvals/${approvalId}/declined`);
     } catch {
-      router.replace(`/approvals/${params.id}/error`);
+      router.replace(`/approvals/${approvalId}/error`);
     }
   };
 
   const handleReport = () => {
-    router.push(`/approvals/${params.id}/report`);
+    if (!approvalId) return;
+    router.push(`/approvals/${approvalId}/report`);
   };
+
+  useEffect(() => {
+    if (!request && user?.id) {
+      loadPendingRequests(user.id);
+    }
+  }, [loadPendingRequests, request, user?.id]);
+
+  useEffect(() => {
+    if (!request || !approvalId) return;
+    if (request.status === "approved") {
+      router.replace(`/approvals/${approvalId}/success`);
+    } else if (request.status === "declined") {
+      router.replace(`/approvals/${approvalId}/declined`);
+    } else if (request.status === "expired") {
+      router.replace(`/approvals/${approvalId}/expired`);
+    } else if (request.status === "cancelled") {
+      router.replace(`/approvals/${approvalId}/cancelled`);
+    }
+  }, [approvalId, request, router]);
 
   if (!request && isLoading) {
     return (
@@ -121,21 +139,3 @@ export default function DeclineReasonPage({ params }: DeclineReasonPageProps) {
     </div>
   );
 }
-  useEffect(() => {
-    if (!request && user?.id) {
-      loadPendingRequests(user.id);
-    }
-  }, [loadPendingRequests, request, user?.id]);
-
-  useEffect(() => {
-    if (!request) return;
-    if (request.status === "approved") {
-      router.replace(`/approvals/${params.id}/success`);
-    } else if (request.status === "declined") {
-      router.replace(`/approvals/${params.id}/declined`);
-    } else if (request.status === "expired") {
-      router.replace(`/approvals/${params.id}/expired`);
-    } else if (request.status === "cancelled") {
-      router.replace(`/approvals/${params.id}/cancelled`);
-    }
-  }, [params.id, request, router]);
