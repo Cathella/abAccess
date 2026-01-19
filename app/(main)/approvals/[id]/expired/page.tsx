@@ -1,21 +1,19 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { usePendingApprovalsStore } from "@/stores/pendingApprovalsStore";
 import { ApprovalDetailCard } from "@/components/cards/ApprovalDetailCard";
 import { useAuth } from "@/hooks/useAuth";
 
-interface ApprovalExpiredPageProps {
-  params: { id: string };
-}
-
-export default function ApprovalExpiredPage({ params }: ApprovalExpiredPageProps) {
+export default function ApprovalExpiredPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const approvalId = params.id;
   const { user } = useAuth();
   const { getRequestById, removeRequest, loadPendingRequests } =
     usePendingApprovalsStore();
-  const request = getRequestById(params.id);
+  const request = approvalId ? getRequestById(approvalId) : undefined;
 
   useEffect(() => {
     if (!request && user?.id) {
@@ -23,7 +21,7 @@ export default function ApprovalExpiredPage({ params }: ApprovalExpiredPageProps
     }
   }, [loadPendingRequests, request, user?.id]);
 
-  if (!request) {
+  if (!approvalId || !request) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <p className="text-gray-500">Request not found</p>
@@ -32,7 +30,7 @@ export default function ApprovalExpiredPage({ params }: ApprovalExpiredPageProps
   }
 
   const handleDone = () => {
-    removeRequest(params.id);
+    removeRequest(approvalId);
     router.push("/dashboard");
   };
 
@@ -59,7 +57,7 @@ export default function ApprovalExpiredPage({ params }: ApprovalExpiredPageProps
       <div className="w-full max-w-sm">
         <button
           onClick={handleDone}
-          className="w-full py-3 bg-[#32C28A] border border-gray-900 rounded-xl font-semibold text-white"
+          className="w-full py-3 bg-primary-900 border border-gray-900 rounded-xl font-semibold text-white"
           type="button"
         >
           Done
