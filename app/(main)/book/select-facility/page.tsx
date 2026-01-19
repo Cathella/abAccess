@@ -57,7 +57,7 @@ export default function SelectFacilityPage() {
         }
 
         const mapped = (data || []).map(
-          (facility: Database["public"]["Tables"]["facilities"]["Row"], index) =>
+          (facility: Database["public"]["Tables"]["facilities"]["Row"], index: number) =>
           mapFacilityRowToBookingFacility(
             facility,
             index
