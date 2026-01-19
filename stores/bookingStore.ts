@@ -212,7 +212,7 @@ export const useBookingStore = create<BookingState>((set, get) => ({
         requestedDate: session.selectedDate,
         preferredTime: session.selectedTimeSlot,
         copayDue: session.package?.package?.copay || 5000,
-        remainingAfter: (session.package?.remainingVisits || 1) - 1,
+        remainingAfter: (session.package?.visitsRemaining || 1) - 1,
       };
 
       set({
