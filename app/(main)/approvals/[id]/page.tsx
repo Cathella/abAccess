@@ -1,19 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ApprovalDetailCard } from "@/components/cards/ApprovalDetailCard";
 import { useCountdown } from "@/hooks/useCountdown";
 import { usePendingApprovalsStore } from "@/stores/pendingApprovalsStore";
 import { Clock } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
-interface ApproveVisitPageProps {
-  params: { id: string };
-}
-
-export default function ApproveVisitPage({ params }: ApproveVisitPageProps) {
+export default function ApproveVisitPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const approvalId = params.id;
   const { user } = useAuth();
   const {
     getRequestById,
@@ -22,8 +20,7 @@ export default function ApproveVisitPage({ params }: ApproveVisitPageProps) {
     processingStatus,
     isLoading,
   } = usePendingApprovalsStore();
-    usePendingApprovalsStore();
-  const request = getRequestById(params.id);
+  const request = approvalId ? getRequestById(approvalId) : undefined;
 
   const { formattedTime, isExpired } = useCountdown(
     request?.expiresAt || new Date().toISOString()
@@ -36,24 +33,24 @@ export default function ApproveVisitPage({ params }: ApproveVisitPageProps) {
   }, [loadPendingRequests, request, user?.id]);
 
   useEffect(() => {
-    if (!request) return;
+    if (!request || !approvalId) return;
     if (request.status === "approved") {
-      router.replace(`/approvals/${params.id}/success`);
+      router.replace(`/approvals/${approvalId}/success`);
     } else if (request.status === "declined") {
-      router.replace(`/approvals/${params.id}/declined`);
+      router.replace(`/approvals/${approvalId}/declined`);
     } else if (request.status === "expired") {
-      router.replace(`/approvals/${params.id}/expired`);
+      router.replace(`/approvals/${approvalId}/expired`);
     } else if (request.status === "cancelled") {
-      router.replace(`/approvals/${params.id}/cancelled`);
+      router.replace(`/approvals/${approvalId}/cancelled`);
     }
-  }, [params.id, request, router]);
+  }, [approvalId, request, router]);
 
   useEffect(() => {
-    if (request && isExpired) {
+    if (request && isExpired && approvalId) {
       markAsExpired(request.id);
-      router.replace(`/approvals/${params.id}/expired`);
+      router.replace(`/approvals/${approvalId}/expired`);
     }
-  }, [isExpired, markAsExpired, params.id, request, router]);
+  }, [approvalId, isExpired, markAsExpired, request, router]);
 
   if (!request && isLoading) {
     return (
@@ -63,7 +60,7 @@ export default function ApproveVisitPage({ params }: ApproveVisitPageProps) {
     );
   }
 
-  if (!request) {
+  if (!approvalId || !request) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <p className="text-gray-500">Request not found</p>
@@ -72,15 +69,18 @@ export default function ApproveVisitPage({ params }: ApproveVisitPageProps) {
   }
 
   const handleApprove = () => {
-    router.push(`/approvals/${params.id}/pin`);
+    if (!approvalId) return;
+    router.push(`/approvals/${approvalId}/pin`);
   };
 
   const handleDecline = () => {
-    router.push(`/approvals/${params.id}/decline`);
+    if (!approvalId) return;
+    router.push(`/approvals/${approvalId}/decline`);
   };
 
   const handleReport = () => {
-    router.push(`/approvals/${params.id}/report`);
+    if (!approvalId) return;
+    router.push(`/approvals/${approvalId}/report`);
   };
 
   return (
@@ -115,7 +115,7 @@ export default function ApproveVisitPage({ params }: ApproveVisitPageProps) {
 
         <button
           onClick={handleDecline}
-          className="w-full py-3 bg-[#FEE2E2] border border-gray-900 rounded-xl font-semibold text-gray-900"
+          className="w-full py-3 bg-error-100 border border-gray-900 rounded-xl font-semibold text-gray-900"
           type="button"
           disabled={processingStatus !== "idle"}
         >
@@ -124,7 +124,7 @@ export default function ApproveVisitPage({ params }: ApproveVisitPageProps) {
 
         <button
           onClick={handleApprove}
-          className="w-full py-3 bg-[#32C28A] rounded-xl font-semibold text-white"
+          className="w-full py-3 bg-primary-900 rounded-xl font-semibold text-white"
           type="button"
           disabled={processingStatus !== "idle"}
         >
