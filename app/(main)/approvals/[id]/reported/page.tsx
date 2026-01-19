@@ -1,21 +1,20 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { usePendingApprovalsStore } from "@/stores/pendingApprovalsStore";
 import { AlertTriangle } from "lucide-react";
 
-interface ReportSubmittedPageProps {
-  params: { id: string };
-}
-
-export default function ReportSubmittedPage({ params }: ReportSubmittedPageProps) {
+export default function ReportSubmittedPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const approvalId = params.id;
   const searchParams = useSearchParams();
   const isFrozen = searchParams.get("freeze") === "true";
   const { removeRequest } = usePendingApprovalsStore();
 
   const handleDone = () => {
-    removeRequest(params.id);
+    if (!approvalId) return;
+    removeRequest(approvalId);
     router.push("/dashboard");
   };
 
@@ -48,7 +47,7 @@ export default function ReportSubmittedPage({ params }: ReportSubmittedPageProps
       <div className="w-full max-w-sm">
         <button
           onClick={handleDone}
-          className="w-full py-3 bg-[#32C28A] border border-gray-900 rounded-xl font-semibold text-white"
+          className="w-full py-3 bg-primary-900 border border-gray-900 rounded-xl font-semibold text-white"
           type="button"
         >
           Done

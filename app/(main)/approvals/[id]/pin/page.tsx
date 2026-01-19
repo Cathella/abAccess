@@ -1,17 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { PinInput } from "@/components/forms/PinInput";
 import { usePendingApprovalsStore } from "@/stores/pendingApprovalsStore";
 import { useAuth } from "@/hooks/useAuth";
 
-interface ApprovalPinPageProps {
-  params: { id: string };
-}
-
-export default function ApprovalPinPage({ params }: ApprovalPinPageProps) {
+export default function ApprovalPinPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const approvalId = params.id;
   const { user } = useAuth();
   const {
     getRequestById,
@@ -19,8 +17,7 @@ export default function ApprovalPinPage({ params }: ApprovalPinPageProps) {
     loadPendingRequests,
     isLoading,
   } = usePendingApprovalsStore();
-    usePendingApprovalsStore();
-  const request = getRequestById(params.id);
+  const request = approvalId ? getRequestById(approvalId) : undefined;
 
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
@@ -34,17 +31,17 @@ export default function ApprovalPinPage({ params }: ApprovalPinPageProps) {
   }, [loadPendingRequests, request, user?.id]);
 
   useEffect(() => {
-    if (!request) return;
+    if (!request || !approvalId) return;
     if (request.status === "approved") {
-      router.replace(`/approvals/${params.id}/success`);
+      router.replace(`/approvals/${approvalId}/success`);
     } else if (request.status === "declined") {
-      router.replace(`/approvals/${params.id}/declined`);
+      router.replace(`/approvals/${approvalId}/declined`);
     } else if (request.status === "expired") {
-      router.replace(`/approvals/${params.id}/expired`);
+      router.replace(`/approvals/${approvalId}/expired`);
     } else if (request.status === "cancelled") {
-      router.replace(`/approvals/${params.id}/cancelled`);
+      router.replace(`/approvals/${approvalId}/cancelled`);
     }
-  }, [params.id, request, router]);
+  }, [approvalId, request, router]);
 
   if (!request && isLoading) {
     return (
@@ -54,7 +51,7 @@ export default function ApprovalPinPage({ params }: ApprovalPinPageProps) {
     );
   }
 
-  if (!request) {
+  if (!approvalId || !request) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <p className="text-gray-500">Request not found</p>
@@ -63,10 +60,11 @@ export default function ApprovalPinPage({ params }: ApprovalPinPageProps) {
   }
 
   const handlePinComplete = async (enteredPin: string) => {
+    if (!approvalId) return;
     if (enteredPin === "1234") {
       setError(null);
       setProcessingStatus("verifying_pin");
-      router.push(`/approvals/${params.id}/approving`);
+      router.push(`/approvals/${approvalId}/approving`);
       return;
     }
 

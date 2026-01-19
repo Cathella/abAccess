@@ -1,17 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { usePendingApprovalsStore } from "@/stores/pendingApprovalsStore";
 import { ApprovalDetailCard } from "@/components/cards/ApprovalDetailCard";
 import { useAuth } from "@/hooks/useAuth";
 
-interface ReportActivityPageProps {
-  params: { id: string };
-}
-
-export default function ReportActivityPage({ params }: ReportActivityPageProps) {
+export default function ReportActivityPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const approvalId = params.id;
   const { user } = useAuth();
   const {
     getRequestById,
@@ -19,8 +17,7 @@ export default function ReportActivityPage({ params }: ReportActivityPageProps) 
     loadPendingRequests,
     isLoading,
   } = usePendingApprovalsStore();
-    usePendingApprovalsStore();
-  const request = getRequestById(params.id);
+  const request = approvalId ? getRequestById(approvalId) : undefined;
 
   const [description, setDescription] = useState("");
   const [freezeAccount, setFreezeAccount] = useState(false);
@@ -33,17 +30,17 @@ export default function ReportActivityPage({ params }: ReportActivityPageProps) 
   }, [loadPendingRequests, request, user?.id]);
 
   useEffect(() => {
-    if (!request) return;
+    if (!request || !approvalId) return;
     if (request.status === "approved") {
-      router.replace(`/approvals/${params.id}/success`);
+      router.replace(`/approvals/${approvalId}/success`);
     } else if (request.status === "declined") {
-      router.replace(`/approvals/${params.id}/declined`);
+      router.replace(`/approvals/${approvalId}/declined`);
     } else if (request.status === "expired") {
-      router.replace(`/approvals/${params.id}/expired`);
+      router.replace(`/approvals/${approvalId}/expired`);
     } else if (request.status === "cancelled") {
-      router.replace(`/approvals/${params.id}/cancelled`);
+      router.replace(`/approvals/${approvalId}/cancelled`);
     }
-  }, [params.id, request, router]);
+  }, [approvalId, request, router]);
 
   if (!request && isLoading) {
     return (
@@ -53,7 +50,7 @@ export default function ReportActivityPage({ params }: ReportActivityPageProps) 
     );
   }
 
-  if (!request) {
+  if (!approvalId || !request) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4">
         <p className="text-gray-500">Request not found</p>
@@ -62,12 +59,13 @@ export default function ReportActivityPage({ params }: ReportActivityPageProps) 
   }
 
   const handleSubmit = async () => {
+    if (!approvalId) return;
     setIsSubmitting(true);
     try {
-      await reportSuspiciousActivity(params.id, description, freezeAccount);
-      router.replace(`/approvals/${params.id}/reported?freeze=${freezeAccount}`);
+      await reportSuspiciousActivity(approvalId, description, freezeAccount);
+      router.replace(`/approvals/${approvalId}/reported?freeze=${freezeAccount}`);
     } catch {
-      router.replace(`/approvals/${params.id}/error`);
+      router.replace(`/approvals/${approvalId}/error`);
     }
   };
 
@@ -125,7 +123,7 @@ export default function ReportActivityPage({ params }: ReportActivityPageProps) 
         <button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full py-3 bg-[#32C28A] rounded-xl font-semibold text-white disabled:opacity-50"
+          className="w-full py-3 bg-primary-900 rounded-xl font-semibold text-white disabled:opacity-50"
           type="button"
         >
           {isSubmitting ? "Submitting..." : "Submit report"}
