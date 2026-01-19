@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Header } from "@/components/common/Header";
@@ -16,7 +16,6 @@ export default function EnterPinPage() {
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [redirect, setRedirect] = useState<string | null>(null);
 
   const {
     phoneNumber,
@@ -26,18 +25,18 @@ export default function EnterPinPage() {
     isLoading,
   } = useAuth();
 
-  // Get redirect parameter on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const redirectParam = params.get('redirect');
-      setRedirect(redirectParam);
-      console.log('[EnterPin] Redirect parameter:', redirectParam);
+  const redirect = useMemo(() => {
+    if (typeof window === "undefined") {
+      return null;
     }
+
+    const params = new URLSearchParams(window.location.search);
+    const redirectParam = params.get("redirect");
+    console.log("[EnterPin] Redirect parameter:", redirectParam);
+    return redirectParam;
   }, []);
 
   const maxAttempts = 3;
-  const attemptsLeft = maxAttempts - pinAttempts;
 
   // Redirect if no phone number
   useEffect(() => {

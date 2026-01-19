@@ -42,6 +42,8 @@ interface AuthState {
   signIn: (user: User, session: Session) => void
   signOut: () => void
   clearAuth: () => void
+  logout: () => void
+  deleteAccount: () => Promise<void>
 }
 
 const MAX_PIN_ATTEMPTS = 3
@@ -144,6 +146,41 @@ export const useAuthStore = create<AuthState>()(
           pinAttempts: 0,
           isPinLocked: false
         }),
+
+      logout: () => {
+        // Clear auth state
+        set({
+          user: null,
+          session: null,
+          isAuthenticated: false,
+          isLoading: false,
+          pinAttempts: 0,
+          isPinLocked: false,
+          isPhoneValid: false
+        })
+
+        // Clear other stores (dynamic import to avoid circular deps)
+        Promise.all([
+          import('./walletStore').then(m => m.useWalletStore.getState().reset?.()),
+          import('./familyStore').then(m => m.useFamilyStore.getState().reset?.()),
+          import('./packageStore').then(m => m.usePackageStore.getState().clearAllData()),
+          import('./notificationsStore').then(m => m.useNotificationsStore.getState().clearAll()),
+          import('./settingsStore').then(m => m.useSettingsStore.getState().resetSettings()),
+        ]).catch(() => {
+          // Stores may not all have reset methods, that's ok
+        })
+      },
+
+      deleteAccount: async () => {
+        // In production: Call API to delete account
+        // await api.deleteAccount();
+
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500))
+
+        // Then logout (clears all stores)
+        get().logout()
+      },
     }),
     {
       name: 'auth-storage',

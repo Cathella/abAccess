@@ -7,7 +7,9 @@ import { usePurchaseStore } from "@/stores/purchaseStore";
 import { usePackageStore } from "@/stores/packageStore";
 import { useWalletStore } from "@/stores/walletStore";
 import { useAuthStore } from "@/stores/authStore";
+import { useNotificationsStore } from "@/stores/notificationsStore";
 import { PACKAGE_CATEGORIES } from "@/lib/constants";
+import { createNotification } from "@/lib/notifications";
 import type { PackageCategoryType, BrowsePackageCategory } from "@/types";
 
 // Helper to map BrowsePackageCategory to PackageCategoryType
@@ -28,6 +30,7 @@ export default function PurchaseSuccessPage() {
   const addUserPackage = usePackageStore((state) => state.addUserPackage);
   const loadUserPackages = usePackageStore((state) => state.loadUserPackages);
   const { deductBalance, addTransaction } = useWalletStore();
+  const addNotification = useNotificationsStore((state) => state.addNotification);
   const user = useAuthStore((state) => state.user);
   const hasProcessedRef = useRef(false);
 
@@ -114,6 +117,15 @@ export default function PurchaseSuccessPage() {
               createdAt: new Date().toISOString(),
             });
           }
+
+          // Create notification for successful purchase
+          addNotification(
+            createNotification(
+              'package_purchased',
+              `You've successfully purchased the ${categoryName} ${selectedPackage.name}.`,
+              { actionRoute: '/my-packages' }
+            )
+          );
         } else {
           console.error('Failed to save package to database:', result.error);
           router.replace("/packages/purchase/failed");

@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useVisitsStore } from "@/stores/visitsStore";
+import { useBookingStore } from "@/stores/bookingStore";
 import { UserHeader } from "@/components/common/UserHeader";
 import { VisitTabFilter } from "@/components/common/VisitTabFilter";
 import { MemberFilterDropdownConnected } from "@/components/common/MemberFilterDropdownConnected";
@@ -17,6 +17,9 @@ import { ROUTES } from "@/lib/constants";
 export default function VisitsPage() {
   const router = useRouter();
   const { user } = useAuth();
+
+  // Booking store
+  const startBooking = useBookingStore((state) => state.startBooking);
 
   // Visits store
   const visits = useVisitsStore((state) => state.visits);
@@ -66,6 +69,12 @@ export default function VisitsPage() {
   // Check if filtered list is empty
   const hasFilteredVisits = filteredVisits.length > 0;
 
+  // Handle book a visit
+  const handleBookVisit = () => {
+    startBooking();
+    router.push('/book/select-package');
+  };
+
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -96,10 +105,10 @@ export default function VisitsPage() {
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-bold text-neutral-900">Visits</h1>
               <Button
-                asChild
+                onClick={handleBookVisit}
                 className="bg-primary-900 hover:bg-primary-800 text-neutral-900 rounded-xl px-4 py-2 font-bold text-base border-[1.5px] border-neutral-900 h-10"
               >
-                <Link href="/packages">Book a Visit</Link>
+                Book a Visit
               </Button>
             </div>
 

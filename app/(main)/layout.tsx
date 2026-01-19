@@ -44,8 +44,156 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
   },
   [ROUTES.PROFILE]: {
     title: "Profile",
-    showBack: false,
+    showBack: true,
     showNotifications: true,
+    hideBottomNav: true,
+  },
+  "/profile/personal-info": {
+    title: "Personal Information",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/security": {
+    title: "Security",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/notifications": {
+    title: "Notification Preferences",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/language": {
+    title: "Language",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/help": {
+    title: "Help & Support",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/approvals": {
+    title: "Approval history",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/approving": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/success": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/decline": {
+    title: "Decline visit",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/declined": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/report": {
+    title: "Report activity",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/reported": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/expired": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/error": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]/cancelled": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/profile/help/faqs": {
+    title: "FAQs",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/help/contact": {
+    title: "Contact Us",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/help/report-issue": {
+    title: "Report an Issue",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/help/report-issue/success": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
+  },
+  "/profile/delete-account": {
+    title: "Delete Account",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/referrals": {
+    title: "Invite Friends",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/referrals/history": {
+    title: "Referral History",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/profile/referrals/success": {
+    title: "",
+    showBack: false,
+    showNotifications: false,
+    hideHeader: true,
+    hideBottomNav: true,
   },
   [ROUTES.FAMILY]: {
     title: "Family Members",
@@ -70,6 +218,19 @@ const routeConfig: Record<string, { title?: string; showBack?: boolean; showNoti
     title: "Notifications",
     showBack: true,
     showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/approvals": {
+    title: "Pending approvals",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
+  },
+  "/approvals/[id]": {
+    title: "Approve visit",
+    showBack: true,
+    showNotifications: false,
+    hideBottomNav: true,
   },
   "/dev-tools": {
     title: "Dev Tools",
@@ -240,6 +401,54 @@ export default function MainLayout({
       };
     } else if (pathname?.startsWith('/redeem/')) {
       // Redemption flow pages
+      currentConfig = {
+        title: "",
+        showBack: false,
+        showNotifications: false,
+        hideHeader: true,
+        hideBottomNav: true,
+      };
+    } else if (pathname?.startsWith('/approvals/')) {
+      if (
+        pathname?.includes("/approving") ||
+        pathname?.includes("/success") ||
+        pathname?.includes("/declined") ||
+        pathname?.includes("/reported") ||
+        pathname?.includes("/expired") ||
+        pathname?.includes("/error") ||
+        pathname?.includes("/cancelled")
+      ) {
+        currentConfig = {
+          title: "",
+          showBack: false,
+          showNotifications: false,
+          hideHeader: true,
+          hideBottomNav: true,
+        };
+      } else if (pathname?.includes("/decline")) {
+        currentConfig = {
+          title: "Decline visit",
+          showBack: true,
+          showNotifications: false,
+          hideBottomNav: true,
+        };
+      } else if (pathname?.includes("/report")) {
+        currentConfig = {
+          title: "Report activity",
+          showBack: true,
+          showNotifications: false,
+          hideBottomNav: true,
+        };
+      } else {
+        currentConfig = {
+          title: "Approve visit",
+          showBack: true,
+          showNotifications: false,
+          hideBottomNav: true,
+        };
+      }
+    } else if (pathname?.startsWith('/book/')) {
+      // Booking flow pages
       currentConfig = {
         title: "",
         showBack: false,

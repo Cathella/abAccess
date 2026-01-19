@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { PackageType, UserPackageType, PackageUsage, PackageStatusType } from '@/types'
+import { checkExpiringPackages } from '@/lib/notifications'
 
 interface PackageState {
   // User's packages
@@ -30,9 +31,11 @@ interface PackageState {
   setPackageFilter: (filter: 'active' | 'completed' | 'expired') => void
   setLoading: (loading: boolean) => void
   recordUsage: (packageId: string, usage: PackageUsage) => void
+  addBonusVisit: (packageId: string) => void
   loadUserPackages: (userId: string, options?: { force?: boolean }) => Promise<void>
   loadMockData: () => void
   clearAllData: () => void
+  checkAndNotifyExpiringPackages: () => void
 }
 
 export const usePackageStore = create<PackageState>()(
@@ -101,6 +104,20 @@ export const usePackageStore = create<PackageState>()(
           }),
         })),
 
+      addBonusVisit: (packageId) => {
+        const { userPackages } = get()
+        const updated = userPackages.map((pkg) =>
+          pkg.id === packageId
+            ? {
+                ...pkg,
+                remainingVisits: pkg.remainingVisits + 1,
+                totalVisits: pkg.totalVisits + 1,
+              }
+            : pkg
+        )
+        set({ userPackages: updated })
+      },
+
       loadUserPackages: async (userId: string, options?: { force?: boolean }) => {
         const { isLoading, hasInitialized } = get()
         const force = options?.force === true
@@ -122,6 +139,9 @@ export const usePackageStore = create<PackageState>()(
             hasInitialized: true,
             isLoading: false
           })
+
+          // Check for expiring packages after loading
+          get().checkAndNotifyExpiringPackages()
         } catch (error) {
           console.error('Error loading user packages:', error)
           set({ isLoading: false })
@@ -135,6 +155,9 @@ export const usePackageStore = create<PackageState>()(
           userPackages: mockUserPackages,
           hasInitialized: true
         })
+
+        // Check for expiring packages after loading mock data
+        get().checkAndNotifyExpiringPackages()
       },
 
       clearAllData: () => {
@@ -144,6 +167,23 @@ export const usePackageStore = create<PackageState>()(
           selectedPackage: null,
           hasInitialized: false,
           packageFilter: 'active',
+        })
+      },
+
+      checkAndNotifyExpiringPackages: () => {
+        const { userPackages } = get()
+
+        // Import notifications store dynamically to avoid circular dependency
+        import('./notificationsStore').then(({ useNotificationsStore }) => {
+          const { notifications, addNotification } = useNotificationsStore.getState()
+
+          // Check for expiring packages
+          const newNotifications = checkExpiringPackages(userPackages, notifications)
+
+          // Add new notifications
+          newNotifications.forEach((notification) => {
+            addNotification(notification)
+          })
         })
       },
     }),

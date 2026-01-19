@@ -100,7 +100,7 @@ export function MyPackageCard({ package: pkg, onPress }: MyPackageCardProps) {
       {/* Top Row */}
       <div className="flex items-start gap-3">
         {/* Icon Circle */}
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary-100">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary-100">
           {getCategoryIcon(pkg.package.category)}
         </div>
 
@@ -113,7 +113,7 @@ export function MyPackageCard({ package: pkg, onPress }: MyPackageCardProps) {
         </div>
 
         {/* Chevron */}
-        <ChevronRight className="h-5 w-5 flex-shrink-0 text-neutral-600" />
+        <ChevronRight className="h-5 w-5 shrink-0 text-neutral-600" />
       </div>
 
       {/* Divider */}

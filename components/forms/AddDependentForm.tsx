@@ -113,7 +113,7 @@ export function AddDependentForm() {
         // Show error toast
         alert(result.error || "Failed to add dependent");
       }
-    } catch (error) {
+    } catch {
       alert("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
@@ -134,7 +134,7 @@ export function AddDependentForm() {
           <TextInput
             id="name"
             label="Full name"
-            placeholder="Enter child's name"
+            placeholder="Enter child&apos;s name"
             value={formData.name}
             onChange={(value) => {
               setFormData({ ...formData, name: value });

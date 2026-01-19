@@ -6,8 +6,26 @@ import type {
   BrowsePackageCategory,
   VisitTabFilter,
   VisitStatusType,
-  VisitRecord
+  VisitRecord,
+  TimeSlotOption,
+  BookingFacility,
+  NotificationType,
+  Notification,
+  LanguageOption,
+  NotificationPreferences,
+  HelpArticle,
+  ProfileMenuItem,
+  ApprovalStatusConfig,
+  ApprovalHistoryItem,
+  Referral,
+  BonusReward,
+  IssueType,
+  DeclineReason,
+  PendingApprovalRequest,
+  ContactMethod,
+  FAQItem,
 } from "@/types";
+import { ApprovalStatus } from "@/types";
 
 export const APP_NAME = "ABA Access";
 export const APP_VERSION = "1.0.0";
@@ -646,6 +664,76 @@ export const MOCK_VISITS: VisitRecord[] = [
   },
 ];
 
+// Booking Flow Constants
+
+export const TIME_SLOT_OPTIONS: TimeSlotOption[] = [
+  { value: 'morning', label: 'Morning', hours: '8 AM - 12 PM' },
+  { value: 'afternoon', label: 'Afternoon', hours: '12 PM - 4 PM' },
+  { value: 'evening', label: 'Evening', hours: '4 PM - 6 PM' },
+];
+
+// Mock facilities data
+export const MOCK_FACILITIES: BookingFacility[] = [
+  {
+    id: 'fac-1',
+    name: 'Mukono Family Clinic',
+    address: 'Plot 45, Mukono Main Street',
+    distance: 1.2,
+    distanceLabel: '1.2 km away',
+    recommendationPercent: 92,
+    patientVisits: 156,
+    imageUrl: '/images/facilities/mukono-clinic.jpg',
+    hours: {
+      weekdays: '8:00 AM - 6:00 PM',
+      saturday: '9:00 AM - 2:00 PM',
+      sunday: 'Closed',
+    },
+    services: ['Consultations', 'Child Wellness', 'Lab Tests', 'Maternal Care'],
+    acceptsBookings: true,
+    isWalkInOnly: false,
+    isOpen: true,
+    closingTime: '8:00 PM',
+  },
+  {
+    id: 'fac-2',
+    name: 'City Medical Centre',
+    address: 'Plot 12, Kampala Road',
+    distance: 2.3,
+    distanceLabel: '2.3 km away',
+    recommendationPercent: 88,
+    patientVisits: 234,
+    hours: {
+      weekdays: '7:00 AM - 9:00 PM',
+      saturday: '8:00 AM - 6:00 PM',
+      sunday: '10:00 AM - 4:00 PM',
+    },
+    services: ['Consultations', 'Lab Tests', 'Pharmacy'],
+    acceptsBookings: true,
+    isWalkInOnly: false,
+    isOpen: true,
+    closingTime: '9:00 PM',
+  },
+  {
+    id: 'fac-3',
+    name: 'Kampala Health Hub',
+    address: 'Plot 78, Ntinda Road',
+    distance: 3.8,
+    distanceLabel: '3.8 km away',
+    recommendationPercent: 95,
+    patientVisits: 312,
+    hours: {
+      weekdays: '8:00 AM - 8:00 PM',
+      saturday: '9:00 AM - 5:00 PM',
+      sunday: 'Closed',
+    },
+    services: ['Consultations', 'Child Wellness', 'Maternal Care'],
+    acceptsBookings: false,
+    isWalkInOnly: true,
+    isOpen: true,
+    closingTime: '8:00 PM',
+  },
+];
+
 // Redemption Feature Constants
 
 // Redemption code settings
@@ -668,3 +756,521 @@ export function calculateAge(dateOfBirth: string): number {
   }
   return age;
 }
+
+// Notification Feature Constants
+
+// Notification type configurations
+export const NOTIFICATION_CONFIG: Record<NotificationType, {
+  defaultTitle: string;
+  icon?: string;
+}> = {
+  approval_needed: {
+    defaultTitle: 'Approval needed',
+  },
+  booking_confirmed: {
+    defaultTitle: 'Booking confirmed',
+  },
+  top_up_success: {
+    defaultTitle: 'Top up successful',
+  },
+  package_expiring: {
+    defaultTitle: 'Package expiring',
+  },
+  visit_reminder: {
+    defaultTitle: 'Visit reminder',
+  },
+  package_purchased: {
+    defaultTitle: 'Package purchased',
+  },
+  visit_completed: {
+    defaultTitle: 'Visit completed',
+  },
+  general: {
+    defaultTitle: 'Notification',
+  },
+};
+
+// Mock notifications data
+export const MOCK_NOTIFICATIONS: Notification[] = [
+  {
+    id: 'notif-1',
+    type: 'approval_needed',
+    title: 'Approval needed',
+    message: 'Mukono Family Clinic wants to use your package for Ben. Tap to review.',
+    timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 min ago
+    isRead: false,
+    actionType: 'approve',
+    actionRoute: '/approve/visit-123',
+    facilityName: 'Mukono Family Clinic',
+    memberName: 'Ben',
+  },
+  {
+    id: 'notif-2',
+    type: 'booking_confirmed',
+    title: 'Booking confirmed',
+    message: 'Your appointment at City Medical Center is confirmed for tomorrow at 2:30 PM.',
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+    isRead: false,
+    actionType: 'navigate',
+    actionRoute: '/visits',
+    facilityName: 'City Medical Center',
+  },
+  {
+    id: 'notif-3',
+    type: 'top_up_success',
+    title: 'Top up successful',
+    message: 'UGX 50,000 has been added to your wallet.',
+    timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
+    isRead: false,
+    actionType: 'navigate',
+    actionRoute: '/wallet/history',
+  },
+  {
+    id: 'notif-4',
+    type: 'package_expiring',
+    title: 'Package expiring soon',
+    message: 'Your Consultations package expires in 3 days. Use it before it expires!',
+    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+    isRead: true,
+    actionType: 'navigate',
+    actionRoute: '/my-packages',
+  },
+];
+
+// Profile & Settings Feature Constants
+
+export const LANGUAGE_OPTIONS: LanguageOption[] = [
+  { code: 'en', name: 'English', available: true },
+  { code: 'lg', name: 'Luganda', available: false },
+  { code: 'sw', name: 'Swahili', available: false },
+];
+
+export const DEFAULT_NOTIFICATION_PREFERENCES: NotificationPreferences = {
+  appointmentReminders: true,
+  packageUpdates: true,
+  remoteApprovals: true,
+  bookingUpdates: true,
+  promotionsOffers: false,
+};
+
+export const PROFILE_MENU_SECTIONS: {
+  id: string;
+  items: ProfileMenuItem[];
+}[] = [
+  {
+    id: 'settings',
+    items: [
+      { id: 'personal-info', label: 'Personal Information', icon: 'User', route: '/profile/personal-info' },
+      { id: 'security', label: 'Security', icon: 'Lock', route: '/profile/security' },
+      { id: 'notifications', label: 'Notification Preferences', icon: 'Bell', route: '/profile/notifications' },
+      { id: 'language', label: 'Language', icon: 'Globe', route: '/profile/language' },
+    ],
+  },
+  {
+    id: 'support',
+    items: [
+      { id: 'help', label: 'Help & Support', icon: 'HelpCircle', route: '/profile/help' },
+      { id: 'approvals', label: 'Approval History', icon: 'Check', route: '/profile/approvals' },
+    ],
+  },
+  {
+    id: 'account',
+    items: [
+      { id: 'logout', label: 'Logout', icon: 'LogOut', action: 'logout' },
+      { id: 'delete', label: 'Delete Account', icon: 'AlertTriangle', route: '/profile/delete-account' },
+    ],
+  },
+];
+
+export const POPULAR_HELP_ARTICLES: HelpArticle[] = [
+  {
+    id: 'art-1',
+    question: 'How do I use my package at a facility?',
+    answer: 'Show your QR code to the facility receptionist...',
+    category: 'packages',
+  },
+  {
+    id: 'art-2',
+    question: 'What is co-pay and why do I pay it?',
+    answer: 'Co-pay is a small fee you pay at the facility...',
+    category: 'payments',
+  },
+  {
+    id: 'art-3',
+    question: 'How do I add children to my account?',
+    answer: 'Go to Family section and tap Add Dependent...',
+    category: 'account',
+  },
+  {
+    id: 'art-4',
+    question: 'Can I get a refund for unused visits?',
+    answer: 'Refunds are available within 14 days of purchase...',
+    category: 'packages',
+  },
+];
+
+export const SECURITY_TIPS = [
+  'Never share your PIN with anyone',
+  'Avoid simple patterns like 1234 or 0000',
+  'Change your PIN if you suspect it\'s been compromised',
+];
+
+export const DELETE_ACCOUNT_ITEMS = [
+  'Your personal information',
+  'All visit history and receipts',
+  'All dependent (children) records',
+  'Saved payment methods',
+  'Referral history and pending rewards',
+];
+
+export const APP_BUILD = '123';
+
+// Approval History Feature Constants
+
+export const APPROVAL_STATUS_CONFIG: Record<ApprovalStatus, ApprovalStatusConfig> = {
+  [ApprovalStatus.APPROVED]: {
+    label: 'Approved',
+    icon: 'Check',
+    bgColor: 'bg-primary-100',
+    textColor: 'text-primary-900',
+    iconColor: 'text-primary-900',
+  },
+  [ApprovalStatus.DECLINED]: {
+    label: 'Declined',
+    icon: 'X',
+    bgColor: 'bg-error-100',
+    textColor: 'text-error-900',
+    iconColor: 'text-error-900',
+  },
+  [ApprovalStatus.EXPIRED]: {
+    label: 'Expired',
+    icon: 'Clock',
+    bgColor: 'bg-warning-100',
+    textColor: 'text-warning-900',
+    iconColor: 'text-warning-900',
+  },
+  [ApprovalStatus.PENDING]: {
+    label: 'Pending',
+    icon: 'Clock',
+    bgColor: 'bg-secondary-100',
+    textColor: 'text-secondary-900',
+    iconColor: 'text-secondary-900',
+  },
+};
+
+export const APPROVAL_TABS = [
+  { key: 'approved', label: 'Approved' },
+  { key: 'declined', label: 'Declined' },
+  { key: 'expired', label: 'Expired' },
+] as const;
+
+// Mock approval history data for MVP
+export const MOCK_APPROVAL_HISTORY: ApprovalHistoryItem[] = [
+  {
+    id: 'apr-1',
+    memberId: 'dep-1',
+    memberName: 'Sarah Nakamya',
+    memberInitials: 'SN',
+    facilityId: 'fac-1',
+    facilityName: 'City Medical Center',
+    packageId: 'pkg-1',
+    packageCategory: 'Child Wellness',
+    packageName: '5 visits pack',
+    requestDate: '2025-01-10',
+    requestTime: '10:34 AM',
+    copay: 5000,
+    status: ApprovalStatus.APPROVED,
+    respondedAt: '2025-01-10T10:35:00Z',
+    createdAt: '2025-01-10T10:30:00Z',
+    updatedAt: '2025-01-10T10:35:00Z',
+  },
+  {
+    id: 'apr-2',
+    memberId: 'dep-2',
+    memberName: 'James Okello',
+    memberInitials: 'JO',
+    facilityId: 'fac-2',
+    facilityName: 'Downtown Clinic',
+    packageId: 'pkg-2',
+    packageCategory: 'Consultations',
+    packageName: '3 visits pack',
+    requestDate: '2025-01-08',
+    requestTime: '2:15 PM',
+    copay: 3000,
+    status: ApprovalStatus.APPROVED,
+    respondedAt: '2025-01-08T14:20:00Z',
+    createdAt: '2025-01-08T14:00:00Z',
+    updatedAt: '2025-01-08T14:20:00Z',
+  },
+  {
+    id: 'apr-3',
+    memberId: 'dep-1',
+    memberName: 'Sarah Nakamya',
+    memberInitials: 'SN',
+    facilityId: 'fac-3',
+    facilityName: 'Health Plus Clinic',
+    packageId: 'pkg-3',
+    packageCategory: 'Lab Tests',
+    packageName: 'Basic panel',
+    requestDate: '2025-01-05',
+    requestTime: '11:00 AM',
+    copay: 10000,
+    status: ApprovalStatus.DECLINED,
+    respondedAt: '2025-01-05T11:30:00Z',
+    createdAt: '2025-01-05T10:55:00Z',
+    updatedAt: '2025-01-05T11:30:00Z',
+  },
+  {
+    id: 'apr-4',
+    memberId: 'dep-2',
+    memberName: 'James Okello',
+    memberInitials: 'JO',
+    facilityId: 'fac-4',
+    facilityName: 'Metro Hospital',
+    packageId: 'pkg-1',
+    packageCategory: 'Child Wellness',
+    packageName: '5 visits pack',
+    requestDate: '2025-01-02',
+    requestTime: '4:00 PM',
+    copay: 5000,
+    status: ApprovalStatus.EXPIRED,
+    expiresAt: '2025-01-02T16:15:00Z',
+    createdAt: '2025-01-02T16:00:00Z',
+    updatedAt: '2025-01-02T16:15:00Z',
+  },
+  {
+    id: 'apr-5',
+    memberId: 'dep-1',
+    memberName: 'Sarah Nakamya',
+    memberInitials: 'SN',
+    facilityId: 'fac-1',
+    facilityName: 'City Medical Center',
+    packageId: 'pkg-4',
+    packageCategory: 'Maternity',
+    packageName: 'Prenatal visits',
+    requestDate: '2024-12-28',
+    requestTime: '9:30 AM',
+    copay: 8000,
+    status: ApprovalStatus.EXPIRED,
+    expiresAt: '2024-12-28T09:45:00Z',
+    createdAt: '2024-12-28T09:30:00Z',
+    updatedAt: '2024-12-28T09:45:00Z',
+  },
+];
+
+// Referral Feature Constants
+
+// User's referral code (would come from API)
+export const getUserReferralCode = (userId: string): string => {
+  // In production, this would be fetched from API
+  return `ABA-${userId.slice(-6).toUpperCase()}`;
+};
+
+// Referral share message
+export const REFERRAL_SHARE_MESSAGE = (code: string): string =>
+  `Join ABA Access and get affordable healthcare for your family! Use my referral code ${code} when signing up. Download: https://abaaccess.com/invite/${code}`;
+
+// Mock referral data
+export const MOCK_REFERRALS: Referral[] = [
+  {
+    id: 'ref-1',
+    friendName: 'Grace A.',
+    friendInitials: 'GA',
+    status: 'completed',
+    signupDate: '2025-01-04',
+    completedDate: '2025-01-04',
+    rewardClaimed: true,
+    rewardPackageId: 'pkg-1',
+    rewardPackageCategory: 'Consultations',
+    createdAt: '2025-01-04T10:00:00Z',
+    updatedAt: '2025-01-04T12:00:00Z',
+  },
+  {
+    id: 'ref-2',
+    friendName: 'Peter M',
+    friendInitials: 'PM',
+    status: 'completed',
+    signupDate: '2024-12-28',
+    completedDate: '2024-12-28',
+    rewardClaimed: true,
+    rewardPackageId: 'pkg-1',
+    rewardPackageCategory: 'Consultations',
+    createdAt: '2024-12-28T10:00:00Z',
+    updatedAt: '2024-12-28T14:00:00Z',
+  },
+  {
+    id: 'ref-3',
+    friendName: 'Sarah K',
+    friendInitials: 'SK',
+    status: 'pending',
+    signupDate: '2025-01-05',
+    rewardClaimed: false,
+    createdAt: '2025-01-05T09:00:00Z',
+    updatedAt: '2025-01-05T09:00:00Z',
+  },
+];
+
+// Unclaimed bonus rewards
+export const MOCK_BONUS_REWARDS: BonusReward[] = [];
+
+// Help & Support Feature Constants
+
+// Issue type options for dropdown
+export const ISSUE_TYPE_OPTIONS: { value: IssueType; label: string }[] = [
+  { value: 'payment_problem', label: 'Payment problem' },
+  { value: 'package_issue', label: 'Package issue' },
+  { value: 'facility_problem', label: 'Facility problem' },
+  { value: 'app_not_working', label: 'App not working' },
+  { value: 'account_issue', label: 'Account issue' },
+  { value: 'other', label: 'Other' },
+];
+
+// Decline reason options
+export const DECLINE_REASON_OPTIONS: { value: DeclineReason; label: string }[] = [
+  { value: 'not_arranged', label: "I didn't arrange this visit" },
+  { value: 'wrong_child', label: 'Wrong child selected' },
+  { value: 'wrong_facility', label: 'Wrong facility' },
+  { value: 'not_recognized', label: "I don't recognize this request" },
+  { value: 'other', label: 'Other reason' },
+];
+
+// Approval request expiry duration (in minutes)
+export const APPROVAL_EXPIRY_MINUTES = 10;
+
+// Mock pending approval requests
+export const MOCK_PENDING_APPROVALS: PendingApprovalRequest[] = [
+  {
+    id: 'apr-req-1',
+    memberId: 'mem-2',
+    memberName: 'Ben Nakitto',
+    memberAge: 8,
+    memberInitials: 'BN',
+    facilityId: 'fac-1',
+    facilityName: 'Mukono Family Clinic',
+    packageId: 'pkg-1',
+    packageCategory: 'Consultations',
+    packageName: '5 Visits Pack',
+    copay: 5000,
+    remainingBefore: 3,
+    remainingAfter: 2,
+    totalVisits: 5,
+    requestedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+    status: 'pending',
+  },
+  {
+    id: 'apr-req-2',
+    memberId: 'mem-1',
+    memberName: 'Sarah Nakitto',
+    memberInitials: 'SN',
+    facilityId: 'fac-2',
+    facilityName: 'City Medical Centre',
+    packageId: 'pkg-1',
+    packageCategory: 'Consultations',
+    packageName: '5 Visits Pack',
+    copay: 5000,
+    remainingBefore: 3,
+    remainingAfter: 2,
+    totalVisits: 5,
+    requestedAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+    status: 'pending',
+  },
+];
+
+// Contact methods
+export const CONTACT_METHODS: ContactMethod[] = [
+  {
+    id: 'whatsapp',
+    type: 'whatsapp',
+    title: 'WhatsApp',
+    value: '+256800123456',
+    actionLabel: 'Open WhatsApp',
+    responseTime: 'Usually replies within 1 hour',
+    icon: '💬',
+  },
+  {
+    id: 'phone',
+    type: 'phone',
+    title: 'Call us',
+    value: '+256 800 123 456',
+    actionLabel: 'Call now',
+    responseTime: 'Available 24/7',
+    icon: '📞',
+  },
+  {
+    id: 'email',
+    type: 'email',
+    title: 'Email',
+    value: 'support@abaaccess.com',
+    actionLabel: 'Send email',
+    responseTime: "We'll respond within 2 hours",
+    icon: '💌',
+  },
+];
+
+// FAQ data grouped by category
+export const FAQ_DATA: FAQItem[] = [
+  // Packages category
+  {
+    id: 'faq-1',
+    question: 'How do I use my package at a facility?',
+    answer: `1. Go to "Packages" and tap "Use now" on your active package.
+2. Select who the visit is for (you or a child).
+3. Confirm the co-pay amount.
+4. Show the QR code to the receptionist at the facility.
+5. Pay the co-pay in cash or mobile money.`,
+    category: 'packages',
+  },
+  {
+    id: 'faq-2',
+    question: 'What happens if my package expires?',
+    answer: 'If your package expires, any unused visits will be forfeited. We recommend using all your visits before the expiry date. You can check your package expiry date in the "My Packages" section.',
+    category: 'packages',
+  },
+  {
+    id: 'faq-3',
+    question: 'Can I share my package with family?',
+    answer: 'Yes! You can use your package for any family member added to your account. Go to "Family" to add dependents, then select them when using a package at a facility.',
+    category: 'packages',
+  },
+  // Payments category
+  {
+    id: 'faq-4',
+    question: 'What is co-pay?',
+    answer: 'Co-pay is a small fixed amount you pay at the facility when using your package. It helps cover additional costs and ensures you receive quality care. The co-pay amount is shown on your package details.',
+    category: 'payments',
+  },
+  {
+    id: 'faq-6',
+    question: 'Can I get a refund?',
+    answer: "Refunds are available within 14 days of purchase if you haven't used any visits from the package. Contact our support team to request a refund.",
+    category: 'payments',
+  },
+  // Account category
+  {
+    id: 'faq-7',
+    question: 'How do I add children to my account?',
+    answer: 'Go to "Family" from the bottom menu, then tap "Add dependent". Fill in your child\'s details including name and date of birth. Once added, you can use your packages for them.',
+    category: 'account',
+  },
+  {
+    id: 'faq-8',
+    question: 'How do I change my phone number?',
+    answer: 'For security reasons, phone number changes require verification. Go to Profile > Personal Information and tap "Edit" next to your phone number, or contact our support team for assistance.',
+    category: 'account',
+  },
+  {
+    id: 'faq-9',
+    question: 'I forgot my PIN. What do I do?',
+    answer: 'Go to Profile > Security > "Forgot PIN?" and follow the steps to reset your PIN using your registered phone number. You\'ll receive an OTP to verify your identity.',
+    category: 'account',
+  },
+];
+
+// Generate reference number for issue reports
+export const generateReferenceNumber = (): string => {
+  const year = new Date().getFullYear();
+  const random = Math.floor(Math.random() * 100000).toString().padStart(5, '0');
+  return `#ISS-${year}-${random}`;
+};

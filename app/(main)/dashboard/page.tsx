@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useVisitsStore } from "@/stores/visitsStore";
+import { usePendingApprovalsStore } from "@/stores/pendingApprovalsStore";
 import { ChevronLeft, ChevronRight, Heart, Hospital, LogOut, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { transformVisitDataToWeeklyChart } from "@/lib/utils/visitChartData";
 import { UserHeader } from "@/components/common/UserHeader";
 import { PartnersEmptyState } from "@/components/common/PartnersEmptyState";
 import { WalletCard } from "@/components/cards/WalletCard";
+import { ApprovalBanner } from "@/components/cards/ApprovalBanner";
 import { DependentsCard } from "@/components/cards/DependentsCard";
 import { PackagesCard } from "@/components/cards/PackagesCard";
 import Link from "next/link";
@@ -24,6 +26,12 @@ const cards = {
     "inline-flex items-center justify-center rounded-full border border-neutral-900 bg-primary-100 px-6 py-2 text-base font-semibold text-neutral-900 hover:bg-primary-100/70",
 };
 
+function getLocalDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -31,6 +39,7 @@ export default function DashboardPage() {
   const { data: dashboardData, loading: dashboardLoading, error: dashboardError, refetch } = useDashboard(user?.id);
   const visits = useVisitsStore((state) => state.visits);
   const loadVisits = useVisitsStore((state) => state.loadVisits);
+  const { pendingRequests, getPendingCount, loadPendingRequests } = usePendingApprovalsStore();
   const [selectedDependent, setSelectedDependent] = useState<string>("All");
   const [weekOffset, setWeekOffset] = useState(0);
 
@@ -60,6 +69,11 @@ export default function DashboardPage() {
     if (!user?.id) return;
     loadVisits(user.id, { force: true });
   }, [loadVisits, user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    loadPendingRequests(user.id);
+  }, [loadPendingRequests, user?.id]);
 
   const dependents = dashboardData.familyMembers;
   const familyMembersCount = dashboardData.familyMembersCount;
@@ -95,23 +109,22 @@ export default function DashboardPage() {
   }, [weekOffset]);
 
   const filteredVisits = useMemo(() => {
-    const toDateKey = (date: Date) => date.toISOString().split("T")[0];
-    const startKey = toDateKey(weekRange.startDate);
-    const endKey = toDateKey(weekRange.endDate);
+    const startKey = getLocalDateKey(weekRange.startDate);
+    const endKey = getLocalDateKey(weekRange.endDate);
 
     return visits.filter((visit) => {
       if (selectedDependent !== "All" && visit.memberId !== selectedDependent) {
         return false;
       }
 
-      const visitKey = toDateKey(new Date(visit.visitDate));
+      const visitKey = getLocalDateKey(new Date(visit.visitDate));
       return visitKey >= startKey && visitKey <= endKey;
     });
   }, [selectedDependent, visits, weekRange.endDate, weekRange.startDate]);
 
   const visitStats = useMemo(() => {
     return filteredVisits.reduce((acc: Record<string, number>, visit) => {
-      const dateKey = new Date(visit.visitDate).toISOString().split("T")[0];
+      const dateKey = getLocalDateKey(new Date(visit.visitDate));
       acc[dateKey] = (acc[dateKey] || 0) + 1;
       return acc;
     }, {});
@@ -152,7 +165,7 @@ export default function DashboardPage() {
       const latestVisit = filteredVisits.reduce((latest, current) =>
         new Date(current.visitDate) > new Date(latest.visitDate) ? current : latest
       );
-      const latestKey = new Date(latestVisit.visitDate).toISOString().split("T")[0];
+      const latestKey = getLocalDateKey(new Date(latestVisit.visitDate));
       const index = weeklyChartData.findIndex((point) => point.dateKey === latestKey);
       if (index >= 0 && weeklyChartData[index].value > 0) {
         return index;
@@ -175,6 +188,17 @@ export default function DashboardPage() {
     console.error("Dashboard error:", dashboardError);
   }
 
+  const pendingCount = getPendingCount();
+  const pendingList = pendingRequests.filter((request) => request.status === "pending");
+
+  const handleBannerTap = () => {
+    if (pendingCount === 1 && pendingList[0]) {
+      router.push(`/approvals/${pendingList[0].id}`);
+    } else {
+      router.push("/approvals");
+    }
+  };
+
   return (
     <>
       <UserHeader
@@ -186,6 +210,14 @@ export default function DashboardPage() {
       />
 
       <div className="space-y-8 px-4 pt-24 pb-8 sm:px-6">
+        {pendingCount > 0 && (
+          <ApprovalBanner
+            pendingCount={pendingCount}
+            singleRequest={pendingCount === 1 ? pendingList[0] : undefined}
+            onTap={handleBannerTap}
+          />
+        )}
+
         {/* Wallet */}
         {dashboardData.transactionCount === 0 ? (
           // Empty wallet state - no transactions yet

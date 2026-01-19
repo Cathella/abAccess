@@ -70,6 +70,8 @@ CREATE TABLE packages (
     is_active BOOLEAN DEFAULT TRUE
 );
 
+ALTER TABLE packages ENABLE ROW LEVEL SECURITY;
+
 -- User packages table (purchased packages)
 CREATE TABLE user_packages (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -98,6 +100,8 @@ CREATE TABLE facilities (
     accepts_booking BOOLEAN DEFAULT FALSE,
     is_partner BOOLEAN DEFAULT FALSE
 );
+
+ALTER TABLE facilities ENABLE ROW LEVEL SECURITY;
 
 CREATE UNIQUE INDEX facilities_name_unique ON facilities (name);
 

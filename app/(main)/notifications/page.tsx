@@ -1,14 +1,70 @@
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Notifications - ABA Access",
-  description: "View your latest notifications",
-};
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { useNotificationsStore } from '@/stores/notificationsStore';
+import { NotificationCard } from '@/components/cards/NotificationCard';
+import { NotificationsEmptyState } from '@/components/common/NotificationsEmptyState';
+import type { Notification } from '@/types';
 
 export default function NotificationsPage() {
+  const router = useRouter();
+  const { user } = useAuth();
+  const notifications = useNotificationsStore((state) => state.notifications);
+  const markAsRead = useNotificationsStore((state) => state.markAsRead);
+  const markAllAsRead = useNotificationsStore((state) => state.markAllAsRead);
+  const hasUnread = useNotificationsStore((state) => state.hasUnread);
+  const loadNotifications = useNotificationsStore((state) => state.loadNotifications);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    loadNotifications(user.id);
+  }, [loadNotifications, user?.id]);
+
+  const handleNotificationPress = (notification: Notification) => {
+    // Mark as read
+    markAsRead(notification.id);
+
+    // Navigate if action route exists
+    if (notification.actionRoute) {
+      router.push(notification.actionRoute);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <h1 className="text-2xl font-bold">Notifications Page</h1>
+    <div className="min-h-screen bg-white flex flex-col">
+      {notifications.length === 0 ? (
+        <NotificationsEmptyState />
+      ) : (
+        <div className="flex-1 px-4 py-4">
+          {/* Mark as read action */}
+          {hasUnread() && (
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={() => {
+                  if (!user?.id) return;
+                  markAllAsRead(user.id);
+                }}
+                className="text-secondary-900 font-medium text-base"
+              >
+                Mark as read
+              </button>
+            </div>
+          )}
+
+          {/* Notification list */}
+          <div className="space-y-3">
+            {notifications.map((notification) => (
+              <NotificationCard
+                key={notification.id}
+                notification={notification}
+                onPress={() => handleNotificationPress(notification)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

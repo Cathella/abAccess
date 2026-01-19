@@ -66,14 +66,16 @@ export enum PaymentProvider {
   CARD = "card",
 }
 
-export enum NotificationType {
-  APPROVAL = "approval",
-  BOOKING = "booking",
-  REMINDER = "reminder",
-  PACKAGE = "package",
-  WALLET = "wallet",
-  SYSTEM = "system",
-}
+// Notification types
+export type NotificationType =
+  | 'approval_needed'
+  | 'booking_confirmed'
+  | 'top_up_success'
+  | 'package_expiring'
+  | 'visit_reminder'
+  | 'package_purchased'
+  | 'visit_completed'
+  | 'general';
 
 export enum ApprovalStatus {
   PENDING = "pending",
@@ -286,16 +288,24 @@ export interface PaymentMethod {
   createdAt: string;
 }
 
-// Notification Types
+// Notification data structure
 export interface Notification {
   id: string;
-  userId: string;
   type: NotificationType;
   title: string;
-  body: string;
-  data?: Record<string, any>;
+  message: string;
+  timestamp: string;      // ISO date string
   isRead: boolean;
-  createdAt: string;
+
+  // Optional action data
+  actionType?: 'navigate' | 'approve' | 'dismiss';
+  actionRoute?: string;   // e.g., "/visits/123" or "/redeem/approve/123"
+  actionData?: Record<string, any>;
+
+  // Related entities (optional)
+  relatedId?: string;     // e.g., visit ID, package ID
+  facilityName?: string;
+  memberName?: string;
 }
 
 // Approval Types
@@ -308,6 +318,51 @@ export interface ApprovalRequest {
   requestedAt: string;
   respondedAt?: string;
   expiresAt: string;
+}
+
+// Extended approval request with display info for UI
+export interface ApprovalHistoryItem {
+  id: string;
+
+  // Member info (who the visit was for)
+  memberId: string;
+  memberName: string;
+  memberInitials: string;
+
+  // Facility info
+  facilityId: string;
+  facilityName: string;
+
+  // Package info
+  packageId: string;
+  packageCategory: string; // e.g., "Consultations"
+  packageName: string; // e.g., "5 visits pack"
+
+  // Request details
+  requestDate: string; // ISO date string
+  requestTime: string; // e.g., "10:34 AM"
+  copay: number;
+
+  // Status
+  status: ApprovalStatus;
+  respondedAt?: string; // When user approved/declined
+  expiresAt?: string; // When pending request expires
+
+  // Timestamps
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Tab filter type for approval history
+export type ApprovalTabFilter = 'approved' | 'declined' | 'expired';
+
+// Status config for displaying approval status
+export interface ApprovalStatusConfig {
+  label: string;
+  icon: string;
+  bgColor: string;
+  textColor: string;
+  iconColor: string;
 }
 
 // Wallet Feature Types
@@ -449,6 +504,95 @@ export interface VisitFilters {
   memberId: string | 'all';  // 'all' for all family members
 }
 
+// Booking Flow Types
+
+// Booking flow status
+export type BookingFlowStatus =
+  | 'idle'
+  | 'selecting_package'
+  | 'selecting_person'
+  | 'selecting_facility'
+  | 'selecting_datetime'
+  | 'confirming'
+  | 'submitting'
+  | 'success'
+  | 'failed';
+
+// Preferred time slot
+export type TimeSlot = 'morning' | 'afternoon' | 'evening';
+
+export interface TimeSlotOption {
+  value: TimeSlot;
+  label: string;
+  hours: string;  // e.g., "8 AM - 12 PM"
+}
+
+// Facility data (for booking flow)
+export interface BookingFacility {
+  id: string;
+  name: string;
+  address: string;
+  distance: number;        // in km
+  distanceLabel: string;   // e.g., "1.2 km away"
+  recommendationPercent: number;  // e.g., 92
+  patientVisits: number;   // e.g., 156
+  imageUrl?: string;
+
+  // Hours
+  hours: {
+    weekdays: string;      // e.g., "8:00 AM - 6:00 PM"
+    saturday: string;      // e.g., "9:00 AM - 2:00 PM"
+    sunday: string;        // e.g., "Closed"
+  };
+
+  // Features
+  services: string[];      // e.g., ["Consultations", "Child Wellness", "Lab Tests"]
+  acceptsBookings: boolean;
+  isWalkInOnly: boolean;
+
+  // Status
+  isOpen: boolean;
+  closingTime?: string;    // e.g., "8:00 PM"
+}
+
+// Booking session data
+export interface BookingSession {
+  // Selected package
+  packageId: string | null;
+  package: UserPackage | null;
+
+  // Selected person
+  memberId: string | null;
+  memberName: string | null;
+
+  // Selected facility
+  facilityId: string | null;
+  facility: BookingFacility | null;
+
+  // Selected date & time
+  selectedDate: string | null;  // ISO date string
+  selectedTimeSlot: TimeSlot | null;
+
+  // Status
+  status: BookingFlowStatus;
+
+  // Result
+  bookingId?: string;
+}
+
+// Booking confirmation data (for success screen)
+export interface BookingConfirmation {
+  bookingId: string;
+  packageCategory: string;
+  packageName: string;
+  patientName: string;
+  facilityName: string;
+  requestedDate: string;
+  preferredTime: string;
+  copayDue: number;
+  remainingAfter: number;
+}
+
 // Redemption Flow Types
 
 // Redemption status
@@ -504,4 +648,182 @@ export interface FamilyMemberOption {
   isSelf: boolean;
   age?: number;          // Only for dependents
   ageLabel?: string;     // e.g., "11 years old" or "Myself"
+}
+
+// Profile & Settings Types
+
+// Notification preferences
+export interface NotificationPreferences {
+  appointmentReminders: boolean;
+  packageUpdates: boolean;
+  remoteApprovals: boolean;
+  bookingUpdates: boolean;
+  promotionsOffers: boolean;
+}
+
+// Language options
+export type LanguageCode = 'en' | 'lg' | 'sw';
+
+export interface LanguageOption {
+  code: LanguageCode;
+  name: string;
+  available: boolean;
+}
+
+// Help article
+export interface HelpArticle {
+  id: string;
+  question: string;
+  answer: string;
+  category: 'packages' | 'payments' | 'account' | 'visits';
+}
+
+// Profile menu item
+export interface ProfileMenuItem {
+  id: string;
+  label: string;
+  icon: string;      // Lucide icon name
+  route?: string;
+  action?: 'logout' | 'delete';
+  description?: string;
+}
+
+// Referral Feature Types
+
+// Referral status
+export type ReferralStatus = 'pending' | 'completed';
+
+// Referral record
+export interface Referral {
+  id: string;
+
+  // Referred friend info
+  friendName: string;
+  friendInitials: string;
+
+  // Status tracking
+  status: ReferralStatus;
+  signupDate: string;          // When they signed up
+  completedDate?: string;      // When they bought first package
+
+  // Reward info (for completed)
+  rewardClaimed: boolean;
+  rewardPackageId?: string;    // Which package received bonus visit
+  rewardPackageCategory?: string;
+
+  // Timestamps
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Bonus visit reward (unclaimed)
+export interface BonusReward {
+  id: string;
+  referralId: string;
+  friendName: string;
+  earnedAt: string;
+  claimed: boolean;
+  claimedAt?: string;
+  packageId?: string;
+}
+
+// Tab filter type
+export type ReferralTabFilter = 'completed' | 'pending';
+
+// Help & Support Types
+
+// FAQ categories for grouping
+export type FAQCategory = 'packages' | 'payments' | 'account';
+
+// FAQ item structure
+export interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+  category: FAQCategory;
+}
+
+// Issue report types
+export type IssueType =
+  | 'payment_problem'
+  | 'package_issue'
+  | 'facility_problem'
+  | 'app_not_working'
+  | 'account_issue'
+  | 'other';
+
+// Issue report submission
+export interface IssueReport {
+  id: string;
+  type: IssueType;
+  description: string;
+  userId: string;
+  status: 'pending' | 'in_progress' | 'resolved';
+  referenceNumber: string;
+  createdAt: string;
+}
+
+// Remote approval types
+export type PendingApprovalStatus =
+  | 'pending'
+  | 'approved'
+  | 'declined'
+  | 'expired'
+  | 'cancelled';
+
+export interface PendingApprovalRequest {
+  id: string;
+
+  // Member info
+  memberId: string;
+  memberName: string;
+  memberAge?: number;
+  memberInitials: string;
+
+  // Facility info
+  facilityId: string;
+  facilityName: string;
+
+  // Package info
+  packageId: string;
+  packageCategory: string;
+  packageName: string;
+
+  // Visit details
+  copay: number;
+  remainingBefore: number;
+  remainingAfter: number;
+  totalVisits: number;
+
+  // Timing
+  requestedAt: string;
+  expiresAt: string;
+
+  // Status
+  status: PendingApprovalStatus;
+}
+
+export type DeclineReason =
+  | 'not_arranged'
+  | 'wrong_child'
+  | 'wrong_facility'
+  | 'not_recognized'
+  | 'other';
+
+export interface SuspiciousActivityReport {
+  requestId: string;
+  description: string;
+  freezeAccount: boolean;
+  submittedAt: string;
+}
+
+// Contact method
+export interface ContactMethod {
+  id: string;
+  type: 'whatsapp' | 'phone' | 'email';
+  title: string;
+  value: string;
+  actionLabel: string;
+  responseTime: string;
+  icon: string; // emoji or icon name
 }

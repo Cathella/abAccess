@@ -5,13 +5,11 @@ import { VisitBadges } from "@/components/common/VisitBadges";
 
 interface PackageInfoCardProps {
   package: UserPackageType;
-  showWarningBanner?: boolean;
 }
 
-export function PackageInfoCard({ package: pkg, showWarningBanner }: PackageInfoCardProps) {
+export function PackageInfoCard({ package: pkg }: PackageInfoCardProps) {
   const isCompleted = pkg.status === "completed";
   const isExpired = pkg.status === "expired";
-  const isActive = pkg.status === "active";
 
   return (
     <div className="rounded-2xl border border-neutral-400 bg-white p-6">

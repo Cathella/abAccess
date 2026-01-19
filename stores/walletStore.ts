@@ -6,6 +6,8 @@ import * as walletService from '@/lib/services/walletService';
 import * as paymentMethodService from '@/lib/services/paymentMethodService';
 import { networkQueue, type QueuedOperation } from '@/lib/utils/networkQueue';
 import { logger } from '@/lib/utils/logger';
+import { createNotification } from '@/lib/notifications';
+import { formatCurrency } from '@/lib/wallet';
 
 interface WalletState {
   // Balance
@@ -71,6 +73,9 @@ interface WalletState {
   // Getters
   getFilteredTransactions: () => WalletTransaction[];
   getDefaultPaymentMethod: () => SavedPaymentMethod | undefined;
+
+  // Reset
+  reset: () => void;
 }
 
 export const useWalletStore = create<WalletState>()(
@@ -486,6 +491,18 @@ export const useWalletStore = create<WalletState>()(
             transactionId: result.data.transaction.id,
           });
 
+          // Create notification for successful top-up
+          // Import notifications store dynamically to avoid circular dependency
+          const { useNotificationsStore } = await import('./notificationsStore');
+          const addNotification = useNotificationsStore.getState().addNotification;
+
+          addNotification(
+            createNotification(
+              'top_up_success',
+              `UGX ${formatCurrency(data.amount, false)} has been added to your wallet.`
+            )
+          );
+
           return { success: true };
         } catch (error) {
           set((state) => {
@@ -534,6 +551,23 @@ export const useWalletStore = create<WalletState>()(
         const { savedPaymentMethods } = get();
         return savedPaymentMethods.find((m) => m.isDefault);
       },
+
+      // Reset store to initial state
+      reset: () =>
+        set((state) => {
+          state.balance = 0;
+          state.transactions = [];
+          state.savedPaymentMethods = [];
+          state.topUpData = {};
+          state.isLoading = false;
+          state.isProcessing = false;
+          state.transactionFilter = 'all';
+          state.walletId = null;
+          state.isSyncing = false;
+          state.lastSyncedAt = null;
+          state.syncError = null;
+          state.pendingOperations = [];
+        }),
     })),
     {
       name: 'wallet-storage',

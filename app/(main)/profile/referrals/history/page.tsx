@@ -1,0 +1,46 @@
+'use client';
+
+import { useReferralsStore } from '@/stores/referralsStore';
+import { ReferralTabFilter } from '@/components/common/ReferralTabFilter';
+import { ReferralCard } from '@/components/cards/ReferralCard';
+import { Users } from 'lucide-react';
+
+export default function ReferralHistoryPage() {
+  const { activeTab, setActiveTab, getFilteredReferrals } = useReferralsStore();
+
+  const referrals = getFilteredReferrals();
+  const hasReferrals = referrals.length > 0;
+
+  const emptyMessage = activeTab === 'completed'
+    ? "No completed referrals yet. Share your link to start earning!"
+    : "No pending referrals. Share your invite link to get started!";
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Tab Filter */}
+      <div className="px-4 py-4">
+        <ReferralTabFilter
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+      </div>
+
+      {/* Content */}
+      {!hasReferrals ? (
+        <div className="flex-1 flex flex-col items-center justify-center px-8 py-16">
+          <Users className="w-16 h-16 text-gray-300 mb-4" />
+          <p className="text-gray-500 text-center">{emptyMessage}</p>
+        </div>
+      ) : (
+        <div className="px-4 pb-8 space-y-3">
+          {referrals.map((referral) => (
+            <ReferralCard
+              key={referral.id}
+              referral={referral}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

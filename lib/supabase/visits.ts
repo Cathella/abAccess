@@ -1,6 +1,29 @@
 import { createClient } from "./client";
 import type { VisitRecord, VisitStatusType } from "@/types";
 
+function getSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    return { error: "Supabase env missing (NEXT_PUBLIC_SUPABASE_URL/ANON_KEY)" };
+  }
+  return { supabase: createClient() };
+}
+
+function normalizeFetchError(err: unknown, fallback: string): string {
+  if (!(err instanceof Error)) return fallback;
+  if (err.message.includes("Failed to fetch")) {
+    return "Network error: failed to reach Supabase. Check URL and connectivity.";
+  }
+  return err.message;
+}
+
+function mapVisitStatus(status?: string | null): VisitStatusType {
+  if (!status) return "pending_confirmation";
+  if (status === "pending") return "pending_confirmation";
+  return status as VisitStatusType;
+}
+
 function formatVisitTime(visitDate: string): string {
   const date = new Date(visitDate);
   return date.toLocaleTimeString("en-US", {
@@ -17,7 +40,10 @@ export async function getUserVisits(
   userId: string
 ): Promise<{ visits: VisitRecord[]; error?: string }> {
   try {
-    const supabase = createClient();
+    const { supabase, error: clientError } = getSupabaseClient();
+    if (clientError || !supabase) {
+      return { visits: [], error: clientError };
+    }
 
     // Get visits for user and their dependents
     const { data, error } = await supabase
@@ -54,7 +80,7 @@ export async function getUserVisits(
       packageName: visit.user_package?.package?.name || "Unknown Package",
       visitDate: visit.visit_date,
       visitTime: formatVisitTime(visit.visit_date),
-      status: visit.status as VisitStatusType,
+      status: mapVisitStatus(visit.status),
       copayAmount: undefined,
       refundNote: visit.provider_notes || undefined,
       createdAt: visit.created_at ?? visit.visit_date,
@@ -65,7 +91,7 @@ export async function getUserVisits(
   } catch (err) {
     return {
       visits: [],
-      error: err instanceof Error ? err.message : "Failed to fetch visits",
+      error: normalizeFetchError(err, "Failed to fetch visits"),
     };
   }
 }
@@ -78,7 +104,10 @@ export async function getVisitsByStatus(
   statuses: VisitStatusType[]
 ): Promise<{ visits: VisitRecord[]; error?: string }> {
   try {
-    const supabase = createClient();
+    const { supabase, error: clientError } = getSupabaseClient();
+    if (clientError || !supabase) {
+      return { visits: [], error: clientError };
+    }
 
     const { data, error } = await supabase
       .from("visits")
@@ -115,7 +144,7 @@ export async function getVisitsByStatus(
       packageName: visit.user_package?.package?.name || "Unknown Package",
       visitDate: visit.visit_date,
       visitTime: formatVisitTime(visit.visit_date),
-      status: visit.status as VisitStatusType,
+      status: mapVisitStatus(visit.status),
       copayAmount: undefined,
       refundNote: visit.provider_notes || undefined,
       createdAt: visit.created_at ?? visit.visit_date,
@@ -126,7 +155,7 @@ export async function getVisitsByStatus(
   } catch (err) {
     return {
       visits: [],
-      error: err instanceof Error ? err.message : "Failed to fetch visits",
+      error: normalizeFetchError(err, "Failed to fetch visits"),
     };
   }
 }
@@ -173,7 +202,10 @@ export async function createVisitForRedemption(data: {
   providerNotes?: string;
 }): Promise<{ success: boolean; visitId?: string; error?: string }> {
   try {
-    const supabase = createClient();
+    const { supabase, error: clientError } = getSupabaseClient();
+    if (clientError || !supabase) {
+      return { success: false, error: clientError };
+    }
 
     let facilityId = data.facilityId || null;
 
@@ -222,7 +254,7 @@ export async function createVisitForRedemption(data: {
   } catch (err) {
     return {
       success: false,
-      error: err instanceof Error ? err.message : "Failed to create visit",
+      error: normalizeFetchError(err, "Failed to create visit"),
     };
   }
 }
@@ -234,7 +266,10 @@ export async function getVisitById(
   visitId: string
 ): Promise<{ visit: VisitRecord | null; error?: string }> {
   try {
-    const supabase = createClient();
+    const { supabase, error: clientError } = getSupabaseClient();
+    if (clientError || !supabase) {
+      return { visit: null, error: clientError };
+    }
 
     const { data, error } = await supabase
       .from("visits")
@@ -272,7 +307,7 @@ export async function getVisitById(
       packageName: data.user_package?.package?.name || "Unknown Package",
       visitDate: data.visit_date,
       visitTime: formatVisitTime(data.visit_date),
-      status: data.status as VisitStatusType,
+      status: mapVisitStatus(data.status),
       copayAmount: undefined,
       refundNote: data.provider_notes || undefined,
       createdAt: data.created_at ?? data.visit_date,
@@ -283,7 +318,7 @@ export async function getVisitById(
   } catch (err) {
     return {
       visit: null,
-      error: err instanceof Error ? err.message : "Failed to fetch visit",
+      error: normalizeFetchError(err, "Failed to fetch visit"),
     };
   }
 }
@@ -296,7 +331,10 @@ export async function updateVisitStatus(
   status: VisitStatusType
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = createClient();
+    const { supabase, error: clientError } = getSupabaseClient();
+    if (clientError || !supabase) {
+      return { success: false, error: clientError };
+    }
 
     const { error } = await supabase
       .from("visits")
@@ -311,7 +349,7 @@ export async function updateVisitStatus(
   } catch (err) {
     return {
       success: false,
-      error: err instanceof Error ? err.message : "Failed to update visit",
+      error: normalizeFetchError(err, "Failed to update visit"),
     };
   }
 }
@@ -324,7 +362,10 @@ export async function cancelVisit(
   refundNote?: string
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const supabase = createClient();
+    const { supabase, error: clientError } = getSupabaseClient();
+    if (clientError || !supabase) {
+      return { success: false, error: clientError };
+    }
 
     const { error } = await supabase
       .from("visits")
@@ -343,7 +384,7 @@ export async function cancelVisit(
   } catch (err) {
     return {
       success: false,
-      error: err instanceof Error ? err.message : "Failed to cancel visit",
+      error: normalizeFetchError(err, "Failed to cancel visit"),
     };
   }
 }
